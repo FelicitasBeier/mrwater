@@ -64,7 +64,7 @@ calcGrowingPeriod <- function(lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
 
     lpj2mag      <- toolGetMapping("MAgPIE_LPJmL.csv",
                                    type = "sectoral",
-                                   where = "mappingfolder")
+                                   where = "mrlandcore")
 
     # Read yields first
     yields <- collapseNames(calcOutput("LPJmL_new", version = lpjmlReadin["crop"],
@@ -79,17 +79,17 @@ calcGrowingPeriod <- function(lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
                                        climatetype = climatetype,  subtype = "hdate",
                                        stage = "raw", aggregate = FALSE)[, , "rainfed"])
 
-    goodCrops <- lpj2mag$MAgPIE[which(lpj2mag$LPJmL %in% getItems(sowd, dim = 3))]
-    badCrops  <- lpj2mag$MAgPIE[which(!lpj2mag$LPJmL %in% getItems(sowd, dim = 3))]
+    goodCrops <- lpj2mag$MAgPIE[which(lpj2mag$LPJmL5 %in% getItems(sowd, dim = 3))]
+    badCrops  <- lpj2mag$MAgPIE[which(!lpj2mag$LPJmL5 %in% getItems(sowd, dim = 3))]
 
     sowd   <- toolAggregate(sowd, rel = lpj2mag,
-                            from = "LPJmL", to = "MAgPIE",
+                            from = "LPJmL5", to = "MAgPIE",
                             dim = 3.1, partrel = TRUE)
     hard   <- toolAggregate(hard, rel = lpj2mag,
-                            from = "LPJmL", to = "MAgPIE",
+                            from = "LPJmL5", to = "MAgPIE",
                             dim = 3.1, partrel = TRUE)
     yields <- toolAggregate(yields, rel = lpj2mag,
-                            from = "LPJmL", to = "MAgPIE",
+                            from = "LPJmL5", to = "MAgPIE",
                             dim = 3.1, partrel = TRUE)
 
     if (length(badCrops) > 0) {

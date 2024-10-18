@@ -42,17 +42,17 @@ calcIrrigSystemShr <- function(iniyear) {
   ######################
   # from LPJmL crops to MAgPIE crops
   map <- toolGetMapping("MAgPIE_LPJmL.csv",
-                        type = "sectoral", where = "mappingfolder")
+                        type = "sectoral", where = "mrlandcore")
   getItems(irrigSuit, dim = "crop") <- gsub("pastures", "mgrass", getItems(irrigSuit, dim = "crop"))
   # add betr and begr
-  irrigSuit <- add_columns(irrigSuit, addnm = c("betr", "begr"),
+  irrigSuit <- add_columns(irrigSuit, addnm = c("biomass tree", "biomass grass"),
                            dim = "crop", fill = 1)
-  irrigSuit[, , "begr"] <- irrigSuit[, , "mgrass"]
+  irrigSuit[, , "biomass grass"] <- irrigSuit[, , "mgrass"]
   # remove LPJmL "others" category
   irrigSuit <- irrigSuit[, , "others", invert = TRUE]
 
   irrigSuit <- toolAggregate(irrigSuit, rel = map,
-                             from = "LPJmL", to = "MAgPIE", dim = "crop")
+                             from = "LPJmL5", to = "MAgPIE", dim = "crop")
 
   # remove pasture (not irrigated in MAgPIE)
   irrigSuit <- irrigSuit[, , "pasture", invert = TRUE]

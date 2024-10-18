@@ -1,12 +1,12 @@
 #' @title       readJaegermeyr2015
-#' @description Read in irrigation system suitability per crop type 
+#' @description Read in irrigation system suitability per crop type
 #'              and country-level irrigation system shares from Jaegermeyr (2015)
-#' 
+#'
 #' @param subtype Data to be read in:
-#'                "systemShare": irrigation system share 
-#'                               as provided in SI of Jägermeyr et al. (2015), 
-#'                               based on FAO 2014, ICID 2012 and Rohwer et al. 2007); 
-#'                "systemSuitability": biophysical and technical irrigation system suitability 
+#'                "systemShare": irrigation system share
+#'                               as provided in SI of Jägermeyr et al. (2015),
+#'                               based on FAO 2014, ICID 2012 and Rohwer et al. 2007);
+#'                "systemSuitability": biophysical and technical irrigation system suitability
 #'                                     by crop type (CFT) as provided in Table 2 of Jägermeyr et al. (2015)
 #'                                     based on Sauer et al. (2010) and Fischer et al. (2012).
 #'
@@ -28,7 +28,7 @@ readJaegermeyr2015 <- function(subtype) {
 
     # Irrigation system share by country
     x <- read.csv("Jaegermeyr-2015-supplement_shr.csv")
-    x$Country <- toolCountry2isocode(x$Country, 
+    x$Country <- toolCountry2isocode(x$Country,
                                      mapping = c("bahamas, the" = "BHS",
                                                 "congo-brazzaville" = "COG",
                                                 "dr congo, former zaire" = "COD",
@@ -58,7 +58,7 @@ readJaegermeyr2015 <- function(subtype) {
   } else if (subtype == "systemSuitability") {
 
     # Irrigation system suitability by LPJmL crop type
-    x <- read.csv("Jaegermeyr2015_Table2.csv")
+    x <- read.csv("Jaegermeyr2015_Data_Table2.csv")
     x <- as.magpie(x)
     getSets(x) <- c("region", "year", "crop", "system")
 

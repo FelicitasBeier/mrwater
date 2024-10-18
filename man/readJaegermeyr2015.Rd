@@ -8,10 +8,10 @@ readJaegermeyr2015(subtype)
 }
 \arguments{
 \item{subtype}{Data to be read in:
-"systemShare": irrigation system share 
-               as provided in SI of Jägermeyr et al. (2015), 
-               based on FAO 2014, ICID 2012 and Rohwer et al. 2007); 
-"systemSuitability": biophysical and technical irrigation system suitability 
+"systemShare": irrigation system share
+               as provided in SI of Jägermeyr et al. (2015),
+               based on FAO 2014, ICID 2012 and Rohwer et al. 2007);
+"systemSuitability": biophysical and technical irrigation system suitability
                      by crop type (CFT) as provided in Table 2 of Jägermeyr et al. (2015)
                      based on Sauer et al. (2010) and Fischer et al. (2012).}
 }
@@ -19,7 +19,7 @@ readJaegermeyr2015(subtype)
 MAgPIE object
 }
 \description{
-Read in irrigation system suitability per crop type 
+Read in irrigation system suitability per crop type
              and country-level irrigation system shares from Jaegermeyr (2015)
 }
 \examples{

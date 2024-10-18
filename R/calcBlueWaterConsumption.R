@@ -53,7 +53,7 @@ calcBlueWaterConsumption <- function(selectyears, lpjml, climatetype,
 
   # Crop mapping
   lpj2mag <- toolGetMapping("MAgPIE_LPJmL.csv", type = "sectoral",
-                            where = "mappingfolder")
+                            where = "mrlandcore")
   kcr     <- lpj2mag$MAgPIE
   kcr     <- kcr[kcr != "pasture"]
 
@@ -137,14 +137,14 @@ calcBlueWaterConsumption <- function(selectyears, lpjml, climatetype,
   bwc2nd <- mbind(bwc2nd, missingCrops)
 
   # Transformation from lpj to kcr crops
-  bwc2nd <- toolAggregate(bwc2nd, lpj2mag, from = "LPJmL",
-                          to = "MAgPIE", dim = "crop", partrel = TRUE)[, , kcr]
-  bwc1st <- toolAggregate(bwc1st, lpj2mag, from = "LPJmL",
-                          to = "MAgPIE", dim = "crop", partrel = TRUE)[, , kcr]
+  bwc2nd <- toolAggregate(bwc2nd, lpj2mag, dim = "crop", partrel = TRUE,
+                          from = "LPJmL5", to = "MAgPIE")[, , kcr]
+  bwc1st <- toolAggregate(bwc1st, lpj2mag, dim = "crop", partrel = TRUE,
+                          from = "LPJmL5", to = "MAgPIE")[, , kcr]
   # The MAgPIE perennial crop "oilpalm" is grown throughout the whole year
   # but proxied with an LPJmL crop with seasonaility ("groundnut").
   # Therefore, both single and multiple cropping blue water consumption has be adjusted
-  if (lpj2mag$LPJmL[lpj2mag$MAgPIE == "oilpalm"] == "groundnut") {
+  if (lpj2mag$LPJmL5[lpj2mag$MAgPIE == "oilpalm"] == "groundnut") {
     bwc1st[, , "oilpalm"] <- bwc1st[, , "oilpalm"] + bwc2nd[, , "oilpalm"]
   }
 
