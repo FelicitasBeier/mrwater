@@ -186,6 +186,6 @@ calcIrrigSystemShr <- function(iniyear) {
   return(list(x            = out,
               weight       = NULL,
               unit         = "share",
-              description  = "irrigation system share (share of irrigated area) per crop",
+              description  = "irrigation system share (of irrigated area) per crop",
               isocountries = FALSE))
 }

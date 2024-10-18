@@ -131,7 +131,7 @@ calcBlueWaterConsumption <- function(selectyears, lpjml, climatetype,
   #       outside the main growing season.
   missingCrops <- new.magpie(cells_and_regions = getItems(bwc2nd, dim = 1),
                              years = getItems(bwc2nd, dim = 2),
-                             names = c("betr", "begr"),
+                             names = c("biomass tree", "biomass grass"),
                              fill = 0)
   getSets(missingCrops) <- getSets(bwc2nd)
   bwc2nd <- mbind(bwc2nd, missingCrops)
