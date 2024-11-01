@@ -50,8 +50,10 @@ calcAvlWater <- function(lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de", crop =
                                     aggregate = FALSE)
 
     ### Monthly Runoff (raw) (in mio. m^3/month)
+    yrs <- getItems(monthDischargeMAG, dim = 2)
     monthRunoffMAG    <- calcOutput("RunoffMonthly", lpjml = lpjmlReadin["natveg"],
-                                    climatetype = climatetype, aggregate = FALSE)
+                                    climatetype = climatetype,
+                                    aggregate = FALSE)[, yrs, ]
 
     ## River basin water allocation algorithm:
     # Read in river structure
