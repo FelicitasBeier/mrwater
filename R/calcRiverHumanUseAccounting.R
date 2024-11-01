@@ -153,7 +153,7 @@ calcRiverHumanUseAccounting <- function(iteration,
   # Lake evaporation as calculated by natural flow river routing
   lakeEvap <- collapseNames(natFlows[, , "lake_evap_nat"])
   # Runoff (on land and water)
-  yearlyRunoff <- collapseNames(calcOutput("YearlyRunoff",
+  yearlyRunoff <- collapseNames(calcOutput("RunoffYearly",
                                            selectyears = selectyears,
                                            lpjml = lpjml, climatetype = climatetype,
                                            aggregate = FALSE))
