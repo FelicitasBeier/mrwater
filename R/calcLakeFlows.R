@@ -24,7 +24,7 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
 
   # Lake area from LPJmL (in ha) for one year (static over time)
   lakeArea <- calcOutput("LPJmLtransform", subtype = "pnv:lake_area",
-                         stage = "raw",
+                         stage = "raw:Fullhist",
                          version = lpjml, climatetype = climatetype,
                          aggregate = FALSE)
   # To Do (Feli): use LUH lake area (if possible)
