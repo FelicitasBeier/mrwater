@@ -28,8 +28,6 @@ calcEvapotranspiration <- function(selectyears, runtype,
   #########################
   ### Extract arguments ###
   #########################
-  variable <- paste0(unlist(strsplit(runtype, split = ":"))[1], "_")
-
   if (unlist(strsplit(runtype, split = ":"))[2] == "ir") {
     # To Do: Ensure correct run is selected when we changed from crops vs. cropsIrrigswap to cropsRF vs. cropsIR
     runfolder <- "crops" # in future: from cropsIR run (i.e. no more runfolder distinction will be needed)
@@ -39,12 +37,22 @@ calcEvapotranspiration <- function(selectyears, runtype,
     mngt      <- "rainfed"
   }
   # subtype function for monthly input data
-  .subtype <- function(x) {
-    out <- paste(runfolder,
-                 paste0(variable, x),
-                 sep = ":")
-    return(out)
+  if (grepl("cft", unlist(strsplit(runtype, split = ":"))[1])) {
+    .subtype <- function(x) {
+      out <- paste(runfolder,
+                   paste0("cft_", x),
+                   sep = ":")
+      return(out)
+    }
+  } else if (grepl("grass", unlist(strsplit(runtype, split = ":"))[1])) {
+    .subtype <- function(x) {
+      out <- paste(runfolder,
+                   paste0("cft_", x, "_grass"),
+                   sep = ":")
+      return(out)
+    }
   }
+
 
   ####################
   ### Read in data ###
