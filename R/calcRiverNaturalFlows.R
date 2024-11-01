@@ -33,7 +33,7 @@ calcRiverNaturalFlows <- function(selectyears, lpjml, climatetype) {
   # Runoff on land and water (in mio. m^3 per year) [smoothed & harmonized]
   runoff   <- as.array(collapseNames(calcOutput("RunoffYearly", selectyears = selectyears,
                                                 lpjml = lpjml, climatetype = climatetype,
-                                                aggregate = FALSE)))
+                                                aggregate = FALSE)[, selectyears, ]))
 
   ############################################
   ###### River Routing: Natural Flows ########
