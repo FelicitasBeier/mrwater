@@ -70,7 +70,7 @@ calcRiverNaturalFlows <- function(selectyears, lpjml, climatetype) {
   }
 
   out <- new.magpie(cells_and_regions = getItems(natDischarge, dim = 1),
-                    years = getItems(natDischarge, dim = "year"),
+                    years = getItems(natDischarge, dim = 2),
                     names = c("discharge_nat", "lake_evap_nat", "inflow_nat"),
                     sets  = c("x.y.iso", "year", "data"))
   out[, , "discharge_nat"] <- as.magpie(natDischarge, spatial = 1, temporal = 2)
