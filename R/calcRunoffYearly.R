@@ -30,15 +30,15 @@ calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
   # Read in input data already time-smoothed and for climate scenarios harmonized to the baseline
   if (grepl("historical", climatetype)) {
     # Baseline is only smoothed (not harmonized)
-    stage <- "smoothed"
+    stage <- "harmonizedHistorical"  #### To Do (Feli): change once calcLPJmLharmonize is ready
   } else {
     # Climate scenarios are harmonized to baseline
     stage <- "harmonizedHistorical"  #### To Do (Feli): change once calcLPJmLharmonize is ready
   }
 
   # Yearly runoff (m^3/ha) [smoothed & harmonized]
-  x <- calcOutput("LPJmLharmonize", subtype = "runoff", stage = stage,
-                  version = lpjml, climatetype = climatetype,
+  x <- calcOutput("LPJmLharmonize", subtype = "pnv:runoff", stage = stage,
+                  version = lpjml, climatetype = climatetype, years = selectyears,
                   aggregate = FALSE)
   #### To Do (Feli, Kristine): handle aggregation to yearly before harmonization (in calcLPJmLtransform)
   x <- dimSums(x, dim = "month")
