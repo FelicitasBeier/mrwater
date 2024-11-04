@@ -38,14 +38,14 @@ calcEvapotranspiration <- function(selectyears, runtype,
   }
   # subtype function for monthly input data
   if (grepl("cft", unlist(strsplit(runtype, split = ":"))[1])) {
-    .subtype <- function(x) {
+    .subtype <- function(x, runfolder) {
       out <- paste(runfolder,
                    paste0("cft_", x),
                    sep = ":")
       return(out)
     }
   } else if (grepl("grass", unlist(strsplit(runtype, split = ":"))[1])) {
-    .subtype <- function(x) {
+    .subtype <- function(x, runfolder) {
       out <- paste(runfolder,
                    paste0("cft_", x, "_grass"),
                    sep = ":")
@@ -58,18 +58,18 @@ calcEvapotranspiration <- function(selectyears, runtype,
   ### Read in data ###
   ####################
   # transpiration (in m^3/ha)
-  transp <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp"),
+  transp <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = runfolder),
                        version = lpjml, climatetype = climatetype,
                        stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
   evap <- calcOutput("LPJmLharmonize",
-                     subtype = .subtype(x = "evap"),
+                     subtype = .subtype(x = "evap", runfolder = runfolder),
                      version = lpjml, climatetype = climatetype,
                      stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                      aggregate = FALSE)[, selectyears, mngt]
   # interception (in m^3/ha)
-  interc <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "interc"),
+  interc <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
                        version = lpjml, climatetype = climatetype,
                        stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                        aggregate = FALSE)[, selectyears, mngt]

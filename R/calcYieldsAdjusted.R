@@ -85,9 +85,9 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
 
     # read in cellular LPJmL yields [in tDM/ha]
     yields <- calcOutput("Yields", source = c(lpjml = lpjml[["crop"]], isimip = NULL),
-                          cells = "lpjcell", climatetype = climatetype,
-                          multicropping = multicropping, marginal_land = "no_marginal:irrigated",
-                          selectyears = selectyears, aggregate = FALSE)
+                         climatetype = climatetype,
+                         multicropping = multicropping, marginal_land = "no_marginal:irrigated",
+                         selectyears = selectyears, aggregate = FALSE)
 
     description <- "LPJmL yields for all different (MAgPIE) crop types"
 
