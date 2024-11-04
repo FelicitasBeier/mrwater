@@ -53,7 +53,6 @@ calcEvapotranspiration <- function(selectyears, runtype,
     }
   }
 
-
   ####################
   ### Read in data ###
   ####################
@@ -63,8 +62,7 @@ calcEvapotranspiration <- function(selectyears, runtype,
                        stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
-  evap <- calcOutput("LPJmLharmonize",
-                     subtype = .subtype(x = "evap", runfolder = runfolder),
+  evap <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
                      version = lpjml, climatetype = climatetype,
                      stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                      aggregate = FALSE)[, selectyears, mngt]
@@ -75,6 +73,13 @@ calcEvapotranspiration <- function(selectyears, runtype,
                        aggregate = FALSE)[, selectyears, mngt]
   # extract unit
   unit <- getFromComment(transp, "unit")
+
+  ### Correction Start ###
+  ### To Do (Feli): Delete once new LPJmL runs are ready! This is only a temporary fix due to a typo in LPJmL
+  if (runtype == "grass:ir") {
+    transp <- transp * 1e6
+  }
+  ### Correction End   ###
 
   ####################
   ### Calculations ###
