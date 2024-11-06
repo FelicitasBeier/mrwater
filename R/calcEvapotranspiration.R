@@ -15,7 +15,7 @@
 #' @return magpie object in cellular resolution
 #' @author Felicitas Beier, Jens Heinke
 #'
-#' @importFrom magclass getFromComment
+#' @importFrom madrat getFromComment
 #'
 #' @examples
 #' \dontrun{
@@ -59,17 +59,14 @@ calcEvapotranspiration <- function(selectyears, runtype,
   # transpiration (in m^3/ha)
   transp <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = runfolder),
                        version = lpjml, climatetype = climatetype,
-                       stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
   evap <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
                      version = lpjml, climatetype = climatetype,
-                     stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                      aggregate = FALSE)[, selectyears, mngt]
   # interception (in m^3/ha)
   interc <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
                        version = lpjml, climatetype = climatetype,
-                       stage = "harmonizedHistorical", # To Do: change once LPJmLharmonize is ready
                        aggregate = FALSE)[, selectyears, mngt]
   # extract unit
   unit <- getFromComment(transp, "unit")

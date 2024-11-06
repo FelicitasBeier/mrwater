@@ -21,23 +21,8 @@
 #'
 calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
 
-  ### To Do: Confirm with Kristine
-  ### How would this be handled with the new structure (calcLPJmLtransform and calcLPJmLharmonize)?
-  ### Ideally I would like to be able to avoid to have to make this distinction at all.
-  ### Can I just call calcLPJmLharmonize and it handles the distinction? I basically always want
-  ### as harmonized as possible and if it's not available (e.g., because it's only historical data)
-  ### than I want it smoothed.
-  # Read in input data already time-smoothed and for climate scenarios harmonized to the baseline
-  if (grepl("historical", climatetype)) {
-    # Baseline is only smoothed (not harmonized)
-    stage <- "harmonizedHistorical"  #### To Do (Feli): change once calcLPJmLharmonize is ready
-  } else {
-    # Climate scenarios are harmonized to baseline
-    stage <- "harmonizedHistorical"  #### To Do (Feli): change once calcLPJmLharmonize is ready
-  }
-
   # Yearly runoff (m^3/ha) [smoothed & harmonized]
-  x <- calcOutput("LPJmLharmonize", subtype = "pnv:runoff", stage = stage,
+  x <- calcOutput("LPJmLharmonize", subtype = "pnv:runoff",
                   version = lpjml, climatetype = climatetype, years = selectyears,
                   aggregate = FALSE)
   #### To Do (Feli, Kristine): handle aggregation to yearly before harmonization (in calcLPJmLtransform)

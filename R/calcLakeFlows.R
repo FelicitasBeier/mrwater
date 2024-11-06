@@ -32,8 +32,6 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
   if (subtype == "input_lake") {
     # Precipitation from LPJmL (in m^3/ha) [smoothed & harmonized]
     x <- calcOutput("LPJmLharmonize", subtype = "pnv:prec",
-                    stage = "harmonizedHistorical", # To Do (Feli): change once calcLPJmLharmonize is fixed
-                    # should be harmonizedScenario eventually (or better: just default)
                     version = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")
@@ -44,8 +42,6 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
   } else if (subtype == "evap_lake") {
     # Lake evaporation from LPJmL (in m^3/ha) [smoothed & harmonized]
     x <- calcOutput("LPJmLharmonize", subtype = "pnv:evap_lake",
-                    stage = "harmonizedHistorical", # To Do (Feli): change once calcLPJmLharmonize is fixed
-                    # should be harmonizedScenario eventually (or better: just default)
                     version = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")
