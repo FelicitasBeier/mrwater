@@ -23,7 +23,8 @@ calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
 
   # Yearly runoff (m^3/ha) [smoothed & harmonized]
   x <- calcOutput("LPJmLharmonize", subtype = "pnv:runoff",
-                  version = lpjml, climatetype = climatetype, years = selectyears,
+                  lpjmlversion = lpjml, climatetype = climatetype,
+                  years = selectyears,
                   aggregate = FALSE)
   #### To Do (Feli, Kristine): handle aggregation to yearly before harmonization (in calcLPJmLtransform)
   x <- dimSums(x, dim = "month")

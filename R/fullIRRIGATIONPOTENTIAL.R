@@ -29,7 +29,7 @@
 #' @param gainthreshold     Threshold of yield improvement potential required for
 #'                          water allocation in upstreamfirst algorithm
 #'                          (in same unit as in rankmethod)
-#' @param protectLand       Land protection scenario (WDPA, 
+#' @param protectLand       Land protection scenario (WDPA,
 #'                          or one of the scenarios available in calcConservationPriorities,
 #'                          e.g., 30by20, BH, BH_IFL, PBL_HalfEarth,
 #'                          or NA for no protection).
@@ -377,8 +377,8 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              file = "avlIrrigarea_pot.mz")
 
   # Accessibility graph
-  calcOutput("LPJmL_new", subtype = "mdischarge",
-             version = lpjml[["natveg"]], climatetype = climatetype,
+  calcOutput("LPJmLtransform", subtype = "mdischarge",
+             lpjmlversion = lpjml, climatetype = climatetype,
              stage = "raw", aggregate = FALSE,
              file = "LPJmL_monthlyDischarge.mz")
 

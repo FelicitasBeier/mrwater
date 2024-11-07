@@ -22,7 +22,7 @@ calcRunoffMonthly <- function(lpjml, climatetype) {
 
   # Monthly runoff (m^3/ha) [smoothed & harmonized]
   x  <- calcOutput("LPJmLtransform", subtype = "pnv:runoff", stage = "raw:cut",
-                   version = lpjml, climatetype = climatetype,
+                   lpjmlversion = lpjml, climatetype = climatetype,
                    aggregate = FALSE)
   # LUH landarea (in Mha)
   landArea <- setYears(collapseNames(dimSums(readSource("LUH2v2",
