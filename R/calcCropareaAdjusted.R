@@ -35,7 +35,7 @@ calcCropareaAdjusted <- function(iniyear, dataset = "LandInG", sectoral = "kcr")
   } else if (dataset == "LandInG") {
 
     phys <- calcOutput("CropareaLandInG", physical = TRUE, sectoral = sectoral,
-                       cellular = TRUE, cells = "lpjcell", irrigation = TRUE,
+                       cellular = TRUE, irrigation = TRUE,
                        selectyears = iniyear, aggregate = FALSE)
 
   } else {
