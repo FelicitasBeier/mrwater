@@ -10,7 +10,7 @@ calcBlueWaterConsumption(
   climatetype,
   fallowFactor = 0.75,
   areaMask,
-  output
+  season
 )
 }
 \arguments{
@@ -36,11 +36,8 @@ sowing of second (off) season}
 "potential:exogenous": potentially multicropped areas given
                        GAEZ suitability classification}
 
-\item{output}{output to be returned by the function: combination of
-crop type ("crops" or "grass") and
-season ("main" (LPJmL growing period), "year" (entire year)),
-separated by ":"
-("crops:main", "crops:year", "grass:main", "grass:year")}
+\item{season}{Season to be returned: "main" (LPJmL growing period),
+"year" (entire year))}
 }
 \value{
 magpie object in cellular resolution

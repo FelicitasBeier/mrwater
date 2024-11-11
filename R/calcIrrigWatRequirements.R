@@ -48,7 +48,7 @@ calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
   # Read in blue water consumption (in m^3 per ha per yr):
   if (mcBoolean) {
     # For multiple cropping case: whole year where suitable
-    bwc <- calcOutput("BlueWaterConsumption", output = "crops:year",
+    bwc <- calcOutput("BlueWaterConsumption", season = "crops:year",
                       areaMask = areaMask,
                       lpjml = lpjml, climatetype = climatetype,
                       selectyears = selectyears, aggregate = FALSE)
@@ -57,7 +57,7 @@ calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
     # For single cropping case: main season blue water consumption
     # (Note: areaMask argument not relevant here, but needs to be set)
     # To Do: as soon as code review complete, set default in calcBlueWaterConsumption
-    bwc <- calcOutput("BlueWaterConsumption", output = "crops:main",
+    bwc <- calcOutput("BlueWaterConsumption", season = "crops:main",
                       areaMask = "potential:endogenous",
                       lpjml = lpjml, climatetype = climatetype,
                       selectyears = selectyears, aggregate = FALSE)
@@ -66,6 +66,9 @@ calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
   years       <- getItems(bwc, dim = "year")
   cropnames   <- getItems(bwc, dim = "crop")
   systemnames <- c("drip", "sprinkler", "surface")
+
+  ###### To Do: NOTE! calcBlueWaterConsumption now already returns
+  ###### object by system (surface, sprinkler, drip) --> adjust dimensions
 
   ### Field efficiencies from Jägermeyr et al. (global values) [placeholder!]
   #### Use field efficiency from LPJmL here (by system, by crop, on 0.5 degree) [Does it vary by year?] ####
