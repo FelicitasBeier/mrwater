@@ -4,6 +4,8 @@
 #'              evapotranspiration of grass
 #'
 #' @param selectyears   Years to be returned
+#' @param iniyear       Initialization year for filtering rules of data for regression
+#'                      that determines second season yield
 #' @param lpjml         LPJmL version required for respective inputs: natveg or crop
 #' @param climatetype   Climate model (e.g., "MRI-ESM2-0:ssp370")
 #'                      or historical baseline (e.g., "GSWP3-W5E5:historical")
@@ -32,7 +34,8 @@
 #' }
 #'
 
-calcBlueWaterConsumption <- function(selectyears, lpjml, climatetype,
+calcBlueWaterConsumption <- function(selectyears, iniyear,
+                                     lpjml, climatetype,
                                      fallowFactor = 0.75, areaMask,
                                      season) {
   # Crop mapping
@@ -48,6 +51,7 @@ calcBlueWaterConsumption <- function(selectyears, lpjml, climatetype,
                        aggregate = FALSE)
   bwc2nd <- calcOutput("BlueWaterConsumptionOff",
                        selectyears = selectyears,
+                       iniyear = iniyear,
                        lpjml = lpjml,
                        climatetype = climatetype,
                        aggregate = FALSE)

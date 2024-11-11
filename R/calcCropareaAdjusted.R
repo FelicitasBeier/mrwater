@@ -85,7 +85,7 @@ calcCropareaAdjusted <- function(iniyear, dataset = "LandInG", sectoral = "kcr")
 
   return(list(x            = croparea,
               weight       = NULL,
-              unit         = "million ha",
+              unit         = "Mha",
               description  = "cellular croparea per crop",
               isocountries = FALSE))
 }

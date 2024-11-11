@@ -4,6 +4,7 @@
 #'              evapotranspiration of grass
 #'
 #' @param selectyears   Years to be returned
+#' @param iniyear       Initialization year for filtering rules of data for regression
 #' @param lpjml         LPJmL version required for respective inputs: natveg or crop
 #' @param climatetype   Climate model (e.g., "MRI-ESM2-0:ssp370")
 #'                      or historical baseline (e.g., "GSWP3-W5E5:historical")
@@ -20,7 +21,8 @@
 #' @importFrom madrat calcOutput getFromComment
 #' @importFrom stats lm coef
 
-calcBlueWaterConsumptionOff <- function(selectyears, lpjml, climatetype) {
+calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
+                                        lpjml, climatetype) {
 
   ####################
   ### Read in data ###
@@ -64,7 +66,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, lpjml, climatetype) {
   ### Filter data ###
   ###################
   # multiple cropping suitability under irrigated conditions
-  mcSuit <- collapseNames(calcOutput("MulticroppingSuitability", selectyears = selectyears,
+  mcSuit <- collapseNames(calcOutput("MulticroppingSuitability", selectyears = iniyear,
                                      lpjml = lpjml, climatetype = climatetype,
                                      suitability = "endogenous", sectoral = "lpj",
                                      aggregate = FALSE)[, , "irrigated"])
@@ -72,15 +74,15 @@ calcBlueWaterConsumptionOff <- function(selectyears, lpjml, climatetype) {
   yldSingle <- calcOutput("YieldsLPJmL", selectyears = selectyears,
                           lpjml = lpjml, climatetype = climatetype,
                           multicropping = FALSE,
-                          aggregate = FALSE)[, , "irrigated"]
+                          aggregate = FALSE)[, iniyear, "irrigated"]
   yldMultiple <- calcOutput("YieldsLPJmL", selectyears = selectyears,
                             lpjml = lpjml, climatetype = climatetype,
                             multicropping = "TRUE:potential:endogenous",
-                            aggregate = FALSE)[, , "irrigated"]
+                            aggregate = FALSE)[, iniyear, "irrigated"]
   yldOffSeason <- collapseNames(yldMultiple - yldSingle)
 
   # initialize object for filtering
-  naCells <- mcSuit
+  naCells <- bwc1st
   naCells[, , ] <- 0
   # where no multicropping suitability under irrigated conditions
   naCells[!mcSuit] <- 1

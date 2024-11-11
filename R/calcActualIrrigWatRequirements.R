@@ -41,7 +41,8 @@ calcActualIrrigWatRequirements <- function(selectyears, iniyear,
                                            irrigationsystem, multicropping) {
 
   # irrigation water requirement per crop per system (in m^3 per ha per yr)
-  irrigReq   <- calcOutput("IrrigWatRequirements", selectyears = selectyears,
+  irrigReq   <- calcOutput("IrrigWatRequirements",
+                           selectyears = selectyears, iniyear = iniyear,
                            lpjml = lpjml,  climatetype = climatetype,
                            multicropping = multicropping,
                            aggregate = FALSE)

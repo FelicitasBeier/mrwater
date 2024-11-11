@@ -4,6 +4,8 @@
 #'              considering irrigation efficiencies
 #'
 #' @param selectyears   Years to be returned
+#' @param iniyear       Initialization year for filtering rules of data for regression
+#'                      that determines second season yield
 #' @param lpjml         LPJmL version required for respective inputs: natveg or crop
 #' @param climatetype   Climate model or historical baseline "GSWP3-W5E5:historical"
 #' @param multicropping Multicropping activated (TRUE) or not (FALSE) and
@@ -34,7 +36,8 @@
 #' @importFrom stringr str_split
 #' @importFrom withr local_options
 
-calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
+calcIrrigWatRequirements <- function(selectyears, iniyear,
+                                     lpjml, climatetype,
                                      multicropping) {
   # Set size limit
   local_options(magclass_sizeLimit = 1e+12)
@@ -51,7 +54,8 @@ calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
     bwc <- calcOutput("BlueWaterConsumption", season = "crops:year",
                       areaMask = areaMask,
                       lpjml = lpjml, climatetype = climatetype,
-                      selectyears = selectyears, aggregate = FALSE)
+                      selectyears = selectyears, iniyear = iniyear,
+                      aggregate = FALSE)
 
   } else {
     # For single cropping case: main season blue water consumption
@@ -60,7 +64,8 @@ calcIrrigWatRequirements <- function(selectyears, lpjml, climatetype,
     bwc <- calcOutput("BlueWaterConsumption", season = "crops:main",
                       areaMask = "potential:endogenous",
                       lpjml = lpjml, climatetype = climatetype,
-                      selectyears = selectyears, aggregate = FALSE)
+                      selectyears = selectyears, iniyear = iniyear,
+                      aggregate = FALSE)
   }
 
   years       <- getItems(bwc, dim = "year")
