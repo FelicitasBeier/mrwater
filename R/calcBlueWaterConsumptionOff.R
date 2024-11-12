@@ -93,13 +93,9 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   # grass blue water consumption in main growing season
   bconsGrass <- collapseNames(etGrassIRgrper - etGrassNOIRgrper)
 
-  lpj2mag <- toolGetMapping("MAgPIE_LPJmL.csv", type = "sectoral", where = "mrlandcore")
-  lpj <- setdiff(lpj2mag$LPJmL5, "grassland")
-  ### Temporary solution start ###
-  ### To Do: replace this with lpj from mapping eventually
+  # crop lists
   missingCrps <- setdiff(getItems(bconsCrop, dim = "crop"), getItems(bconsGrass, dim = "crop"))
-  lpj <- intersect(getItems(bconsCrop, dim = "crop"), getItems(bconsGrass, dim = "crop"))
-  ### Temporary solution end ###
+  lpj         <- intersect(getItems(bconsCrop, dim = "crop"), getItems(bconsGrass, dim = "crop"))
 
   # select crops
   naCells    <- naCells[, , lpj]
@@ -160,9 +156,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   bwc2nd[naCells] <- 0     #### To Do: double-check whether object dimensions are correct
 
   #### To Do: check whether perennials all got 0 BWC in second season (should be the case via N/A rules above!)
-  #### To Do: check whether betr and begr are included (and also have 0 BWC in 2nd period)
 
-  ### temporary solution start ###
   # add missing crops and assign them 0 (no multiple cropping for these)
   noBWC2nd <- new.magpie(cells_and_regions = getItems(bwc2nd, dim = 1),
                          years = getItems(bwc2nd, dim = 2),
@@ -170,7 +164,6 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                          fill = 0)
   getSets(noBWC2nd) <- getSets(bwc2nd)
   bwc2nd <- mbind(bwc2nd, noBWC2nd)
-  ### temporary solution end ###
 
   ##############
   ### Checks ###

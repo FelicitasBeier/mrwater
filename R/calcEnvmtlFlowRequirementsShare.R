@@ -10,7 +10,7 @@
 #'
 #' @importFrom magclass collapseNames new.magpie getYears setYears as.array as.magpie add_dimension mbind
 #' @importFrom madrat calcOutput
-#' @importFrom mrlandcore toolLPJmLVersion
+#' @importFrom mrlandcore toolLPJmLHarmonization
 #' @importFrom stats quantile
 #'
 #' @return magpie object in cellular resolution representing share of discharge
@@ -28,17 +28,17 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   # Long-term reference time frame for EFR calculation:
   refYears <- c(1985:2015)
 
-  cfg <- toolLPJmLVersion(version = lpjml[["natveg"]],
-                          climatetype = climatetype)
+  # extract LPJmL version information
+  cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
+                                            climatetype = climatetype)
 
   # retrieve ecosystem preservation status:
   preservationstatus <- strsplit(efrMethod, ":")[[1]][2]
 
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
-  monthlyDischarge   <- setYears(calcOutput("LPJmL_new", version = cfg$readin_version,
-                                            subtype = "mdischarge", climatetype = cfg$baseline_hist,
-                                            stage = "raw", years = refYears, aggregate = FALSE),
-                                 refYears)
+  monthlyDischarge <- setYears(calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+                                          lpjmlversion = lpjml, climatetype = cfg$baseline_hist,
+                                          stage = "raw:cut", aggregate = FALSE), refYears)
 
   # Transform to array (faster calculation)
   monthlyDischarge    <- as.array(collapseNames(monthlyDischarge))

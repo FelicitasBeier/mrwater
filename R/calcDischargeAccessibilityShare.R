@@ -37,12 +37,12 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
   method <- as.list(strsplit(accessibilityrule, split = ":"))[[1]][1]
 
   # Monthly Discharge from LPJmL (raw: including variation)
-  monthlyDischargeLPJmL <- calcOutput("LPJmL_new", subtype = "mdischarge",
-                                      version = lpjml[["natveg"]], climatetype = climatetype,
-                                      stage = "raw", aggregate = FALSE)
+  monthlyDischargeLPJmL <- calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+                                      lpjmlversion = lpjml, climatetype = climatetype,
+                                      stage = "raw:cut", aggregate = FALSE)
 
   # To Do: calculate it back to daily
-  # double-check with Jens
+  # double-check with Jens!
 
   # Extract years
   years         <- getYears(monthlyDischargeLPJmL, as.integer = TRUE)
@@ -73,7 +73,7 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
 
       # Share of monthly discharge that is accessible for human use
       x <- apply(pmin(monthlyDischarge, dischargeQuant), MARGIN = 1, sum) /
-           apply(monthlyDischarge, MARGIN = 1, sum)
+        apply(monthlyDischarge, MARGIN = 1, sum)
       # Where no discharge (in entire year): all accessible (is 0 if no natural discharge)
       x[apply(monthlyDischarge, MARGIN = 1, sum) == 0] <- 1
 
