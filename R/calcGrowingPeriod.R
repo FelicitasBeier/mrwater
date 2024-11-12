@@ -64,17 +64,14 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
                                        aggregate = FALSE)[, , "irrigated"])
 
     # Load Sowing dates from LPJmL (use just rainfed dates since they do not differ for irrigated and rainfed)
-    #### Question (Kristine, Jens): We used to use rainfed sowing dates (see comment above),
-    #### but with the new runs, we could use irrigated, right? Both from the cropsIr run...
-    #### or is there still justification to use rainfed? Then please adjust
-    sowd <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:sdate", # To Do: replace with cropsIr once ready
+    sowd <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:sdate", # To Do: replace with cropsRf once ready
                                      lpjmlversion = lpjml, climatetype = climatetype,
                                      stage = "raw:cut",
-                                     aggregate = FALSE)[, , "irrigated"])
-    hard <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:hdate", # To Do: replace with cropsIr once ready
+                                     aggregate = FALSE)[, , "rainfed"])
+    hard <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:hdate", # To Do: replace with cropsRf once ready
                                      lpjmlversion = lpjml, climatetype = climatetype,
                                      stage = "raw:cut",
-                                     aggregate = FALSE)[, , "irrigated"])
+                                     aggregate = FALSE)[, , "rainfed"])
 
     goodCrops <- lpj2mag$MAgPIE[which(lpj2mag$LPJmL5 %in% getItems(sowd, dim = 3))]
     badCrops  <- lpj2mag$MAgPIE[which(!lpj2mag$LPJmL5 %in% getItems(sowd, dim = 3))]
