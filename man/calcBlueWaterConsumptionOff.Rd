@@ -4,10 +4,12 @@
 \alias{calcBlueWaterConsumptionOff}
 \title{calcBlueWaterConsumptionOff}
 \usage{
-calcBlueWaterConsumptionOff(selectyears, lpjml, climatetype)
+calcBlueWaterConsumptionOff(selectyears, iniyear, lpjml, climatetype)
 }
 \arguments{
 \item{selectyears}{Years to be returned}
+
+\item{iniyear}{Initialization year for filtering rules of data for regression}
 
 \item{lpjml}{LPJmL version required for respective inputs: natveg or crop}
 

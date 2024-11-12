@@ -64,7 +64,7 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
                           from = "LPJmL5", to = "MAgPIE",
                           dim = "crop", partrel = TRUE)[, , kcr]
   # The MAgPIE perennial crop "oilpalm" is grown throughout the whole year
-  # but proxied with an LPJmL crop with seasonaility ("groundnut").
+  # but proxied with an LPJmL crop with seasonality ("groundnut").
   # Therefore, both single and multiple cropping blue water consumption has to be adjusted
   # by assigning both seasons water requirements to this crop
   if (lpj2mag$LPJmL5[lpj2mag$MAgPIE == "oilpalm"] == "groundnut") {
@@ -133,10 +133,8 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
     stop("calcBlueWaterConsumption produced NA irrigation water requirements")
   }
   if (any(out < 0)) {
-    warning("calcBlueWaterConsumption produced negative irrigation water requirements")
-    # ToDo: Change to stop() when LPJmL runs are ready and smoothing can be activated
+    stop("calcBlueWaterConsumption produced negative irrigation water requirements")
   }
-  out[out < 0] <- 0
 
   return(list(x = out,
               weight = NULL,

@@ -6,6 +6,7 @@
 \usage{
 calcBlueWaterConsumption(
   selectyears,
+  iniyear,
   lpjml,
   climatetype,
   fallowFactor = 0.75,
@@ -15,6 +16,9 @@ calcBlueWaterConsumption(
 }
 \arguments{
 \item{selectyears}{Years to be returned}
+
+\item{iniyear}{Initialization year for filtering rules of data for regression
+that determines second season yield}
 
 \item{lpjml}{LPJmL version required for respective inputs: natveg or crop}
 

@@ -107,14 +107,15 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   ### Checks ###
   ##############
   if (any(is.na(bwc1st))) {
-    stop("calcBlueWaterConsumption produced NA irrigation water requirements")
+    stop("calcBlueWaterConsumptionMain produced NA irrigation water requirements")
   }
   if (any(bwc1st < 0)) {
     warning("calcBlueWaterConsumptionMain produced negative values")
-    # To Do: Double-check with Jens whether that's fine or it should produce a warning / stop.
+    # To Do: Double-check numbers and then remove warning
+    # Jan: warning makes sense here? (Because we know it occurs, as long as they are
+    # just a few cases, it's not really a problem.)
   }
-  #bwc1st[bwc1st < 0] <- 0
-  #### Question (Jens): Should I correct that here (i.e. before regression) or later in calcBlueWaterConsumption?
+  bwc1st[bwc1st < 0] <- 0
 
   return(list(x = bwc1st,
               weight = NULL,

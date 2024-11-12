@@ -450,14 +450,17 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   calcOutput("MulticroppingSuitability", sectoral = "lpj",
              lpjml = lpjml, climatetype = climatetype,
              selectyears = selectyears, suitability = "endogenous",
-             aggregate = FALSE, file = "suitMC_LPJmL.mz"
-  )
+             aggregate = FALSE, file = "suitMC_LPJmL.mz")
 
   # Multiple cropping zones according to GAEZ
   calcOutput("MultipleCroppingZones",
              layers = 8,
-             aggregate = FALSE, file = "suitMC_GAEZ.mz"
-  )
+             aggregate = FALSE, file = "suitMC_GAEZ.mz")
+
+  # Main season yields
+  calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
+             selectyears = iniyear, multicropping = FALSE,
+             aggregate = FALSE, file = "yldsLPJmL.mz")
 
   # Inverted Growing Period Runs
   # crop yields

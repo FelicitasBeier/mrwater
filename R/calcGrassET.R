@@ -28,28 +28,23 @@ calcGrassET <- function(selectyears, lpjml, climatetype, season) {
   ### Read in data ###
   ####################
   #### To Do (discuss with Jens): yearly grass ET (for cropsIr and for cropsRf)
-  #### To Do (discuss with Jens): from which runs? cropsIr and cropsRf or only cropsIr?
-  #### (see also: calcEvapotranspiration and calcBlueWaterConsumptionOff)
+
   # irrigated grass ET in entire year
   yearlyIrrigated <- calcOutput("LPJmLharmonize", subtype = "cropsIr:et_grass_ir",
                                 lpjmlversion = lpjml, climatetype = climatetype,
                                 aggregate = FALSE)[, selectyears, "irrigated"]
   # rainfed grass ET in entire year
-  yearlyRainfed <- calcOutput("LPJmLharmonize", subtype = "cropsRf:et_grass_ir",
+  yearlyRainfed <- calcOutput("LPJmLharmonize", subtype = "cropsRf:et_grass_rf",
                               lpjmlversion = lpjml, climatetype = climatetype,
-                              aggregate = FALSE)[, selectyears, "irrigated"]
+                              aggregate = FALSE)[, selectyears, "rainfed"]
   # irrigated grass ET in irrigated growing period of crop
   grperIrrigated <- calcOutput("LPJmLharmonize", subtype = "cropsIr:cft_et_grass_ir",
                                lpjmlversion = lpjml, climatetype = climatetype,
                                aggregate = FALSE)[, selectyears, "irrigated"]
-
   # rainfed grass ET in rainfed growing period of crop
   grperRainfed <- calcOutput("LPJmLharmonize", subtype = "cropsRf:cft_et_grass_rf",
                              lpjmlversion = lpjml, climatetype = climatetype,
-                             aggregate = FALSE)[, selectyears, "irrigated"]
-
-  ### @JENS: I don't need counterfactuals (i.e. irrigated grass et in rainfed growing period of crop,
-  ###        and rainfed grass et in irrigated growing period of crop) here, right?
+                             aggregate = FALSE)[, selectyears, "rainfed"]
 
   ########################
   ### Data preparation ###
