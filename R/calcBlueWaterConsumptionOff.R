@@ -190,6 +190,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                             nm = c("drip", "sprinkler", "surface"))
   getSets(noBWC2nd) <- getSets(bwc2nd)
   bwc2nd <- mbind(bwc2nd, noBWC2nd)
+  getSets(bwc2nd) <- c("x", "y", "iso", "year", "system", "crop")
 
   ##############
   ### Checks ###

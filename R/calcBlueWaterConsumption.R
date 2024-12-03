@@ -71,9 +71,6 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
     bwc1st[, , "oilpalm"] <- bwc1st[, , "oilpalm"] + bwc2nd[, , "oilpalm"]
   }
 
-  ### To Do: check whether pasture is included here or not.
-  ### If so: remove it from set.
-
   ##############
   ### Return ###
   ##############
@@ -88,13 +85,13 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
   } else if (season == "year") {
     # Water requirements for multiple cropping case are only returned for areas
     # where multiple cropping is possible in case of irrigation
+    # Note: for the selected years since it can change over time
     suitMC <- collapseNames(calcOutput("MulticroppingCells",
                                        sectoral = "kcr",
                                        scenario = "potential:endogenous",
                                        selectyears = selectyears,
                                        lpjml = lpjml, climatetype = climatetype,
                                        aggregate = FALSE)[, , "irrigated"][, , kcr])
-    ### To Do: double-check whether this is necessary... Should already be handled in calcBlueWaterConsumptionOff
 
     # Special case: current multicropping according to LandInG
     if (grepl(pattern = "actual", x = areaMask)) {
