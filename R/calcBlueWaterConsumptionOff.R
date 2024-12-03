@@ -55,35 +55,42 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                                  selectyears = selectyears,
                                  aggregate = FALSE)
   # yearly grass evapotranspiration (grassland cft grows throughout the whole year)
-  etGrassIRyear <- etCropIRgrper[, , "grassland"]
-  etGrassNOIRyear <- etCropNOIRgrper[, , "grassland"]
+  etGrassIRyear <- collapseNames(etCropIRgrper[, , "grassland"])
+  etGrassNOIRyear <- collapseNames(etCropNOIRgrper[, , "grassland"])
 
-  ###################
-  ### Filter data ###
-  ###################
-  # multiple cropping suitability under irrigated conditions
+  ##########################
+  ### Data for filtering ###
+  ##########################
+  # To ensure that the sample size doesn't change over the time series,
+  # filtering data is read in for iniyear only
+
+  # Multiple cropping suitability under irrigated conditions
   mcSuit <- collapseNames(calcOutput("MulticroppingSuitability", selectyears = iniyear,
                                      lpjml = lpjml, climatetype = climatetype,
                                      suitability = "endogenous", sectoral = "lpj",
                                      aggregate = FALSE)[, , "irrigated"])
-  # off-season yields
-  yldSingle <- setYears(calcOutput("YieldsLPJmL", selectyears = iniyear,
-                          lpjml = lpjml, climatetype = climatetype,
-                          multicropping = FALSE,
-                          aggregate = FALSE)[, , "irrigated"], iniyear)
-  yldMultiple <- setYears(calcOutput("YieldsLPJmL", selectyears = iniyear,
-                            lpjml = lpjml, climatetype = climatetype,
-                            multicropping = "TRUE:potential:endogenous",
-                            aggregate = FALSE)[, , "irrigated"], iniyear)
-  yldOffSeason <- collapseNames(yldMultiple - yldSingle)[, , getItems(mcSuit, dim = 3)]
+  mcSuit <- toolHoldConstant(add_dimension(mcSuit, dim = 3.1, add = "system",
+                                           nm = c("drip", "sprinkler", "surface")),
+                             selectyears)
+  getSets(mcSuit) <- c("x", "y", "iso", "year", "system", "crop")
 
-  # initialize object for filtering
-  naCells <- bwc1st
-  naCells[, , ] <- 0
-  # where no multicropping suitability under irrigated conditions
-  naCells[!mcSuit] <- 1
-  # where no yield increase through multiple cropping
-  naCells[yldOffSeason <= 0] <- 1
+  # Off-season yields
+  yldSingle <- setYears(calcOutput("YieldsLPJmL", selectyears = iniyear,
+                                   lpjml = lpjml, climatetype = climatetype,
+                                   multicropping = FALSE,
+                                   aggregate = FALSE)[, , "irrigated"],
+                        iniyear)
+  yldMultiple <- setYears(calcOutput("YieldsLPJmL", selectyears = iniyear,
+                                     lpjml = lpjml, climatetype = climatetype,
+                                     multicropping = "TRUE:potential:endogenous",
+                                     aggregate = FALSE)[, , "irrigated"],
+                          iniyear)
+  yldOffSeason <- collapseNames(yldMultiple - yldSingle)
+  yldOffSeason <- toolHoldConstant(add_dimension(yldOffSeason, dim = 3.1, add = "system",
+                                                 nm = c("drip", "sprinkler", "surface"))[, , getItems(mcSuit, dim = 3)],
+                                   selectyears)
+  getSets(yldOffSeason) <- c("x", "y", "iso", "year", "system", "crop")
+
 
   ####################
   ### Calculations ###
@@ -92,19 +99,34 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   bconsCrop <- bwc1st
   # grass blue water consumption in main growing season
   bconsGrass <- collapseNames(etGrassIRgrper - etGrassNOIRgrper)
+  bconsGrass <- add_dimension(bconsGrass, dim = 3.1, add = "system",
+                              nm = c("drip", "sprinkler", "surface"))
+  getSets(bconsGrass) <- c("x", "y", "iso", "year", "system", "crop")
 
   # crop lists
   missingCrps <- setdiff(getItems(bconsCrop, dim = "crop"), getItems(bconsGrass, dim = "crop"))
   lpj         <- intersect(getItems(bconsCrop, dim = "crop"), getItems(bconsGrass, dim = "crop"))
 
   # select crops
-  naCells    <- naCells[, , lpj]
-  bconsCrop  <- bconsCrop[, , lpj]
-  bconsGrass <- bconsGrass[, , lpj]
+  bconsCrop    <- bconsCrop[, , lpj]
+  bconsGrass   <- bconsGrass[, , lpj]
+  mcSuit       <- mcSuit[, , lpj]
+  yldOffSeason <- yldOffSeason[, , lpj]
 
-  # Apply filtering
-  bconsCrop[naCells] <- NA
-  bconsGrass[naCells] <- NA
+  # filtering
+  naCells <- bconsCrop
+  naCells[, , ] <- 0
+  # where no multicropping suitability under irrigated conditions
+  naCells[mcSuit != 1] <- 1
+  # where no yield increase through multiple cropping
+  naCells[yldOffSeason <= 0] <- 1
+  # apply filtering
+  bconsCrop[naCells == 1] <- NA
+  bconsGrass[naCells == 1] <- NA
+
+  if (any(naCells[, , "drip"] != naCells[, , "sprinkler"])) {
+    stop("There must be a dimension mismatch in the filtering in calcBlueWaterConsumptionOff")
+  }
 
   # Regression (linear fit between crop blue water consumption
   # by irrigation system and grass evapotranspiration) to derive
@@ -114,66 +136,81 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   a <- b <- new.magpie(cells_and_regions = getItems(bconsGrass, dim = 1),
                        years = getItems(bconsGrass, dim = 2),
                        names = getItems(bconsCrop, dim = 3),
-                       fill = NA)
-  tmp1 <- getItems(bconsCrop, dim = 3.1)
-  tmp2 <- getItems(bconsCrop, dim = 3.2)
+                       fill = 0)
   # regression is executed for each year since the relationship can change over time
   for (yr in selectyears) {
     # regression is executed for each crop and each irrigation system separately
     for (i in getItems(bconsCrop, dim = 3)) {
-      # i is the combination of crop and irrigation system
-      # For grass, select crop only crop
-      if (any(grepl("drip", tmp1))) {
-        # remove irrigation system dimension (dim 3.1)
-        j <- gsub("^[^.]*\\.", "", i)
-      } else if (any(grepl("drip", tmp2))) {
-        # remove irrigation system dimension (dim 3.2)
-        j <- gsub("\\..*$", "", i)
+      if (all(is.na(bconsCrop[, yr, i]))) {
+        # For case of crops that are non-suitable for multiple cropping,
+        # second season blue water consumption is 0
+        a[, yr, i] <- 0
+        b[, yr, i] <- 0
       } else {
-        stop("Wrong dimensionality in object used in regression of calcBlueWaterConsumptionOff.")
+        # Linear regression
+        fit <- stats::lm(y ~ x,
+                         na.action = "na.omit",
+                         data = data.frame(y = as.vector(bconsCrop[, yr, i]),
+                                           x = as.vector(bconsGrass[, yr, i])))
+        # Extract intercept and slope coefficient for each crop and system and year
+        a[, yr, i] <- stats::coef(fit)[1]
+        b[, yr, i] <- stats::coef(fit)[2]
       }
-      # Linear regression
-      fit <- stats::lm(y ~ x, na.action = "na.omit",
-                data = data.frame(y = as.vector(bconsCrop[, yr, i]),
-                                  x = as.vector(bconsGrass[, yr, j])))
-      # Extract intercept and slope coefficient
-      a[, yr, i] <- stats::coef(fit)[1]
-      b[, yr, i] <- stats::coef(fit)[2]
     }
   }
 
-  ### To do: write out coefficients (a, b, r2, rse) for checking
+  ### To do: write out coefficients (a, b, r2, rse) for checking (e.g., when data update)
+  ### and for plot
   ### Check with Jan (toolExpect warning/note?)
 
   # grass blue water consumption in the entire year
-  bconsGrassYr <- etGrassIRyear - etGrassNOIRyear
+  bconsGrassYr <- collapseNames(etGrassIRyear) - collapseNames(etGrassNOIRyear)
 
   # Second season blue water consumption of grass ("off season")
-  grassBWC2nd <- bconsGrassYr - bconsGrass         ### To Do: check whether dimensions work out.
-  # Second season blue water consumption of crop ("off season")
-  bwc2nd <- a + b * grassBWC2nd                    ### To Do: check whether dimensions work out.
-  # Exclude cells with low yields in second season
-  bwc2nd[naCells] <- 0     #### To Do: double-check whether object dimensions are correct
+  grassBWC2nd <- bconsGrassYr - bconsGrass
+  ### Jan: does this work with the given dimensions?
 
-  #### To Do: check whether perennials all got 0 BWC in second season (should be the case via N/A rules above!)
+  # Set negative grass BWC to 0
+  grassBWC2nd[grassBWC2nd < 0] <- 0
+  ### To Do: double-check with Jens!!!! (see examples below)
+  ### This may lead to an over-estimation of 2nd season water demand in
+  ### locations where grass doesn't really need irrigation in the second season
+
+  # Second season blue water consumption of crop ("off season")
+  bwc2nd <- a + b * grassBWC2nd
+  # Exclude cells with low yields in second season
+  bwc2nd[naCells == 1] <- 0
 
   # add missing crops and assign them 0 (no multiple cropping for these)
   noBWC2nd <- new.magpie(cells_and_regions = getItems(bwc2nd, dim = 1),
                          years = getItems(bwc2nd, dim = 2),
                          names = missingCrps,
                          fill = 0)
+  noBWC2nd <- add_dimension(noBWC2nd, dim = 3.1, add = "system",
+                            nm = c("drip", "sprinkler", "surface"))
   getSets(noBWC2nd) <- getSets(bwc2nd)
   bwc2nd <- mbind(bwc2nd, noBWC2nd)
 
   ##############
   ### Checks ###
   ##############
+  if (any(bwc2nd[, , c("sugarcane", "biomass tree", "biomass grass")] != 0)) {
+    stop("second season blue water consumption for perennials should be 0")
+  }
   if (any(is.na(bwc2nd))) {
     stop("calcBlueWaterConsumptionOff produced NA values")
   }
   if (any(bwc2nd < 0)) {
     warning("calcBlueWaterConsumptionOff produced negative values")
     # ToDo: Check values and remove warning
+
+    ### @Jan: Currently this are only a few cases and we have checked them and decided it's fine to set them to 0.
+    ### I'm thinking of implementing a check though for if this number get's to high (e.g. >1% / 10% of cases)
+    #as.numeric(as.vector(summary(bwc2nd[, , "rice"] < 0))[3]) / as.numeric(as.vector(summary(bwc2nd[, , "rice"] < 0))[2])
+    ### Example: grassBWC2nd["0p75.40p75.ESP", "y2100", "rice"] (grass blue water consumption in off-season is negative)
+    ### Specific crops in specific locations
+
+    ### Note: this actually doesn't occur anymore if grassBWC2nd is set to 0 above (see below)
   }
   # Correction of negative values
   bwc2nd[bwc2nd < 0] <- 0
@@ -187,6 +224,20 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
     stop(paste0("Problem in calcBlueWaterConsumptionOff: ",
                 "Surface should always have greater blue water consumption than drip"))
   }
+  ### Jens: These checks fail.
+  ### For the coefficients (a, b), everything is fine,
+  ### but grassBWC2nd is negative and therefore order changes.
+  ### Better to set grassBWC2nd already to 0 when negative?
+  # Example 1:
+  #bwc2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
+  #a["102p25.-5p25.IDN", "y2100", "temperate cereals"] #+
+  #b["102p25.-5p25.IDN", "y2100", "temperate cereals"] #*
+  #grassBWC2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
+  # Example 2:
+  #bwc2nd["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  #a["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  #b["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
   return(list(x = bwc2nd,
               weight = NULL,

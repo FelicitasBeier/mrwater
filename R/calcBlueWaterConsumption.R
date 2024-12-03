@@ -80,12 +80,12 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
   description <- "Blue water consumption of "
   unit <- " m^3/ha per year"
 
-  if (season == "crops:main") {
+  if (season == "main") {
     # main season BWC for crops (single cropping case)
     out <- bwc1st[, , kcr]
     description <- paste0(description, "crops in LPJmL growing period")
 
-  } else if (season == "crops:year") {
+  } else if (season == "year") {
     # Water requirements for multiple cropping case are only returned for areas
     # where multiple cropping is possible in case of irrigation
     suitMC <- collapseNames(calcOutput("MulticroppingCells",
