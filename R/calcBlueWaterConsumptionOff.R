@@ -8,6 +8,9 @@
 #' @param lpjml         LPJmL version required for respective inputs: natveg or crop
 #' @param climatetype   Climate model (e.g., "MRI-ESM2-0:ssp370")
 #'                      or historical baseline (e.g., "GSWP3-W5E5:historical")
+#' @param interim       Interim output, i.e. the inputs to the blue water consumption regression
+#'                      (bconsCrop or bconsGrass).
+#'                      This is optional and only required for visulatization purposes.
 #'
 #' @return magpie object in cellular resolution
 #' @author Felicitas Beier, Jens Heinke
@@ -22,7 +25,8 @@
 #' @importFrom stats lm coef
 
 calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
-                                        lpjml, climatetype) {
+                                        lpjml, climatetype,
+                                        interim = NULL) {
 
   ####################
   ### Read in data ###
@@ -133,42 +137,13 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   # coefficient used to derive off-season blue water consumption
   # Dependent variable (y): crop blue water consumption for given system in main season
   # Independent variable (x): grass ET in irrigated growing period of respective crop
-  a <- b <- new.magpie(cells_and_regions = getItems(bconsGrass, dim = 1),
-                       years = getItems(bconsGrass, dim = 2),
-                       names = getItems(bconsCrop, dim = 3),
-                       fill = 0)
-  # regression is executed for each year since the relationship can change over time
-  for (yr in selectyears) {
-    # regression is executed for each crop and each irrigation system separately
-    for (i in getItems(bconsCrop, dim = 3)) {
-      if (all(is.na(bconsCrop[, yr, i]))) {
-        # For case of crops that are non-suitable for multiple cropping,
-        # second season blue water consumption is 0
-        a[, yr, i] <- 0
-        b[, yr, i] <- 0
-      } else {
-        # Linear regression
-        fit <- stats::lm(y ~ x,
-                         na.action = "na.omit",
-                         data = data.frame(y = as.vector(bconsCrop[, yr, i]),
-                                           x = as.vector(bconsGrass[, yr, i])))
-        # Extract intercept and slope coefficient for each crop and system and year
-        a[, yr, i] <- stats::coef(fit)[1]
-        b[, yr, i] <- stats::coef(fit)[2]
-      }
-    }
-  }
-
-  ### To do: write out coefficients (a, b, r2, rse) for checking (e.g., when data update)
-  ### and for plot
-  ### Check with Jan (toolExpect warning/note?)
+  fit <- toolBWCregression(y = bconsCrop, x = bconsGrass)
 
   # grass blue water consumption in the entire year
   bconsGrassYr <- collapseNames(etGrassIRyear) - collapseNames(etGrassNOIRyear)
 
   # Second season blue water consumption of grass ("off season")
   grassBWC2nd <- bconsGrassYr - bconsGrass
-  ### Jan: does this work with the given dimensions?
 
   # Set negative grass BWC to 0
   grassBWC2nd[grassBWC2nd < 0] <- 0
@@ -177,7 +152,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   ### locations where grass doesn't really need irrigation in the second season
 
   # Second season blue water consumption of crop ("off season")
-  bwc2nd <- a + b * grassBWC2nd
+  bwc2nd <- fit$a + fit$b * grassBWC2nd
   # Exclude cells with low yields in second season
   bwc2nd[naCells == 1] <- 0
 
@@ -202,16 +177,16 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
     stop("calcBlueWaterConsumptionOff produced NA values")
   }
   if (any(bwc2nd < 0)) {
-    warning("calcBlueWaterConsumptionOff produced negative values")
-    # ToDo: Check values and remove warning
-
-    ### @Jan: Currently this are only a few cases and we have checked them and decided it's fine to set them to 0.
-    ### I'm thinking of implementing a check though for if this number get's to high (e.g. >1% / 10% of cases)
-    #as.numeric(as.vector(summary(bwc2nd[, , "rice"] < 0))[3]) / as.numeric(as.vector(summary(bwc2nd[, , "rice"] < 0))[2])
-    ### Example: grassBWC2nd["0p75.40p75.ESP", "y2100", "rice"] (grass blue water consumption in off-season is negative)
-    ### Specific crops in specific locations
-
-    ### Note: this actually doesn't occur anymore if grassBWC2nd is set to 0 above (see below)
+    # warning only if more than 1% are negative
+    for (i in getItems(bwc2nd, dim = 3)) {
+      condition <- bwc2nd[, , i]
+      if (sum(condition) / sum(!condition) > 0.01) {
+        stop(paste0("More than 1% of the grid cells have negative
+                    blue water consumption in the off season
+                    for crop ", i, ".
+                    Check calcBlueWaterConsumptionOff!"))
+      }
+    }
   }
   # Correction of negative values
   bwc2nd[bwc2nd < 0] <- 0
@@ -240,7 +215,22 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   #b["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
   #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
-  return(list(x = bwc2nd,
+  # Choose output that is returned by this function
+  if (interim == "bconsCrop") {
+    ### Auxilary output ###
+    # Blue water consumption of crop in main season
+    out <- bconsCrop
+  } else if (interim == "bconsGrass") {
+    ### Auxilary output ###
+    # Blue water consumption of grass in main season of crop
+    out <- bconsGrass
+  } else {
+    ### Main output ###
+    # Crop blue water consumption in off-season
+    out <- bwc2nd
+  }
+
+  return(list(x = out,
               weight = NULL,
               unit = unit,
               description = paste0("blue water consumption ",

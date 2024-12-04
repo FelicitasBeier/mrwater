@@ -4,7 +4,13 @@
 \alias{calcBlueWaterConsumptionOff}
 \title{calcBlueWaterConsumptionOff}
 \usage{
-calcBlueWaterConsumptionOff(selectyears, iniyear, lpjml, climatetype)
+calcBlueWaterConsumptionOff(
+  selectyears,
+  iniyear,
+  lpjml,
+  climatetype,
+  interim = NULL
+)
 }
 \arguments{
 \item{selectyears}{Years to be returned}
@@ -15,6 +21,10 @@ calcBlueWaterConsumptionOff(selectyears, iniyear, lpjml, climatetype)
 
 \item{climatetype}{Climate model (e.g., "MRI-ESM2-0:ssp370")
 or historical baseline (e.g., "GSWP3-W5E5:historical")}
+
+\item{interim}{Interim output, i.e. the inputs to the blue water consumption regression
+(bconsCrop or bconsGrass).
+This is optional and only required for visulatization purposes.}
 }
 \value{
 magpie object in cellular resolution
