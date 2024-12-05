@@ -9,7 +9,7 @@
 #' @param climatetype   Climate model (e.g., "MRI-ESM2-0:ssp370")
 #'                      or historical baseline (e.g., "GSWP3-W5E5:historical")
 #' @param interim       Interim output, i.e. the inputs to the blue water consumption regression
-#'                      (bconsCrop or bconsGrass).
+#'                      (TRUE:bconsCrop or TRUE:bconsGrass).
 #'                      This is optional and only required for visulatization purposes.
 #'
 #' @return magpie object in cellular resolution
@@ -216,21 +216,21 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
   # Choose output that is returned by this function
-  if (!interim) {
+  bool <- strsplit(interim, split = ":")[1]
+  if (!bool) {
     ### Main output ###
     # Crop blue water consumption in off-season
     out <- bwc2nd
-  } else if (interim == "bconsCrop") {
-    ### Auxilary output ###
-    # Blue water consumption of crop in main season
-    out <- bconsCrop
-  } else if (interim == "bconsGrass") {
-    ### Auxilary output ###
-    # Blue water consumption of grass in main season of crop
-    out <- bconsGrass
   } else {
-    stop("Please set interim argument to bconsCrop or bconsGrass if you would like to return auxiliary outputs.
-         For the main function output (bwc2nd) select interim=FALSE.")
+    if (grepl("bconsCrop", interim)) {
+      ### Auxilary output ###
+      # Blue water consumption of crop in main season
+      out <- bconsCrop
+    } (grepl("bconsGrass", interim)) {
+      ### Auxilary output ###
+      # Blue water consumption of grass in main season of crop
+      out <- bconsGrass
+    }
   }
 
   return(list(x = out,

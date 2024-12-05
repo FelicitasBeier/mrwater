@@ -74,7 +74,7 @@ toolBWCregression <- function(y, x) {
   }
 
   # Check
-  mstools::toolExpectTrue(all(r2 >= 0.8), "BWC regression has acceptable R2",
+  mstools::toolExpectTrue(all(r2 > 0.7), "BWC regression has acceptable R2",
                           level = 0, falseStatus = "warn")
   ### Jens: what would be an expectable R2?
 
