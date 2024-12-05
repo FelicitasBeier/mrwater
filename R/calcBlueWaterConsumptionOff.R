@@ -26,7 +26,7 @@
 
 calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                                         lpjml, climatetype,
-                                        interim = NULL) {
+                                        interim = FALSE) {
 
   ####################
   ### Read in data ###
@@ -216,7 +216,11 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
   # Choose output that is returned by this function
-  if (interim == "bconsCrop") {
+  if (!interim) {
+    ### Main output ###
+    # Crop blue water consumption in off-season
+    out <- bwc2nd
+  } else if (interim == "bconsCrop") {
     ### Auxilary output ###
     # Blue water consumption of crop in main season
     out <- bconsCrop
@@ -225,9 +229,8 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
     # Blue water consumption of grass in main season of crop
     out <- bconsGrass
   } else {
-    ### Main output ###
-    # Crop blue water consumption in off-season
-    out <- bwc2nd
+    stop("Please set interim argument to bconsCrop or bconsGrass if you would like to return auxiliary outputs.
+         For the main function output (bwc2nd) select interim=FALSE.")
   }
 
   return(list(x = out,

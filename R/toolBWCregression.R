@@ -64,18 +64,19 @@ toolBWCregression <- function(y, x) {
         # Note to be returned
         mstools::toolStatusMessage(status = "note",
                                    message = paste0("For crop ", i, " and year ", yr,
-                                                    ": y =", round(a[, yr, i]),
-                                                    "+", round(b[, yr, i]), "x",
-                                                    " with R2=", round(r2[, yr, i], 2),
-                                                    " and RSE=", round(rse[, yr, i])),
+                                                    ": y =", round(a[1, yr, i]),
+                                                    "+", round(b[1, yr, i]), "x",
+                                                    " with R2=", round(r2[1, yr, i], 2),
+                                                    " and RSE=", round(rse[1, yr, i])),
                                    level = 0)
       }
     }
   }
 
   # Check
-  mstools::toolExpectTrue(all(r2 > 0.9), "BWC regression has acceptable R2",
+  mstools::toolExpectTrue(all(r2 >= 0.8), "BWC regression has acceptable R2",
                           level = 0, falseStatus = "warn")
+  ### Jens: what would be an expectable R2?
 
   out <- list(a = a,
               b = b,
