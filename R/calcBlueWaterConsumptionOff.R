@@ -10,7 +10,7 @@
 #'                      or historical baseline (e.g., "GSWP3-W5E5:historical")
 #' @param interim       Interim output, i.e. the inputs to the blue water consumption regression
 #'                      (TRUE:bconsCrop or TRUE:bconsGrass).
-#'                      This is optional and only required for visulatization purposes.
+#'                      This is optional and only required for visualization purposes.
 #'
 #' @return magpie object in cellular resolution
 #' @author Felicitas Beier, Jens Heinke
@@ -26,7 +26,7 @@
 
 calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                                         lpjml, climatetype,
-                                        interim = FALSE) {
+                                        interim = "FALSE") {
 
   ####################
   ### Read in data ###
@@ -216,7 +216,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
   # Choose output that is returned by this function
-  bool <- strsplit(interim, split = ":")[1]
+  bool <- (as.logical(stringr::str_split(interim, ":")[[1]][1]))
   if (!bool) {
     ### Main output ###
     # Crop blue water consumption in off-season

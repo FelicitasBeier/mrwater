@@ -65,8 +65,8 @@ toolBWCregression <- function(y, x) {
         mstools::toolStatusMessage(status = "note",
                                    message = paste0("For crop ", i, " and year ", yr,
                                                     ": y =", round(a[1, yr, i]),
-                                                    "+", round(b[1, yr, i]), "x",
-                                                    " with R2=", round(r2[1, yr, i], 2),
+                                                    "+", round(b[1, yr, i], digits = 1), "x",
+                                                    " with R2=", round(r2[1, yr, i], digits = 2),
                                                     " and RSE=", round(rse[1, yr, i])),
                                    level = 0)
       }
