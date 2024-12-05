@@ -32,7 +32,7 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
   if (subtype == "input_lake") {
     # Precipitation from LPJmL (in m^3/ha) [smoothed & harmonized]
     x <- calcOutput("LPJmLharmonize", subtype = "pnv:prec",
-                    version = lpjml, climatetype = climatetype,
+                    lpjmlversion = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")
     ### To Do (Feli, Kristine): handle aggregation from month to year already in calcLPJmLtransform
@@ -42,7 +42,7 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
   } else if (subtype == "evap_lake") {
     # Lake evaporation from LPJmL (in m^3/ha) [smoothed & harmonized]
     x <- calcOutput("LPJmLharmonize", subtype = "pnv:evap_lake",
-                    version = lpjml, climatetype = climatetype,
+                    lpjmlversion = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")
     description <- "evaporation from water bodies"
