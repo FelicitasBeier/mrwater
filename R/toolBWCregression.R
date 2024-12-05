@@ -38,6 +38,10 @@ toolBWCregression <- function(y, x) {
                           years = yrs,
                           names = crps,
                           fill = NA)
+  tmp <- new.magpie(cells_and_regions = c("a", "b", "R2", "RSE"),
+                    years = yrs,
+                    names = crps,
+                    fill = NA)
 
   # regression is executed for each year since the relationship can change over time
   for (yr in yrs) {
@@ -55,20 +59,11 @@ toolBWCregression <- function(y, x) {
                          data = data.frame(y = as.vector(y[, yr, i]),
                                            x = as.vector(x[, yr, i])))
         # Extract intercept and slope coefficient for each crop and system and year
-        a[, yr, i] <- stats::coef(fit)[1]
-        b[, yr, i] <- stats::coef(fit)[2]
+        a[, yr, i] <- tmp["a", yr, i] <- stats::coef(fit)[1]
+        b[, yr, i] <- tmp["b", yr, i] <- stats::coef(fit)[2]
         # Extract statistical information of regression
-        r2[, yr, i] <- summary(fit)$r.squared
-        rse[, yr, i] <- summary(fit)$sigma
-
-        # Note to be returned
-        mstools::toolStatusMessage(status = "note",
-                                   message = paste0("For crop ", i, " and year ", yr,
-                                                    ": y =", round(a[1, yr, i]),
-                                                    "+", round(b[1, yr, i], digits = 1), "x",
-                                                    " with R2=", round(r2[1, yr, i], digits = 2),
-                                                    " and RSE=", round(rse[1, yr, i])),
-                                   level = 0)
+        r2[, yr, i] <- tmp["R2", yr, i] <- summary(fit)$r.squared
+        rse[, yr, i] <- tmp["RSE", yr, i] <- summary(fit)$sigma
       }
     }
   }
@@ -77,6 +72,11 @@ toolBWCregression <- function(y, x) {
   mstools::toolExpectTrue(all(r2 > 0.7), "BWC regression has acceptable R2",
                           level = 0, falseStatus = "warn")
   ### Jens: what would be an expectable R2?
+
+  # Save table with regression outputs for checking
+  tmp <- as.data.frame(tmp)[, c("Region", "Data1", "Data2", "Value")]
+  tmp$Value <- round(tmp$Value, digits = 2)
+  write.csv(tmp, row.names = FALSE, file = "BWCregression.csv")
 
   out <- list(a = a,
               b = b,
