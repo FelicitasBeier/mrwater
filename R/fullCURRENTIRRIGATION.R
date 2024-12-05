@@ -28,6 +28,27 @@ fullCURRENTIRRIGATION <- function(yieldcalib = "TRUE:TRUE:actual:irrig_crop") {
   irrigationsystem  <- "initialization"
   efrMethod         <- "VMF:fair"
 
+  ##########################
+  # SUPPLEMENTARY MATERIAL #
+  ##########################
+  # Blue water consumption regression plot
+  calcOutput("BlueWaterConsumptionOff",
+             selectyears = selectyears,
+             iniyear = iniyear,
+             lpjml = lpjml,
+             climatetype = climatetype,
+             interim = "TRUE:bconsGrass",
+             aggregate = FALSE, warnNA = FALSE,
+             file = "bconsGrass.mz")
+  calcOutput("BlueWaterConsumptionOff",
+             selectyears = selectyears,
+             iniyear = iniyear,
+             lpjml = lpjml,
+             climatetype = climatetype,
+             interim = "TRUE:bconsCrop",
+             aggregate = FALSE, warnNA = FALSE,
+             file = "bconsCrop.mz")
+
   ################
   # MAIN RESULTS #
   ################
