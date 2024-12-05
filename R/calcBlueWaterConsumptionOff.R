@@ -226,7 +226,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
       ### Auxilary output ###
       # Blue water consumption of crop in main season
       out <- bconsCrop
-    } (grepl("bconsGrass", interim)) {
+    } else if (grepl("bconsGrass", interim)) {
       ### Auxilary output ###
       # Blue water consumption of grass in main season of crop
       out <- bconsGrass
