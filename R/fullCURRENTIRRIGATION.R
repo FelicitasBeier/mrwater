@@ -49,6 +49,26 @@ fullCURRENTIRRIGATION <- function(yieldcalib = "TRUE:TRUE:actual:irrig_crop") {
              aggregate = FALSE, warnNA = FALSE,
              file = "bconsCrop.mz")
 
+  ##############
+  # VALIDATION #
+  ##############
+  # Multiple cropping suitability per crop calculated based on crop and grass productivity ##### double check criteria!
+  # (for LPJmL crop types)
+  calcOutput("MulticroppingSuitability", sectoral = "lpj",
+             lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears, suitability = "endogenous",
+             aggregate = FALSE, file = "suitMC_LPJmL.mz")
+
+  # Multiple cropping zones according to GAEZ
+  calcOutput("MultipleCroppingZones", layers = 8,
+             aggregate = FALSE, file = "suitMC_GAEZ.mz")
+
+  # Single cropping yield (to determine where no cropping takes place)
+  calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears, multicropping = FALSE,
+             aggregate = FALSE, file = "lpjml_yields_single.mz")
+
+
   ################
   # MAIN RESULTS #
   ################
@@ -194,22 +214,4 @@ fullCURRENTIRRIGATION <- function(yieldcalib = "TRUE:TRUE:actual:irrig_crop") {
                file = paste0("shrHumanUsesFulfilledSingle_", t, ".mz"))
 
   }
-
-  ##############
-  # VALIDATION #
-  ##############
-  # Multiple cropping suitability per crop calculated based on crop and grass productivity
-  # (for LPJmL crop types)
-  calcOutput("MulticroppingSuitability", sectoral = "lpj",
-             lpjml = lpjml, climatetype = climatetype,
-             selectyears = selectyears, suitability = "endogenous",
-             aggregate = FALSE, file = "suitMC_LPJmL.mz")
-
-  # Multiple cropping zones according to GAEZ
-  calcOutput("MultipleCroppingZones", layers = 8,
-             aggregate = FALSE, file = "suitMC_GAEZ.mz")
-
-  # Inverted Growing Period Runs
-  # crop yields
-
 }
