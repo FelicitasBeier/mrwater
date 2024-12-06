@@ -27,6 +27,8 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
 
   # Long-term reference time frame for EFR calculation:
   refYears <- c(1985:2015)
+  ### Kristine/Jens: Has the number of years in the historical baseline changed?
+  ### It doesn't go until 2015 anymore? Should I change the ref years to 1984-2014?
 
   # extract LPJmL version information
   cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
@@ -36,16 +38,16 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   preservationstatus <- strsplit(efrMethod, ":")[[1]][2]
 
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
-  monthlyDischarge <- setYears(calcOutput("LPJmLtransform", subtype = "pnv:discharge",
-                                          lpjmlversion = lpjml, climatetype = cfg$baselineHist,
-                                          stage = "raw:cut", aggregate = FALSE), refYears)
+  monthlyDischarge <- calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+                                 lpjmlversion = lpjml, climatetype = cfg$baselineHist,
+                                 stage = "raw:cut", years = refYears, aggregate = FALSE)
 
   # Transform to array (faster calculation)
   monthlyDischarge    <- as.array(collapseNames(monthlyDischarge))
 
   # Mean annual discharge
   meanAnnualDischarge <- apply(monthlyDischarge,
-                               MARGIN = c(1), sum) / length(refYears)
+                               MARGIN = c(1), sum) / length(getItems(monthlyDischarge, dim = 2))
 
   # Mean monthly flow
   meanMonthlyFlow     <- as.magpie(apply(monthlyDischarge,
