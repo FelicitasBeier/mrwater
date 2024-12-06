@@ -116,13 +116,13 @@ calcPotMulticroppingShare <- function(scenario, lpjml, climatetype,
   # Crop yield in main season (in tDM/ha per year):
   crpYldFirst <- calcOutput("Yields", multicropping = FALSE,
                             selectyears = selectyears,
-                            datasource = lpjml,
+                            datasource = c(lpjml = lpjml, isimip = NULL),
                             climatetype = climatetype,
                             aggregate = FALSE)
   # Crop yield in the entire year under multiple cropping (in tDM/ha per year):
   crpYldYear <- calcOutput("Yields", multicropping = multicropping,
                            selectyears = selectyears,
-                           datasource = lpjml,
+                           datasource = c(lpjml = lpjml, isimip = NULL),
                            climatetype = climatetype,
                            aggregate = FALSE)
   # Crop yield in the second season (in tDM/ha per year):
