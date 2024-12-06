@@ -40,9 +40,8 @@ calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
 
   # Precipitation/runoff on water bodies (in mio. m^3)
   runoffWater <- calcOutput("LakeFlows", subtype = "input_lake",
-                            years = selectyears,
                             lpjml = lpjml, climatetype = climatetype,
-                            aggregate = FALSE)
+                            aggregate = FALSE)[, selectyears, ]
 
   ## Calculate Runoff (on land and water)
   out <- runoffLand + runoffWater
