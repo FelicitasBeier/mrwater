@@ -36,6 +36,7 @@
 #' @importFrom magclass new.magpie getYears getCells getSets setYears dimOrder
 #' @importFrom mstools toolCell2isoCell toolCoord2Isocell toolGetMappingCoord2Country toolHarmonize2Baseline
 #' @importFrom magpiesets addLocation findset
+#' @importFrom withr local_options
 
 calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lpjcell", # nolint: cyclocomp_linter
                               datasource = "WATCH_ISIMIP_WATERGAP", usetype = "all",
@@ -44,7 +45,7 @@ calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lp
                                         crop = "ggcmi_phase3_nchecks_9ca735cb"),
                               climatetype = "GSWP3-W5E5:historical") {
   # Set up size limit
-  local_options(magclass_sizeLimit = 1e+12)
+  withr::local_options(magclass_sizeLimit = 1e+12)
 
   # Extract arguments
   waterusetype    <- strsplit(usetype, split = ":")[[1]][1]
