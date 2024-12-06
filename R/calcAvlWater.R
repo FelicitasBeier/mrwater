@@ -27,7 +27,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
 
   ########## CONFIGURE READ START ##########
   cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
-                                             climatetype = climatetype)
+                                            climatetype = climatetype)
   ########## CONFIGURE READ END    ##########
 
   ######################################################
@@ -127,10 +127,12 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
       growDAYS <- calcOutput("GrowingPeriod", yield_ratio = 0.1,
                              lpjml = lpjml, climatetype = climatetype,
                              stage = stage, aggregate = FALSE)
+      getItems(growDAYS, dim = 3) <- c(1:12)
+      getSets(growDAYS) <- c("x", "y", "iso", "year", "month")
 
       # Adjust years
       yearsWAT <- getYears(dailyAvlWat)
-      yearsGRPER  <- getYears(growDAYS)
+      yearsGRPER <- getYears(growDAYS)
       if (length(yearsWAT) >= length(yearsGRPER)) {
         years <- yearsGRPER
       } else {
