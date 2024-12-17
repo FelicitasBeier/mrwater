@@ -18,7 +18,6 @@
 #' @importFrom magclass getItems add_columns where dimSums
 
 calcIrrigSystemShr <- function(iniyear) {
-
   ####################
   ### READ IN DATA ###
   ####################
@@ -43,11 +42,11 @@ calcIrrigSystemShr <- function(iniyear) {
   # from LPJmL crops to MAgPIE crops
   map <- toolGetMapping("MAgPIE_LPJmL.csv",
                         type = "sectoral", where = "mrlandcore")
-  getItems(irrigSuit, dim = "crop") <- gsub("pastures", "mgrass", getItems(irrigSuit, dim = "crop"))
+  getItems(irrigSuit, dim = "crop") <- gsub("pastures", "grassland", getItems(irrigSuit, dim = "crop"))
   # add betr and begr
   irrigSuit <- add_columns(irrigSuit, addnm = c("biomass tree", "biomass grass"),
                            dim = "crop", fill = 1)
-  irrigSuit[, , "biomass grass"] <- irrigSuit[, , "mgrass"]
+  irrigSuit[, , "biomass grass"] <- irrigSuit[, , "grassland"]
   # remove LPJmL "others" category
   irrigSuit <- irrigSuit[, , "others", invert = TRUE]
 

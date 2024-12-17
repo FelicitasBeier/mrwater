@@ -78,7 +78,9 @@ toolBWCregression <- function(y, x) {
   tmp        <- as.data.frame(tmp)[, c("Region", "Data1", "Data2", "Value")]
   names(tmp) <- c("Regression", "System", "Crop", "Value")
   tmp$Value  <- round(tmp$Value, digits = 2)
-  tmp        <- paste0(capture.output({write.csv(tmp, row.names = FALSE)}))
+  tmp        <- paste0(capture.output({
+    write.csv(tmp, row.names = FALSE)
+  }))
   writeLines(tmp, "BWCregression.log")
 
   out <- list(a = a,

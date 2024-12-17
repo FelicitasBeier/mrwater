@@ -33,14 +33,12 @@
 #' calcOutput("BlueWaterConsumption", aggregate = FALSE)
 #' }
 #'
-
 calcBlueWaterConsumption <- function(selectyears, iniyear,
                                      lpjml, climatetype,
                                      fallowFactor = 0.75, areaMask,
                                      season) {
   # Crop mapping
   lpj2mag <- toolGetMapping("MAgPIE_LPJmL.csv", type = "sectoral", where = "mrlandcore")
-  lpj <- setdiff(lpj2mag$LPJmL5, "grassland")
   kcr <- setdiff(lpj2mag$MAgPIE, "pasture")
 
   # Read in data

@@ -27,7 +27,6 @@
 calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
                                         lpjml, climatetype,
                                         interim = "FALSE") {
-
   ####################
   ### Read in data ###
   ####################
@@ -205,15 +204,15 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   ### but grassBWC2nd is negative and therefore order changes.
   ### Better to set grassBWC2nd already to 0 when negative?
   # Example 1:
-  #bwc2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
-  #a["102p25.-5p25.IDN", "y2100", "temperate cereals"] #+
-  #b["102p25.-5p25.IDN", "y2100", "temperate cereals"] #*
-  #grassBWC2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
+  # bwc2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
+  # a["102p25.-5p25.IDN", "y2100", "temperate cereals"] #+
+  # b["102p25.-5p25.IDN", "y2100", "temperate cereals"] #*
+  # grassBWC2nd["102p25.-5p25.IDN", "y2100", "temperate cereals"]
   # Example 2:
-  #bwc2nd["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
-  #a["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
-  #b["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
-  #grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
+  # bwc2nd["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  # a["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  # b["130p25.-12p75.AUS", "y1995", "oil crops rapeseed"]
+  # grassBWC2nd["130p25.-12p75.AUS","y1995","oil crops rapeseed"]
 
   # Choose output that is returned by this function
   bool <- (as.logical(stringr::str_split(interim, ":")[[1]][1]))
