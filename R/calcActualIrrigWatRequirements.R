@@ -46,7 +46,7 @@ calcActualIrrigWatRequirements <- function(selectyears, iniyear,
                            lpjml = lpjml,  climatetype = climatetype,
                            multicropping = multicropping,
                            aggregate = FALSE)
-  cellorder  <- getCells(irrigReq)
+  cellorder  <- getItems(irrigReq, dim = 1)
 
   # calculate irrigation water requirements per crop [in mio. m^3 per year] given irrigation system share in use
   if (irrigationsystem == "initialization") {

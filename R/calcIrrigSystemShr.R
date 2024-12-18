@@ -18,6 +18,7 @@
 #' @importFrom magclass getItems add_columns where dimSums
 
 calcIrrigSystemShr <- function(iniyear) {
+
   ####################
   ### READ IN DATA ###
   ####################
@@ -164,9 +165,6 @@ calcIrrigSystemShr <- function(iniyear) {
   ##         where irrigated areas in initialization year are 0, ##
   ##         insert irrigShr equally for all crops               ##
   out[dimSums(irrigArea, dim = "crop") == 0, , ] <- irrigShr[dimSums(irrigArea, dim = "crop") == 0, , ]
-
-  # Dimension ordering and naming
-  out <- dimOrder(out, perm = c(2, 1), dim = 3)
 
   ##############
   ### Checks ###
