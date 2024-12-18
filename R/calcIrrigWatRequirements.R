@@ -33,14 +33,15 @@
 #' @importFrom magclass getItems new.magpie add_dimension
 #' @importFrom madrat calcOutput toolAggregate toolGetMapping
 #' @importFrom mstools toolCell2isoCell
+#' @importFrom stringr str_split
 
 calcIrrigWatRequirements <- function(selectyears, iniyear,
                                      lpjml, climatetype,
                                      multicropping) {
 
   # Extract multiple cropping suitability mask
-  areaMask <- paste(unlist(strsplit(multicropping, split = ":"))[2],
-                    unlist(strsplit(multicropping, split = ":"))[3],
+  areaMask <- paste(str_split(multicropping, ":")[[1]][2],
+                    str_split(multicropping, ":")[[1]][3],
                     sep = ":")
   mcBoolean <- as.logical(unlist(strsplit(multicropping, split = ":"))[1])
 
