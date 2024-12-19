@@ -23,7 +23,7 @@
 calcLakeFlows <- function(lpjml, climatetype, subtype) {
 
   # Lake area from LPJmL (in ha) for one year (static over time)
-  lakeArea <- calcOutput("LPJmLtransform", subtype = "pnv:lake_area",
+  lakeArea <- calcOutput("LPJmLTransform", subtype = "pnv:lake_area",
                          stage = "raw:Fullhist",
                          lpjmlversion = lpjml, climatetype = climatetype,
                          aggregate = FALSE)
@@ -31,17 +31,17 @@ calcLakeFlows <- function(lpjml, climatetype, subtype) {
 
   if (subtype == "input_lake") {
     # Precipitation from LPJmL (in m^3/ha) [smoothed & harmonized]
-    x <- calcOutput("LPJmLharmonize", subtype = "pnv:prec",
+    x <- calcOutput("LPJmLHarmonize", subtype = "pnv:prec",
                     lpjmlversion = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")
-    ### To Do (Feli, Kristine): handle aggregation from month to year already in calcLPJmLtransform
+    ### To Do (Feli, Kristine): handle aggregation from month to year already in calcLPJmLTransform
     description <- "precipitation on water bodies"
     ### Question (Jens, Kristine): I don't think that we need this input at a monthly scale.
     ### Do I overlook something? If not: can we get it as yearly output instead?
   } else if (subtype == "evap_lake") {
     # Lake evaporation from LPJmL (in m^3/ha) [smoothed & harmonized]
-    x <- calcOutput("LPJmLharmonize", subtype = "pnv:evap_lake",
+    x <- calcOutput("LPJmLHarmonize", subtype = "pnv:evap_lake",
                     lpjmlversion = lpjml, climatetype = climatetype,
                     aggregate = FALSE)
     x <- dimSums(x, dim = "month")

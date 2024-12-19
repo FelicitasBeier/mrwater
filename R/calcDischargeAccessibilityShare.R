@@ -37,7 +37,7 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
   method <- as.list(strsplit(accessibilityrule, split = ":"))[[1]][1]
 
   # Monthly Discharge from LPJmL (raw: including variation)
-  monthlyDischargeLPJmL <- calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+  monthlyDischargeLPJmL <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                       lpjmlversion = lpjml, climatetype = climatetype,
                                       stage = "raw:cut", aggregate = FALSE)
 

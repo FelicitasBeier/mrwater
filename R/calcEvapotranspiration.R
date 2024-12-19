@@ -57,15 +57,15 @@ calcEvapotranspiration <- function(selectyears, runtype,
   ### Read in data ###
   ####################
   # transpiration (in m^3/ha)
-  transp <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = runfolder),
+  transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
-  evap <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
+  evap <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
                      lpjmlversion = lpjml, climatetype = climatetype,
                      aggregate = FALSE)[, selectyears, mngt]
   # interception (in m^3/ha)
-  interc <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
+  interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, mngt]
   # extract unit

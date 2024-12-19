@@ -31,37 +31,37 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   }
   ### To Do: uncomment once new LPJmL runs (with cropsIr and cropsRf) are ready:
   # # transpiration (in m^3/ha)
-  # transp <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = "cropsIr"),
+  # transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIr"),
   #                      lpjmlversion = lpjml, climatetype = climatetype,
   #                      aggregate = FALSE)[, selectyears, ]
   # # evaporation (in m^3/ha)
-  # evap   <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = "cropsIr"),
+  # evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIr"),
   #                      lpjmlversion = lpjml, climatetype = climatetype,
   #                      aggregate = FALSE)[, selectyears, ]
   # # interception (in m^3/ha)
-  # interc <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "interc", runfolder = "cropsIr"),
+  # interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = "cropsIr"),
   #                      lpjmlversion = lpjml, climatetype = climatetype,
   #                      aggregate = FALSE)[, selectyears, ]
 
   #### Temporary solution start ####
   ### To Do: delete once new LPJmL runs (with cropsIr and cropsRf) are ready:
-  transpIr <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = "crops"),
+  transpIr <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "crops"),
                          lpjmlversion = lpjml, climatetype = climatetype,
                          aggregate = FALSE)[, selectyears, "irrigated"]
-  transpRf <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "transp", runfolder = "cropsIrrigswap"),
+  transpRf <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIrrigswap"),
                          lpjmlversion = lpjml, climatetype = climatetype,
                          aggregate = FALSE)[, selectyears, "rainfed"]
-  evapIr <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = "crops"),
+  evapIr <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "crops"),
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, "irrigated"]
-  evapRf <- calcOutput("LPJmLharmonize", subtype = .subtype(x = "evap", runfolder = "cropsIrrigswap"),
+  evapRf <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIrrigswap"),
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, "rainfed"]
-  intercIr <- calcOutput("LPJmLharmonize",
+  intercIr <- calcOutput("LPJmLHarmonize",
                          subtype = .subtype(x = "interc", runfolder = "crops"),
                          lpjmlversion = lpjml, climatetype = climatetype,
                          aggregate = FALSE)[, selectyears, "irrigated"]
-  intercRf <- calcOutput("LPJmLharmonize",
+  intercRf <- calcOutput("LPJmLHarmonize",
                          subtype = .subtype(x = "interc", runfolder = "cropsIrrigswap"),
                          lpjmlversion = lpjml, climatetype = climatetype,
                          aggregate = FALSE)[, selectyears, "rainfed"]

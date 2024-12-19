@@ -10,7 +10,7 @@
 #'
 #' @importFrom magclass collapseNames new.magpie getYears setYears as.array as.magpie add_dimension mbind
 #' @importFrom madrat calcOutput
-#' @importFrom mrlandcore toolLPJmLHarmonization
+#' @importFrom mrlandcore toolLPJmLHarmonize
 #' @importFrom stats quantile
 #'
 #' @return magpie object in cellular resolution representing share of discharge
@@ -31,14 +31,14 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   ### It doesn't go until 2015 anymore? Should I change the ref years to 1984-2014?
 
   # extract LPJmL version information
-  cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
+  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                             climatetype = climatetype)
 
   # retrieve ecosystem preservation status:
   preservationstatus <- strsplit(efrMethod, ":")[[1]][2]
 
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
-  monthlyDischarge <- calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+  monthlyDischarge <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                  lpjmlversion = lpjml, climatetype = cfg$baselineHist,
                                  stage = "raw:cut", years = refYears, aggregate = FALSE)
 

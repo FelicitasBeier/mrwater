@@ -11,7 +11,7 @@
 #' @import magclass
 #' @import madrat
 #' @importFrom mstools toolHarmonize2Baseline
-#' @importFrom mrlandcore toolLPJmLHarmonization
+#' @importFrom mrlandcore toolLPJmLHarmonize
 #'
 #' @return magpie object in cellular resolution
 #' @author Felicitas Beier, Kristine Karstens, Abhijeet Mishra
@@ -26,7 +26,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
                          stage = "harmonized2020", seasonality = "grper") {
 
   ########## CONFIGURE READ START ##########
-  cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
+  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                             climatetype = climatetype)
   ########## CONFIGURE READ END    ##########
 
@@ -37,7 +37,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
   ######################################################
   if (stage %in% c("raw", "smoothed")) {
     ### Monthly Discharge (unit (after calcLPJmL): mio. m^3/month)
-    monthDischargeMAG <- calcOutput("LPJmLtransform", subtype = "pnv:discharge",
+    monthDischargeMAG <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                     lpjmlversion = lpjml, climatetype = climatetype,
                                     stage = "raw:cut", aggregate = FALSE)
 

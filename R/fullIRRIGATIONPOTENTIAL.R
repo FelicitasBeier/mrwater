@@ -377,7 +377,7 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              file = "avlIrrigarea_pot.mz")
 
   # Accessibility graph
-  calcOutput("LPJmLtransform", subtype = "mdischarge",
+  calcOutput("LPJmLTransform", subtype = "mdischarge",
              lpjmlversion = lpjml, climatetype = climatetype,
              stage = "raw", aggregate = FALSE,
              file = "LPJmL_monthlyDischarge.mz")

@@ -18,7 +18,7 @@
 #' @importFrom madrat toolGetMapping toolAggregate
 #' @importFrom magclass collapseNames getItems new.magpie getYears dimSums magpie_expand
 #' @importFrom mstools toolHarmonize2Baseline toolSmooth toolGetMappingCoord2Country
-#' @importFrom mrlandcore toolLPJmLHarmonization
+#' @importFrom mrlandcore toolLPJmLHarmonize
 #'
 #' @export
 
@@ -28,7 +28,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
                               yield_ratio = 0.1) { # nolint
 
   ########## CONFIGURE READ START ##########
-  cfg <- mrlandcore::toolLPJmLHarmonization(lpjmlversion = lpjml,
+  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                             climatetype = climatetype)
   lpjmlReadin <- paste(cfg$version, cfg$climatetype, cfg$subtype, sep = ":")
   ########## CONFIGURE READ END    ##########
@@ -58,17 +58,17 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
                               where = "mrlandcore")
 
     # Read yields first
-    yields <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:pft_harvestc",
+    yields <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:pft_harvestc",
                                        lpjmlversion = lpjml, climatetype = climatetype,
                                        stage = "raw:cut",
                                        aggregate = FALSE)[, , "irrigated"])
 
     # Load Sowing dates from LPJmL (use just rainfed dates since they do not differ for irrigated and rainfed)
-    sowd <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:sdate", # To Do: replace with cropsRf once ready
+    sowd <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:sdate", # To Do: replace with cropsRf once ready
                                      lpjmlversion = lpjml, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
-    hard <- collapseNames(calcOutput("LPJmLtransform", subtype = "crops:hdate", # To Do: replace with cropsRf once ready
+    hard <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:hdate", # To Do: replace with cropsRf once ready
                                      lpjmlversion = lpjml, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
