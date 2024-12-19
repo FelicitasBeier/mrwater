@@ -40,10 +40,10 @@ calcIrrigWatRequirements <- function(selectyears, iniyear,
                                      multicropping) {
 
   # Extract multiple cropping suitability mask
-  areaMask <- paste(str_split(multicropping, ":")[[1]][2],
-                    str_split(multicropping, ":")[[1]][3],
-                    sep = ":")
-  mcBoolean <- as.logical(unlist(strsplit(multicropping, split = ":"))[1])
+  areaMask  <- paste(str_split(multicropping, ":")[[1]][2],
+                     str_split(multicropping, ":")[[1]][3],
+                     sep = ":")
+  mcBoolean <- as.logical(str_split(multicropping, ":")[[1]][1])
 
   # Read in blue water consumption (in m^3 per ha per yr):
   if (mcBoolean) {
