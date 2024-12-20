@@ -25,10 +25,8 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
                          climatetype = "MRI-ESM2-0:ssp370",
                          stage = "harmonized2020", seasonality = "grper") {
 
-  ########## CONFIGURE READ START ##########
   cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
-                                            climatetype = climatetype)
-  ########## CONFIGURE READ END    ##########
+                                        climatetype = climatetype)
 
   ######################################################
   ############ Water availability per cell #############
@@ -38,12 +36,12 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
   if (stage %in% c("raw", "smoothed")) {
     ### Monthly Discharge (unit (after calcLPJmL): mio. m^3/month)
     monthDischargeMAG <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
-                                    lpjmlversion = lpjml, climatetype = climatetype,
+                                    lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                     stage = "raw:cut", aggregate = FALSE)
 
     ### Monthly Runoff (raw) (in mio. m^3/month)
     yrs <- getItems(monthDischargeMAG, dim = 2)
-    monthRunoffMAG <- calcOutput("RunoffMonthly", lpjml = lpjml,
+    monthRunoffMAG <- calcOutput("RunoffMonthly", lpjml = cfg$readinVersion,
                                  climatetype = climatetype,
                                  aggregate = FALSE)[, yrs, ]
 
@@ -125,7 +123,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
 
       # Growing days per month
       growDAYS <- calcOutput("GrowingPeriod", yield_ratio = 0.1,
-                             lpjml = lpjml, climatetype = climatetype,
+                             lpjml = cfg$readinVersion, climatetype = climatetype,
                              stage = stage, aggregate = FALSE)
       getItems(growDAYS, dim = 3) <- c(1:12)
       getSets(growDAYS) <- c("x", "y", "iso", "year", "month")
@@ -157,7 +155,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
   } else if (stage == "harmonized") {
     # load smoothed data for historical baseline
     baseline <- calcOutput("AvlWater", stage = "smoothed",
-                           lpjml = lpjml, climatetype = cfg$baselineHist,
+                           lpjml = cfg$readinVersion, climatetype = cfg$baselineHist,
                            seasonality = seasonality, aggregate = FALSE)
 
     if (climatetype == cfg$baselineHist) {
@@ -166,7 +164,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
     } else {
       # load smoothed future scenario
       x   <- calcOutput("AvlWater", stage = "smoothed",
-                        lpjml = lpjml, climatetype = climatetype,
+                        lpjml = cfg$readinVersion, climatetype = cfg$climatetype,
                         seasonality = seasonality, aggregate = FALSE)
       # Harmonize future scenario to baseline
       out <- toolHarmonize2Baseline(x = x, base = baseline, ref_year = cfg$refYearHist)
@@ -175,7 +173,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
   } else if (stage == "harmonized2020") {
     # load harmonized baseline GCM scenario
     baseline2020 <- calcOutput("AvlWater", stage = "harmonized",
-                               lpjml = lpjml, climatetype = cfg$baselineGcm,
+                               lpjml = cfg$readinVersion, climatetype = cfg$baselineGcm,
                                seasonality = seasonality, aggregate = FALSE)
 
     if (climatetype == cfg$baselineGcm) {
@@ -184,7 +182,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.5-m1",
     } else {
       # load smoothed future scenario
       x   <- calcOutput("AvlWater", stage = "smoothed",
-                        lpjml = lpjml, climatetype = climatetype,
+                        lpjml = cfg$readinVersion, climatetype = cfg$climatetype,
                         seasonality = seasonality,
                         aggregate = FALSE)
       # harmonize future scenario to baseline

@@ -27,11 +27,8 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
                               stage = "harmonized2020",
                               yield_ratio = 0.1) { # nolint
 
-  ########## CONFIGURE READ START ##########
   cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
-                                            climatetype = climatetype)
-  lpjmlReadin <- paste(cfg$version, cfg$climatetype, cfg$subtype, sep = ":")
-  ########## CONFIGURE READ END    ##########
+                                        climatetype = climatetype)
 
   if (stage %in% c("raw", "smoothed")) {
 
@@ -65,11 +62,11 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
 
     # Load Sowing dates from LPJmL (use just rainfed dates since they do not differ for irrigated and rainfed)
     sowd <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:sdate", # To Do: replace with cropsRf once ready
-                                     lpjmlversion = lpjml, climatetype = climatetype,
+                                     lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
     hard <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:hdate", # To Do: replace with cropsRf once ready
-                                     lpjmlversion = lpjml, climatetype = climatetype,
+                                     lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
 
@@ -292,7 +289,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
 
     # load smoothed data for historical baseline
     baseline <- calcOutput("GrowingPeriod", stage = "smoothed",
-                           lpjml = cfg$baselineVersion, climatetype = cfg$baselineHist,
+                           lpjml = cfg$readinVersion, climatetype = cfg$baselineHist,
                            yield_ratio = yield_ratio,
                            aggregate = FALSE)
 
@@ -303,7 +300,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
     } else {
       # load smoothed future scenario
       x   <- calcOutput("GrowingPeriod", stage = "smoothed",
-                        lpjml = lpjml, climatetype = climatetype,
+                        lpjml = cfg$readinVersion, climatetype = cfg$climatetype,
                         yield_ratio = yield_ratio,
                         aggregate = FALSE)
       # Harmonize future scenario to baseline
@@ -325,7 +322,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
     } else {
       # load smoothed future scenario
       x   <- calcOutput("GrowingPeriod", stage = "smoothed",
-                        lpjml = lpjmlReadin, climatetype = climatetype,
+                        lpjml = cfg$readinVersion, climatetype = cfg$climatetype,
                         yield_ratio = yield_ratio,
                         aggregate = FALSE)
       out <- toolHarmonize2Baseline(x, baseline2020, ref_year = cfg$refYearGcm)

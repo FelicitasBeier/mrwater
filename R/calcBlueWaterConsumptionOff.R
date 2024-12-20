@@ -144,6 +144,10 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   # Second season blue water consumption of grass ("off season")
   grassBWC2nd <- bconsGrassYr - bconsGrass
 
+  ### To Do:
+  ### Check whether bconsGrassYr and bconsGrass are negative: set to 0 (before making difference)
+  ### Also: if this is the case: find handeling of setting respective yields to zero as well.
+
   # Set negative grass BWC to 0
   grassBWC2nd[grassBWC2nd < 0] <- 0
   ### To Do: double-check with Jens!!!! (see examples below)

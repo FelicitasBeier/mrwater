@@ -32,14 +32,14 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
 
   # extract LPJmL version information
   cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
-                                            climatetype = climatetype)
+                                        climatetype = climatetype)
 
   # retrieve ecosystem preservation status:
   preservationstatus <- strsplit(efrMethod, ":")[[1]][2]
 
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
   monthlyDischarge <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
-                                 lpjmlversion = lpjml, climatetype = cfg$baselineHist,
+                                 lpjmlversion = cfg$readinVersion, climatetype = cfg$baselineHist,
                                  stage = "raw:cut", years = refYears, aggregate = FALSE)
 
   # Transform to array (faster calculation)
