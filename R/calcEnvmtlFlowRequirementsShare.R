@@ -26,9 +26,7 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
                                             climatetype, efrMethod) {
 
   # Long-term reference time frame for EFR calculation:
-  refYears <- c(1985:2015)
-  ### Kristine/Jens: Has the number of years in the historical baseline changed?
-  ### It doesn't go until 2015 anymore? Should I change the ref years to 1984-2014?
+  refYears <- c(1985:2014)
 
   # extract LPJmL version information
   cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,

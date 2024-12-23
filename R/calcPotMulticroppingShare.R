@@ -326,7 +326,7 @@ calcPotMulticroppingShare <- function(scenario, lpjml, climatetype,
   }
 
   # Check whether out is >= shrMC
-  if (any(collapseNames(out[, , "irrigated"]) - shrMC < - 1e-10)) {
+  if (any(collapseNames(out[, , "irrigated"]) - shrMC[, , "irrigated"] < -1e-10)) {
     stop("The potential multiple cropping share should at least be as high as the
            currently actually multiple cropped share.
            Please check what's wrong in calcPotMulticroppingShare")
