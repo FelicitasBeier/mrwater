@@ -32,9 +32,9 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   efrMethod         <- "VMF:fair"
 
   # Newest LPJmL runs
-  lpjml             <- c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
-                         crop = "ggcmi_phase3_nchecks_bft_e511ac58")
-  climatetype       <- "GSWP3-W5E5:historical"
+  # To Do: update when new runs are ready
+  lpjml       <- "lpjml5.9.5-m1"
+  climatetype <- "MRI-ESM2-0:ssp370"
 
   # Settings for optimization algorithm
   accessibilityrule <- "CV:2"
