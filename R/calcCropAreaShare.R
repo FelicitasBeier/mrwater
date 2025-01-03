@@ -45,7 +45,7 @@ calcCropAreaShare <- function(iniyear, cropmix) {
       zeroIrrigArea <- cropareaShr
       zeroIrrigArea[, , ] <- NA
       zeroIrrigArea[, , ] <- (dimSums(irrigArea, dim = 3) == 0)
-      if (names(dimnames(totalcropShr)) != names(dimnames(zeroIrrigArea))) {
+      if (any(names(dimnames(totalcropShr)) != names(dimnames(zeroIrrigArea)))) {
         stop("Dimension mismatch in mrwater::calcCropareaShare")
       }
       cropareaShr[zeroIrrigArea] <- totalcropShr[zeroIrrigArea]
