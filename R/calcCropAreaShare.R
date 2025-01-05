@@ -37,17 +37,12 @@ calcCropAreaShare <- function(iniyear, cropmix) {
     if (grepl("irrig", as.list(strsplit(cropmix, split = "_"))[[1]][2])) {
 
       # irrigated croparea
-      irrigArea    <- collapseNames(croparea[, , "irrigated"])
+      irrigArea <- collapseNames(croparea[, , "irrigated"])
       irrigcropShr <- irrigArea / dimSums(irrigArea, dim = 3)
 
       # where currently no irrigated area: use cropmix of total croparea (i.e. rainfed)
-      cropareaShr   <- irrigcropShr
-      zeroIrrigArea <- cropareaShr
-      zeroIrrigArea[, , ] <- NA
-      zeroIrrigArea[, , ] <- (dimSums(irrigArea, dim = 3) == 0)
-      if (any(names(dimnames(totalcropShr)) != names(dimnames(zeroIrrigArea)))) {
-        stop("Dimension mismatch in mrwater::calcCropareaShare")
-      }
+      zeroIrrigArea <- (dimSums(irrigArea, dim = 3) == 0)
+      cropareaShr <- irrigcropShr
       cropareaShr[zeroIrrigArea] <- totalcropShr[zeroIrrigArea]
 
     } else if (grepl("total", as.list(strsplit(cropmix, split = "_"))[[1]][2])) {
@@ -66,7 +61,6 @@ calcCropAreaShare <- function(iniyear, cropmix) {
       cropareaShr <- rfdcropShr
       cropareaShr[zeroRfdArea] <- totalcropShr[zeroRfdArea]
 
-
     } else {
       stop("Please select hist_irrig, hist_rainf, or hist_total when
            selecting historical cropmix")
@@ -74,13 +68,11 @@ calcCropAreaShare <- function(iniyear, cropmix) {
 
     # correct NAs: where no current cropland available,
     # representative crops (maize, rapeseed, pulses) assumed as proxy
-    zeroCroparea <- cropareaShr
-    zeroCroparea[, , ] <- NA
-    zeroCroparea[, , ] <- (dimSums(croparea, dim = 3) == 0)
+    zeroCroparea <- (dimSums(croparea, dim = 3) == 0)
     proxyCrops <- c("maiz", "rapeseed", "puls_pro")
-    otherCrops <- setdiff(getNames(cropareaShr), proxyCrops)
-    cropareaShr[, , proxyCrops][zeroCroparea[, , proxyCrops]] <- 1 / length(proxyCrops)
-    cropareaShr[, , otherCrops][zeroCroparea[, , otherCrops]] <- 0
+    otherCrops <- setdiff(getItems(cropareaShr, dim = "crop"), proxyCrops)
+    cropareaShr[, , proxyCrops][zeroCroparea] <- 1 / length(proxyCrops)
+    cropareaShr[, , otherCrops][zeroCroparea] <- 0
 
   } else {
 
@@ -94,14 +86,13 @@ calcCropAreaShare <- function(iniyear, cropmix) {
   }
 
   # Checks
-  if (any(round(dimSums(cropareaShr, dim = 3)) != 1)) {
-    stop("Croparea share does not sum up to 1.
-         Please check: calcCropAreaShare!")
-  }
-
   if (any(is.na(cropareaShr))) {
     stop("mrwater::calcCropAreaShare produced NA values.
          Please check!")
+  }
+  if (any(round(dimSums(cropareaShr, dim = 3)) != 1)) {
+    stop("Croparea share does not sum up to 1.
+         Please check: calcCropAreaShare!")
   }
 
   return(list(x            = cropareaShr,
