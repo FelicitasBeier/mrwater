@@ -224,10 +224,6 @@ calcCropProductionRevenue <- function(outputtype, scenario, management, area,
          `'revenue'` for associated revenue with production quantity in USD.")
   }
 
-  # reorder third dimension (switch irrigation and crop)
-  yields       <- dimOrder(yields, c(2, 1), dim = 3)
-  yieldsSingle <- dimOrder(yieldsSingle, c(2, 1), dim = 3)
-
   # difference between multiple cropped and single yields
   deltaYields <- yields - yieldsSingle
   if (any(round(deltaYields, digits = 6) < 0)) {
