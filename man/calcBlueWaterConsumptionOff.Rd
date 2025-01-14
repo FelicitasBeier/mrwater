@@ -9,7 +9,7 @@ calcBlueWaterConsumptionOff(
   iniyear,
   lpjml,
   climatetype,
-  interim = NULL
+  interim = "FALSE"
 )
 }
 \arguments{
@@ -23,8 +23,8 @@ calcBlueWaterConsumptionOff(
 or historical baseline (e.g., "GSWP3-W5E5:historical")}
 
 \item{interim}{Interim output, i.e. the inputs to the blue water consumption regression
-(bconsCrop or bconsGrass).
-This is optional and only required for visulatization purposes.}
+(TRUE:bconsCrop or TRUE:bconsGrass).
+This is optional and only required for visualization purposes.}
 }
 \value{
 magpie object in cellular resolution

@@ -47,7 +47,8 @@ Multiple Cropping Suitability mask selected
 magpie object in cellular resolution
 }
 \description{
-This function returns irrigated and rainfed yields for MAgPIE crops.
+This function returns irrigated and rainfed yields for MAgPIE crops
+             in the format required by mrwater.
 }
 \examples{
 \dontrun{

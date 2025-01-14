@@ -1,5 +1,6 @@
 #' @title       calcYieldsAdjusted
-#' @description This function returns irrigated and rainfed yields for MAgPIE crops.
+#' @description This function returns irrigated and rainfed yields for MAgPIE crops
+#'              in the format required by mrwater.
 #'
 #' @param lpjml         LPJmL version used
 #' @param climatetype   Switch between different climate scenarios or
@@ -77,7 +78,7 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
                          selectyears = selectyears,
                          areaSource = "LandInG", refYields = refYields,
                          multicropping = multicropping, marginal_land = "no_marginal:irrigated",
-                         cells = "lpjcell", aggregate = FALSE)
+                         aggregate = FALSE)
 
     description <- "LPJmL yields calibrated to FAO yield levels for all different (MAgPIE) crop types"
 
@@ -95,6 +96,9 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
 
   # only crops (pasture is not irrigated)
   yields <- yields[, , "pasture", invert = TRUE]
+
+  # order third dimension as common in mrwater
+  yields <- dimOrder(yields, perm = c(2, 1), dim = 3)
 
   # Check for NAs
   if (any(is.na(yields))) {
