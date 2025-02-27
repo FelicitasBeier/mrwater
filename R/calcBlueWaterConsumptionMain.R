@@ -49,7 +49,7 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   # compared to rainfed counterfactual (in same growing season)
   transp <- collapseNames(transp[, , "irrigated"]) - collapseNames(transp[, , "rainfed"])
   evap <- collapseNames(evap[, , "irrigated"]) - collapseNames(evap[, , "rainfed"])
-  interc <- collapseNames(transp[, , "irrigated"]) - collapseNames(interc[, , "rainfed"])
+  interc <- collapseNames(interc[, , "irrigated"]) - collapseNames(interc[, , "rainfed"])
 
   # Calculate blue water consumption per system
   # Prepare object: blue water consumption of main growing period for three irrigation systems

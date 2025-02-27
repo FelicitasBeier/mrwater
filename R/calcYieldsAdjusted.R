@@ -43,7 +43,8 @@
 
 calcYieldsAdjusted <- function(lpjml, climatetype,
                                iniyear, selectyears,
-                               yieldcalib, calibDetails, multicropping) {
+                               yieldcalib, calibDetails = "country:5",
+                               multicropping) {
 
   # Extraction of yield calibration arguments
   if (!is.logical(yieldcalib)) {

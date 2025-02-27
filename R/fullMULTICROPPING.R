@@ -46,6 +46,7 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   gtrange <- gainthreshold <- 0
   # potential yields from LPJmL to derive multiple cropping potentials
   yieldcalib        <- "TRUE:TRUE:actual:irrig_crop" # FALSE
+  calibDetails      <- "country:5"
   # Historical cropmix
   cropmix           <- "hist_total"
 
@@ -171,19 +172,19 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   # potential (non-calibrated) yield under single cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = FALSE,
+             yieldcalib = FALSE, calibDetails = calibDetails,
              multicropping = FALSE, aggregate = FALSE,
              file = "yield_single.mz")
   # potential (non-calibrated) yield under multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = FALSE,
+             yieldcalib = FALSE, calibDetails = calibDetails,
              multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
              file = "yield_multiple.mz")
   # actual (calibrated) yield under multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = "TRUE:TRUE:actual:irrig_crop",
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
              multicropping = "TRUE:actual:irrig_crop", aggregate = FALSE,
              ### Double-check: should this be "TRUE:potential:endogenous" or "TRUE:actual:irrig_crop".
              # Test both! I think it should be  "TRUE:actual:irrig_crop"
