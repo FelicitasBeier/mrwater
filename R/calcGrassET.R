@@ -11,7 +11,7 @@
 #'                                    period of LPJmL (main season)
 #'
 #' @return magpie object in cellular resolution
-#' @author Felicitas Beier
+#' @author Felicitas Beier, Jens Heinke
 #'
 #' @examples
 #' \dontrun{
@@ -30,19 +30,19 @@ calcGrassET <- function(selectyears, lpjml, climatetype, season) {
   #### To Do (discuss with Jens): yearly grass ET (for cropsIr and for cropsRf)
 
   # irrigated grass ET in entire year
-  yearlyIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIr:et_grass_ir",
+  yearlyIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIR:et_grass_ir",
                                 lpjmlversion = lpjml, climatetype = climatetype,
                                 aggregate = FALSE)[, selectyears, "irrigated"]
   # rainfed grass ET in entire year
-  yearlyRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRf:et_grass_rf",
+  yearlyRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRF:et_grass_rf",
                               lpjmlversion = lpjml, climatetype = climatetype,
                               aggregate = FALSE)[, selectyears, "rainfed"]
   # irrigated grass ET in irrigated growing period of crop
-  grperIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIr:cft_et_grass_ir",
+  grperIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIR:cft_et_grass_ir",
                                lpjmlversion = lpjml, climatetype = climatetype,
                                aggregate = FALSE)[, selectyears, "irrigated"]
   # rainfed grass ET in rainfed growing period of crop
-  grperRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRf:cft_et_grass_rf",
+  grperRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRF:cft_et_grass_rf",
                              lpjmlversion = lpjml, climatetype = climatetype,
                              aggregate = FALSE)[, selectyears, "rainfed"]
 

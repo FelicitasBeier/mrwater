@@ -28,12 +28,10 @@ calcEvapotranspiration <- function(selectyears, runtype,
   #########################
   ### Extract arguments ###
   #########################
+  runfolder <- "cropsIR"
   if (unlist(strsplit(runtype, split = ":"))[2] == "ir") {
-    # To Do: Ensure correct run is selected when we changed from crops vs. cropsIrrigswap to cropsRF vs. cropsIR
-    runfolder <- "crops" # in future (To Do!): from cropsIR run (i.e. no more runfolder distinction will be needed)
     mngt      <- "irrigated"
   } else if (unlist(strsplit(runtype, split = ":"))[2] == "noir") {
-    runfolder <- "cropsIrrigswap" # in future (To Do!): from cropsIR run (i.e. no more runfolder distinction will be needed)
     mngt      <- "rainfed"
   }
   # subtype function for monthly input data
@@ -61,22 +59,15 @@ calcEvapotranspiration <- function(selectyears, runtype,
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
-  evap <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
-                     lpjmlversion = lpjml, climatetype = climatetype,
-                     aggregate = FALSE)[, selectyears, mngt]
+  evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
+                       lpjmlversion = lpjml, climatetype = climatetype,
+                       aggregate = FALSE)[, selectyears, mngt]
   # interception (in m^3/ha)
   interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, mngt]
   # extract unit
   unit <- getFromComment(transp, "unit")
-
-  ### Correction Start ###
-  ### To Do (Feli): Delete once new LPJmL runs are ready! This is only a temporary fix due to a typo in LPJmL
-  if (runtype == "grass:ir") {
-    transp <- transp * 1e6
-  }
-  ### Correction End   ###
 
   ####################
   ### Calculations ###

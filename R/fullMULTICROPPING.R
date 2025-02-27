@@ -32,8 +32,7 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   efrMethod         <- "VMF:fair"
 
   # Newest LPJmL runs
-  # To Do: update when new runs are ready
-  lpjml       <- "lpjml5.9.5-m1"
+  lpjml       <- "lpjml5.9.16-m1"
   climatetype <- "MRI-ESM2-0:ssp370"
 
   # Settings for optimization algorithm
@@ -62,6 +61,16 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
                file = paste0("groundwater_tD", as.character(t), ".mz"))
 
   }
+
+  ######################################
+  # Blue water consumption regressions #
+  ######################################
+  calcOutput("BlueWaterConsumptionOff", selectyears = selectyears, iniyear = iniyear,
+             lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsCrop",
+             aggregate = FALSE, file = "BWCcrop.mz")
+  calcOutput("BlueWaterConsumptionOff", selectyears = selectyears, iniyear = iniyear,
+             lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsGrass",
+             aggregate = FALSE, file = "BWCgrass.mz")
 
   ####################
   # CURRENT CROPAREA #
@@ -171,18 +180,18 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              yieldcalib = FALSE,
              multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
              file = "yield_multiple.mz")
-  # actual (calibrated) yield under single cropping (in tDM)
-  calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
-             iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = "TRUE:TRUE:actual:irrig_crop", #### or TRUE:FALSE?
-             multicropping = FALSE, aggregate = FALSE,
-             file = "yield_single_calib.mz")
   # actual (calibrated) yield under multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
              yieldcalib = "TRUE:TRUE:actual:irrig_crop",
-             multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
+             multicropping = "TRUE:actual:irrig_crop", aggregate = FALSE,
+             ### Double-check: should this be "TRUE:potential:endogenous" or "TRUE:actual:irrig_crop".
+             # Test both! I think it should be  "TRUE:actual:irrig_crop"
              file = "yield_multiple_calib.mz")
+  # FAO production (for comparison)
+  calcOutput("Production", products = "kcr", attributes = "dm",
+             irrigation = FALSE, cellular = FALSE,
+             aggregate = FALSE, file = "FAOproduction.mz")
 
 
   #########################

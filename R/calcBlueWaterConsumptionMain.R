@@ -29,60 +29,27 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
     out <- paste(runfolder, paste0("cft_", x), sep = ":")
     return(out)
   }
-  ### To Do: uncomment once new LPJmL runs (with cropsIr and cropsRf) are ready:
-  # # transpiration (in m^3/ha)
-  # transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIr"),
-  #                      lpjmlversion = lpjml, climatetype = climatetype,
-  #                      aggregate = FALSE)[, selectyears, ]
-  # # evaporation (in m^3/ha)
-  # evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIr"),
-  #                      lpjmlversion = lpjml, climatetype = climatetype,
-  #                      aggregate = FALSE)[, selectyears, ]
-  # # interception (in m^3/ha)
-  # interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = "cropsIr"),
-  #                      lpjmlversion = lpjml, climatetype = climatetype,
-  #                      aggregate = FALSE)[, selectyears, ]
-
-  #### Temporary solution start ####
-  ### To Do: delete once new LPJmL runs (with cropsIr and cropsRf) are ready:
-  transpIr <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "crops"),
-                         lpjmlversion = lpjml, climatetype = climatetype,
-                         aggregate = FALSE)[, selectyears, "irrigated"]
-  transpRf <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIrrigswap"),
-                         lpjmlversion = lpjml, climatetype = climatetype,
-                         aggregate = FALSE)[, selectyears, "rainfed"]
-  evapIr <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "crops"),
+  # transpiration (in m^3/ha)
+  transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIR"),
                        lpjmlversion = lpjml, climatetype = climatetype,
-                       aggregate = FALSE)[, selectyears, "irrigated"]
-  evapRf <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIrrigswap"),
+                       aggregate = FALSE)[, selectyears, ]
+  # evaporation (in m^3/ha)
+  evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIR"),
                        lpjmlversion = lpjml, climatetype = climatetype,
-                       aggregate = FALSE)[, selectyears, "rainfed"]
-  intercIr <- calcOutput("LPJmLHarmonize",
-                         subtype = .subtype(x = "interc", runfolder = "crops"),
-                         lpjmlversion = lpjml, climatetype = climatetype,
-                         aggregate = FALSE)[, selectyears, "irrigated"]
-  intercRf <- calcOutput("LPJmLHarmonize",
-                         subtype = .subtype(x = "interc", runfolder = "cropsIrrigswap"),
-                         lpjmlversion = lpjml, climatetype = climatetype,
-                         aggregate = FALSE)[, selectyears, "rainfed"]
-  #### Temporary solution end   ####
+                       aggregate = FALSE)[, selectyears, ]
+  # interception (in m^3/ha)
+  interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = "cropsIR"),
+                       lpjmlversion = lpjml, climatetype = climatetype,
+                       aggregate = FALSE)[, selectyears, ]
 
   ####################
   ### Calculations ###
   ####################
-  ### To Do: uncomment once new LPJmL runs (with cropsIr and cropsRf) are ready:
   # Calculate additional evaporation, transpiration and interception due to irrigation
   # compared to rainfed counterfactual (in same growing season)
-  # transp <- collapseNames(transp[, , "irrigated"]) - collapseNames(transp[, , "rainfed"])
-  # evap <- collapseNames(evap[, , "irrigated"]) - collapseNames(evap[, , "rainfed"])
-  # interc <- collapseNames(transp[, , "irrigated"]) - collapseNames(interc[, , "rainfed"])
-
-  #### Temporary solution start ####
-  ### To Do: delete once new LPJmL runs (with cropsIr and cropsRf) are ready:
-  transp <- collapseNames(transpIr) - collapseNames(transpRf)
-  evap <- collapseNames(evapIr) - collapseNames(evapRf)
-  interc <- collapseNames(intercIr) - collapseNames(intercRf)
-  #### Temporary solution end   ####
+  transp <- collapseNames(transp[, , "irrigated"]) - collapseNames(transp[, , "rainfed"])
+  evap <- collapseNames(evap[, , "irrigated"]) - collapseNames(evap[, , "rainfed"])
+  interc <- collapseNames(transp[, , "irrigated"]) - collapseNames(interc[, , "rainfed"])
 
   # Calculate blue water consumption per system
   # Prepare object: blue water consumption of main growing period for three irrigation systems

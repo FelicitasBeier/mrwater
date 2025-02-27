@@ -17,7 +17,7 @@
 fullCURRENTIRRIGATION <- function(yieldcalib = "TRUE:TRUE:actual:irrig_crop") {
 
   # Newest LPJmL runs
-  lpjml       <- "lpjml5.9.5-m1"
+  lpjml       <- "lpjml5.9.16-m1"
   climatetype <- "MRI-ESM2-0:ssp370"
 
   # Standard settings

@@ -12,6 +12,10 @@
 #'                               Options: FALSE (for single cropping analyses) or
 #'                                        "TRUE:actual:irrig_crop" (for multiple cropping analyses)
 #'                      If FALSE: uncalibrated LPJmL yields are used
+#' @param calibDetails  Determines FAO yield calibration with two arguments separated by ":":
+#'                      aggregation: country, continent, GLO
+#'                      average: in number of years or NULL
+#'                      (e.g. country:5)
 #' @param multicropping Multicropping activated (TRUE) or not (FALSE) and
 #'                      Multiple Cropping Suitability mask selected
 #'                      (mask can be:
@@ -39,13 +43,20 @@
 
 calcYieldsAdjusted <- function(lpjml, climatetype,
                                iniyear, selectyears,
-                               yieldcalib, multicropping) {
+                               yieldcalib, calibDetails, multicropping) {
 
   # Extraction of yield calibration arguments
   if (!is.logical(yieldcalib)) {
     refYields  <- strsplit(yieldcalib, split = ":")[[1]][-1]
     # boolean for calibration or not
     yieldcalib <- as.logical(strsplit(yieldcalib, split = ":")[[1]][1])
+    # calibration details for FAO yields
+    aggregation <- strsplit(calibDetails, split = ":")[[1]][1]
+    if (strsplit(calibDetails, split = ":")[[1]][2] == "NULL") {
+      average <- NULL
+    } else {
+      average <- as.numeric(strsplit(calibDetails, split = ":")[[1]][2])
+    }
   }
 
   if (yieldcalib) {
@@ -77,6 +88,7 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
                          climatetype = climatetype, refYear = iniyear,
                          selectyears = selectyears,
                          areaSource = "LandInG", refYields = refYields,
+                         average = average, aggregation = aggregation,
                          multicropping = multicropping, marginal_land = "no_marginal:irrigated",
                          aggregate = FALSE)
 

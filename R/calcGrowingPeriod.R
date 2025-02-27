@@ -22,7 +22,7 @@
 #'
 #' @export
 
-calcGrowingPeriod <- function(lpjml = "lpjml5.9.5-m1",
+calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
                               climatetype = "MRI-ESM2-0:ssp370",
                               stage = "harmonized2020",
                               yield_ratio = 0.1) { # nolint
