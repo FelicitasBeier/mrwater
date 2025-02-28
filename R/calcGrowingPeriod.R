@@ -55,17 +55,17 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
                               where = "mrlandcore")
 
     # Read yields first
-    yields <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:pft_harvestc",
+    yields <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsIR:pft_harvestc",
                                        lpjmlversion = lpjml, climatetype = climatetype,
                                        stage = "raw:cut",
                                        aggregate = FALSE)[, , "irrigated"])
 
     # Load Sowing dates from LPJmL (use just rainfed dates since they do not differ for irrigated and rainfed)
-    sowd <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:sdate", # To Do: replace with cropsRf once ready
+    sowd <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsRF:sdate",
                                      lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
-    hard <- collapseNames(calcOutput("LPJmLTransform", subtype = "crops:hdate", # To Do: replace with cropsRf once ready
+    hard <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsRF:hdate",
                                      lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
                                      aggregate = FALSE)[, , "rainfed"])
