@@ -80,7 +80,7 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
 
       } else {
         stop("Please specify which reference yield to calibrate the yields to
-          in the case of multiple cropping")
+              in the case of yield calibration in mrwater::calcYieldsAdjusted")
       }
     }
 

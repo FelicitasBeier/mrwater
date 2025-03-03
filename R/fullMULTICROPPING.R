@@ -32,8 +32,8 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   efrMethod         <- "VMF:fair"
 
   # Newest LPJmL runs
-  lpjml       <- "lpjml5.9.16-m1"
-  climatetype <- "MRI-ESM2-0:ssp370"
+  lpjml             <- "lpjml5.9.16-m1"
+  climatetype       <- "MRI-ESM2-0:ssp370"
 
   # Settings for optimization algorithm
   accessibilityrule <- "CV:2"
@@ -44,8 +44,9 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   # Assumption in this study:
   # only technical potential is reported for the purpose of this analysis:
   gtrange <- gainthreshold <- 0
-  # potential yields from LPJmL to derive multiple cropping potentials
-  yieldcalib        <- "TRUE:TRUE:actual:irrig_crop" # FALSE
+  # potential yields from LPJmL to derive multiple cropping potentials:
+  yieldcalib        <- FALSE
+  # yield calibration setting for where calibrated yields are used in analysis:
   calibDetails      <- "country:5"
   # Historical cropmix
   cropmix           <- "hist_total"
@@ -144,30 +145,43 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   calcOutput("YieldsValued",
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = FALSE, priceAgg = "GLO",
+             yieldcalib = FALSE, calibDetails = calibDetails,
+             priceAgg = "GLO",
              multicropping = FALSE, aggregate = FALSE,
              file = "yieldValued_single.mz")
   # potential (non-calibrated) yields under multiple cropping (in USD/ha)
   calcOutput("YieldsValued",
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = FALSE, priceAgg = "GLO",
+             yieldcalib = FALSE, calibDetails = calibDetails,
+             priceAgg = "GLO",
              multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
              file = "yieldValued_multiple.mz")
+
   # actual (calibrated) yields under single cropping (in USD/ha)
   calcOutput("YieldsValued",
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = "TRUE:TRUE:actual:irrig_crop", priceAgg = "GLO", #### or TRUE:FALSE?
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
+             priceAgg = "GLO",
              multicropping = FALSE, aggregate = FALSE,
              file = "yieldValued_single_calib.mz")
   # actual (calibrated) yields under multiple cropping (in USD/ha)
   calcOutput("YieldsValued",
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
-             yieldcalib = "TRUE:TRUE:actual:irrig_crop", priceAgg = "GLO",
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
+             priceAgg = "GLO",
+             multicropping = "TRUE:actual:irrig_crop", aggregate = FALSE,
+             file = "yieldValued_multiple_calib_act.mz")
+  # potential (calibrated) yields under multiple cropping (in USD/ha)
+  calcOutput("YieldsValued",
+             lpjml = lpjml, climatetype = climatetype,
+             iniyear = iniyear, selectyears = selectyears,
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
+             priceAgg = "GLO",
              multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
-             file = "yieldValued_multiple_calib.mz")
+             file = "yieldValued_multiple_calib_pot.mz")
 
   # potential (non-calibrated) yield under single cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
@@ -175,20 +189,38 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              yieldcalib = FALSE, calibDetails = calibDetails,
              multicropping = FALSE, aggregate = FALSE,
              file = "yield_single.mz")
-  # potential (non-calibrated) yield under multiple cropping (in tDM)
+  # potential (non-calibrated) yield under actual multiple cropping (in tDM)
+  calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
+             iniyear = iniyear, selectyears = selectyears,
+             yieldcalib = FALSE, calibDetails = calibDetails,
+             multicropping = "TRUE:actual:irrig_crop", aggregate = FALSE,
+             file = "yield_multiple_act.mz")
+  # potential (non-calibrated) yield under potential multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
              yieldcalib = FALSE, calibDetails = calibDetails,
              multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
-             file = "yield_multiple.mz")
+             file = "yield_multiple_pot.mz")
+
+  # counterfactual (calibrated) yield under single cropping (in tDM)
+  calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
+             iniyear = iniyear, selectyears = selectyears,
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
+             multicropping = FALSE, aggregate = FALSE,
+             file = "yield_single.mz")
   # actual (calibrated) yield under multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
              yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
              multicropping = "TRUE:actual:irrig_crop", aggregate = FALSE,
-             ### Double-check: should this be "TRUE:potential:endogenous" or "TRUE:actual:irrig_crop".
-             # Test both! I think it should be  "TRUE:actual:irrig_crop"
-             file = "yield_multiple_calib.mz")
+             file = "yield_multiple_calib_act.mz")
+  # potential (calibrated) yield under multiple cropping (in tDM)
+  calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
+             iniyear = iniyear, selectyears = selectyears,
+             yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
+             multicropping = "TRUE:potential:endogenous", aggregate = FALSE,
+             file = "yield_multiple_calib_pot.mz")
+
   # FAO production (for comparison)
   calcOutput("Production", products = "kcr", attributes = "dm",
              irrigation = FALSE, cellular = FALSE,

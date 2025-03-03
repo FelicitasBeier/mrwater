@@ -11,10 +11,14 @@
 #'                      "CONST" for same price for all crops
 #' @param iniyear       initialization year for food price and cropmix area
 #' @param yieldcalib    If TRUE: LPJmL yields calibrated to FAO country yield in iniyear
-#'                               Also needs specification of refYields, separated by ":".
-#'                               Options: FALSE (for single cropping analyses) or
-#'                                        "TRUE:actual:irrig_crop" (for multiple cropping analyses)
+#'                      Also needs specification of refYields, separated by ":".
+#'                      Options: FALSE (for single cropping analyses) or
+#'                               "TRUE:actual:irrig_crop" (for multiple cropping analyses)
 #'                      If FALSE: uncalibrated LPJmL yields are used
+#' @param calibDetails  Determines FAO yield calibration with two arguments separated by ":":
+#'                      aggregation: country, continent, GLO
+#'                      average: in number of years or NULL
+#'                      (e.g. country:5)
 #' @param multicropping Multicropping activated (TRUE) or not (FALSE) and
 #'                      Multiple Cropping Suitability mask selected
 #'                      (mask can be:
@@ -42,7 +46,8 @@
 
 calcYieldsValued <- function(lpjml, climatetype, priceAgg,
                              iniyear, selectyears,
-                             yieldcalib, multicropping) {
+                             yieldcalib, calibDetails = "country:5",
+                             multicropping) {
 
   # prices are reported in current US$MER
   priceUnit <- "current US$MER"
@@ -50,7 +55,7 @@ calcYieldsValued <- function(lpjml, climatetype, priceAgg,
   # read in cellular lpjml yields [in tDM/ha]
   yields    <- calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
                           iniyear = iniyear, selectyears = selectyears,
-                          yieldcalib = yieldcalib,
+                          yieldcalib = yieldcalib, calibDetails = calibDetails,
                           multicropping = multicropping, aggregate = FALSE)
   # extract magpie crops
   croplist  <- getNames(collapseNames(yields[, , "irrigated"]))
@@ -111,8 +116,8 @@ calcYieldsValued <- function(lpjml, climatetype, priceAgg,
 
   } else {
     stop("Problem in calcYieldsValued:
-       Please select price aggregation level to GLO or ISO or CONST via
-       the unit argument.")
+          Please select price aggregation level to GLO or ISO or CONST via
+          the unit argument.")
   }
 
   # missing crop types get proxy values of 2005 and average price development over time
