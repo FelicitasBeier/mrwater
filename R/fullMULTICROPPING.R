@@ -350,19 +350,39 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              selectyears = selectyears, iniyear = iniyear,
              comagyear = NULL,
              irrigationsystem = irrigationsystem, landScen = paste0("potCropland:", "NULL"),
-             cropmix = "hist_irrig", yieldcalib = yieldcalib,
+             cropmix = "hist_irrig", yieldcalib = FALSE,
              multicropping = FALSE, aggregate = FALSE,
-             file = "yieldgain_single.mz")
-
+             file = "yieldgain_single_nocalib.mz")
   # Multiple cropping yield gain
   calcOutput("IrrigYieldImprovementPotential", unit = "USD_ha:GLO",
              lpjml = lpjml, climatetype = climatetype,
              selectyears = selectyears, iniyear = iniyear,
              comagyear = NULL,
              irrigationsystem = irrigationsystem, landScen = paste0("potCropland:", "NULL"),
-             cropmix = "hist_irrig", yieldcalib = yieldcalib,
+             cropmix = "hist_irrig", yieldcalib = FALSE,
              multicropping = TRUE, aggregate = FALSE,
-             file = "yieldgain_multiple.mz")
+             file = "yieldgain_multiple_nocalib.mz")
+
+
+  # Single cropping yield gain
+  calcOutput("IrrigYieldImprovementPotential", unit = "USD_ha:GLO",
+             lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears, iniyear = iniyear,
+             comagyear = NULL,
+             irrigationsystem = irrigationsystem, landScen = paste0("potCropland:", "NULL"),
+             cropmix = "hist_irrig", yieldcalib = "TRUE:TRUE:actual:irrig_crop",
+             multicropping = FALSE, aggregate = FALSE,
+             file = "yieldgain_single_calib.mz")
+  # Multiple cropping yield gain
+  calcOutput("IrrigYieldImprovementPotential", unit = "USD_ha:GLO",
+             lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears, iniyear = iniyear,
+             comagyear = NULL,
+             irrigationsystem = irrigationsystem, landScen = paste0("potCropland:", "NULL"),
+             cropmix = "hist_irrig", yieldcalib = "TRUE:TRUE:actual:irrig_crop",
+             multicropping = TRUE, aggregate = FALSE,
+             file = "yieldgain_multiple_calib.mz")
+
 
   # Agricultural Water Consumption (NOLIM) [in mio. m^3 per year]
   calcOutput("WaterUseCommittedAg",
