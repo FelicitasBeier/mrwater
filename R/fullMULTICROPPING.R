@@ -207,7 +207,7 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              iniyear = iniyear, selectyears = selectyears,
              yieldcalib = "TRUE:TRUE:actual:irrig_crop", calibDetails = calibDetails,
              multicropping = FALSE, aggregate = FALSE,
-             file = "yield_single.mz")
+             file = "yield_single_calib.mz")
   # actual (calibrated) yield under multiple cropping (in tDM)
   calcOutput("YieldsAdjusted", lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = selectyears,
