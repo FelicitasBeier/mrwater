@@ -74,6 +74,19 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsGrass",
              aggregate = FALSE, file = "BWCgrass.mz")
 
+  #####################
+  # Yield regressions #
+  #####################
+  # grass GPP in the growing period of LPJmL (main season) (in tDM/ha)
+  calcOutput("GrassGPPyearly", season = "mainSeason",
+             lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears,
+             aggregate = FALSE, file = "grassGPP.mz")
+  # crop yields in the growing period of LPJmL (main season) (in tDM/ha)
+  calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears, multicropping = FALSE,
+             aggregate = FALSE, file = "cropYields_lpjml.mz")
+
   ####################
   # CURRENT CROPAREA #
   ####################
