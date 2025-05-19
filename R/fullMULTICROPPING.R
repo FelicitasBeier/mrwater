@@ -74,19 +74,6 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsGrass",
              aggregate = FALSE, file = "BWCgrass.mz")
 
-  #####################
-  # Yield regressions #
-  #####################
-  # grass GPP in the growing period of LPJmL (main season) (in tDM/ha)
-  calcOutput("GrassGPPyearly", season = "mainSeason",
-             lpjml = lpjml, climatetype = climatetype,
-             selectyears = selectyears,
-             aggregate = FALSE, file = "grassGPP.mz")
-  # crop yields in the growing period of LPJmL (main season) (in tDM/ha)
-  calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
-             selectyears = selectyears, multicropping = FALSE,
-             aggregate = FALSE, file = "cropYields_lpjml.mz")
-
   ####################
   # CURRENT CROPAREA #
   ####################
@@ -532,15 +519,21 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              layers = 8,
              aggregate = FALSE, file = "suitMC_GAEZ.mz")
 
-  # Main season yields
+  ### Yields regression ###
+  # grass GPP in the growing period of LPJmL (main season) (in tDM/ha)
+  calcOutput("GrassGPPyearly", season = "mainSeason",
+             lpjml = lpjml, climatetype = climatetype,
+             selectyears = selectyears,
+             aggregate = FALSE, file = "grassGPP.mz")
+  # crop yields in the growing period of LPJmL (main season) (in tDM/ha)
   calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
              selectyears = iniyear, multicropping = FALSE,
-             aggregate = FALSE, file = "yldsLPJmL.mz")
-
-  # Inverted Growing Period Runs
-  # crop yields
-
-
+             aggregate = FALSE, file = "cropYields_lpjml.mz")
+  # For filtering out small off-season yields:
+  # crop yields in entire year for LPJmL crops (in tDM/ha)
+  calcOutput("YieldsLPJmL", lpjml = lpjml, climatetype = climatetype,
+             selectyears = iniyear, multicropping = "TRUE:potential:endogenous",
+             aggregate = FALSE, file = "cropYields_lpjml_multiple.mz")
 
   ###########
   # Revenue #
