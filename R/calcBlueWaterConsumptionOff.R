@@ -135,7 +135,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   # by irrigation system and grass evapotranspiration) to derive
   # coefficient used to derive off-season blue water consumption
   # Dependent variable (y): crop blue water consumption for given system in main season
-  # Independent variable (x): grass ET in irrigated growing period of respective crop
+  # Independent variable (x): delta grass ET in irrigated growing period of respective crop
   fit <- toolBWCregression(y = bconsCrop, x = bconsGrass)
 
   # grass blue water consumption in the entire year

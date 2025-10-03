@@ -64,7 +64,7 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   bwc1st[, , "sprinkler"] <- transp + evap + interc
   # Drip system
   # parameter as of LPJmL (drip_evap_reduction = 0.6):
-  # 60% of blue water evaporation are saved in drip stystem
+  # 60% of blue water evaporation are saved in drip system
   bwc1st[, , "drip"] <- transp + 0.4 * evap
   # Surface system
   # no interception losses
