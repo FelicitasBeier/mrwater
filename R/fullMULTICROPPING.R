@@ -387,9 +387,9 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   # COMPARISON #
   ##############
   # Multiple cropping zones according to GAEZ
-  calcOutput("MultipleCroppingZones",
-             layers = 8,
-             aggregate = FALSE, file = "suitMC_GAEZ.mz")
+  suitMC_GAEZ <- calcOutput("MultipleCroppingZones",
+                            layers = 8,
+                            aggregate = FALSE, file = "suitMC_GAEZ.mz")
 
   ### Yields regression ###
   # grass GPP in the growing period of LPJmL (main season) (in tDM/ha)
