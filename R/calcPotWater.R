@@ -1,6 +1,6 @@
 #' @title       calcPotWater
 #' @description This function returns the potential water quantity
-#'              (separted into withdrawal and consumption)
+#'              (separated into withdrawal and consumption)
 #'              available for different uses
 #'
 #' @param lpjml             LPJmL version used

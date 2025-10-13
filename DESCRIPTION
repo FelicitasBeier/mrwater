@@ -27,7 +27,10 @@ Imports:
     stats,
     stringr,
     utils,
-    withr
+    withr,
+    digest,
+    ggplot2,
+    luplot
 Suggests: 
     covr,
     knitr,
@@ -37,4 +40,4 @@ VignetteBuilder:
     knitr
 Encoding: UTF-8
 LazyData: no
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

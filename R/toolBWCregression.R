@@ -19,6 +19,7 @@
 #' }
 #'
 #' @importFrom stats lm coef
+#' @importFrom utils capture.output write.csv
 #' @export
 
 toolBWCregression <- function(y, x) {

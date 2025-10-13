@@ -31,5 +31,5 @@ calcOutput("GrassET", aggregate = FALSE)
 
 }
 \author{
-Felicitas Beier
+Felicitas Beier, Jens Heinke
 }
