@@ -44,15 +44,15 @@
 #' @importFrom ggplot2 ggsave
 #' @importFrom withr local_options
 
-fullCELLULARMAGPIE <- function(rev = numeric_version("0.1"), dev = "",
-                               ctype = "c200",
-                               climatetype = "MRI-ESM2-0:ssp370",
-                               lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
-                                         crop = "ggcmi_phase3_nchecks_9ca735cb",
-                                         grass = "lpjml5p2_pasture"),
-                               isimip = NULL,
-                               clusterweight = NULL,
-                               emu_id = NULL) { # nolint
+fullWATER4MAGPIE <- function(rev = numeric_version("0.1"), dev = "",
+                             ctype = "c200",
+                             climatetype = "MRI-ESM2-0:ssp370",
+                             lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
+                                       crop = "ggcmi_phase3_nchecks_9ca735cb",
+                                       grass = "lpjml5p2_pasture"),
+                             isimip = NULL,
+                             clusterweight = NULL,
+                             emu_id = NULL) { # nolint
 
   "!# @pucArguments ctype clusterweight"
 
