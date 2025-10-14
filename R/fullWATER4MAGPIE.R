@@ -47,7 +47,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
   # Note: currently, this is based on LandInG
   calcOutput("IrrigAreaCommitted",
              selectyears = magYearsPastLong, iniyear = iniyear, round = roundArea,
-             aggregate = FALSE, file = paste0("area_irrig_", ctype, ".mz"))
+             aggregate = FALSE, file = paste0("area_irrig_", "0.5", ".mz"))
   # Question (Benni): This used to be "avl_irrig_...", Should I rename such files, too?
 
   # 42 water demand
@@ -58,7 +58,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
   calcOutput("ActualIrrigWatRequirements", selectyears = lpjYears, iniyear = iniyear,
              lpjml = lpjml, climatetype = climatetype,
              irrigationsystem = irrigationsystem, multicropping = multicropping,
-             aggregate = FALSE, file = paste0("irrig_req_crop", ctype, ".mz"))
+             aggregate = FALSE, file = paste0("irrig_req_crop", "0.5", ".mz"))
 
   # 43 water availability
   # Potentially irrigated areas with same settings as PIWW for disaggregation
@@ -73,7 +73,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
              fossilGW = fossilGW, transDist = transDist,
              multicropping = multicropping,
              landScen, cropmix = cropmix,
-             aggregate = FALSE, file = paste0("pia", ctype, ".mz"))
+             aggregate = FALSE, file = paste0("pia", "0.5", ".mz"))
 
   # Question (Jan): Can I remove one dimension here in full-function? or do I need a separate function for that?
   calcOutput("PotWater", lpjml = lpjml, climatetype = climatetype,
@@ -85,7 +85,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
              fossilGW = fossilGW, transDist = transDist,
              multicropping = multicropping,
              landScen, cropmix = cropmix,
-             aggregate = FALSE, file = paste0("piww", ctype, ".mz"))
+             aggregate = FALSE, file = paste0("piww", "0.5", ".mz"))
 
   # To Do: remove non-renewable GW from this PIWW and report separately
 
