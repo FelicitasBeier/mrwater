@@ -34,6 +34,12 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
   landScen  <- "potCropland:NULL" # potential cropland and no land protection (for testing)
   # To Do: different area protection scenario settings for different scenarios
 
+  ### fullCELLULAR settings
+
+  magYearsPastLong <- c("y1995", "y2000", "y2005", "y2010", "y2015")
+  lpjYears         <- seq(1995, 2100, by = 5)
+  iniyear         <- 1995
+
   # 14_yields
   # irrigated and rainfed yields with different aggregation weights
   # calcOutput("Yields", source = c(lpjml = lpjml, isimip = isimip), climatetype = climatetype,
@@ -46,7 +52,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
   # area committed for irrigation according to data in past
   # Note: currently, this is based on LandInG
   calcOutput("IrrigAreaCommitted",
-             selectyears = magYearsPastLong, iniyear = iniyear, round = roundArea,
+             selectyears = magYearsPastLong, iniyear = iniyear,
              aggregate = FALSE, file = paste0("area_irrig_", "0.5", ".mz"))
   # Question (Benni): This used to be "avl_irrig_...", Should I rename such files, too?
 
