@@ -64,7 +64,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0
   calcOutput("ActualIrrigWatRequirements", selectyears = lpjYears, iniyear = iniyear,
              lpjml = lpjml, climatetype = climatetype,
              irrigationsystem = irrigationsystem, multicropping = multicropping,
-             aggregate = FALSE, file = paste0("irrig_req_crop", "0.5", ".mz"))
+             aggregate = FALSE, file = paste0("irrig_req_crop_", "0.5", ".mz"))
 
   # 43 water availability
   # Potentially irrigated areas with same settings as PIWW for disaggregation
@@ -82,6 +82,8 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0
              aggregate = FALSE, file = paste0("pia", "_0.5", ".mz"))
 
   # Question (Jan): Can I remove one dimension here in full-function? or do I need a separate function for that?
+  # To Do: argument to choose output [,, c("wat_ww", "wat_wc"]
+  # To Do: scenario settings (tool function for water scenarios)
   calcOutput("PotWater", lpjml = lpjml, climatetype = climatetype,
              selectyears = lpjYears, iniyear = iniyear,
              efrMethod = efrMethod, irrigationsystem = irrigationsystem,
@@ -91,7 +93,7 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0
              fossilGW = fossilGW, transDist = transDist,
              multicropping = multicropping,
              landScen = landScen, cropmix = cropmix,
-             aggregate = FALSE, file = paste0("piww", "_0.5", ".mz"))
+             aggregate = FALSE, file = paste0("pot_irr_wat_withdrawal", "_0.5", ".mz"))
 
   # To Do: remove non-renewable GW from this PIWW and report separately
 

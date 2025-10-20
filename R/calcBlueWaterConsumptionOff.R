@@ -138,15 +138,25 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   # Independent variable (x): delta grass ET in irrigated growing period of respective crop
   fit <- toolBWCregression(y = bconsCrop, x = bconsGrass)
 
+  ##JENS: bconsGrass can have negative values. Should I set them to zero before the regression?
+  # Note: the negative values of bconsCrop are already set to 0 in calcBlueWaterConsumptionMain
+
   # grass blue water consumption in the entire year
   bconsGrassYr <- collapseNames(etGrassIRyear) - collapseNames(etGrassNOIRyear)
+
+  # set negative values to zero:
+  #bconsGrassYr[bconsGrassYr < 0] <- 0
+  #bconsGrass[bconsGrass < 0] <- 0
 
   # Second season blue water consumption of grass ("off season")
   grassBWC2nd <- bconsGrassYr - bconsGrass
 
-  ### To Do:
+  ### JENS: both bconsGrassYr and bconsGrass have negative values
+  ### I'm considering to set them to 0 before making the difference and then set the yields
+  ### for the second season to 0 (or the multiple cropping suitability under irrigated conditions?)
   ### Check whether bconsGrassYr and bconsGrass are negative: set to 0 (before making difference)
   ### Also: if this is the case: find handling of setting respective yields to zero as well.
+  ### Note: even when setting them individually to zero, negative values can occur for grassBWC2nd and need to be corrected
 
   # Set negative grass BWC to 0
   grassBWC2nd[grassBWC2nd < 0] <- 0
@@ -195,12 +205,11 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   bwc2nd[bwc2nd < 0] <- 0
 
   # Check system blue water consumption
-  if (any(bwc2nd[, , "sprinkler"] <= bwc2nd[, , "surface"])) {
+  if (any(bwc2nd[, , "sprinkler"] < bwc2nd[, , "surface"])) {
     stop(paste0("Problem in calcBlueWaterConsumptionOff: ",
-                "Sprinkler should always have greater blue water consumption than surface.",
-                print()))
+                "Sprinkler should always have greater blue water consumption than surface."))
   }
-  if (any(bwc2nd[, , "surface"] <= bwc2nd[, , "drip"])) {
+  if (any(bwc2nd[, , "surface"] < bwc2nd[, , "drip"])) {
     stop(paste0("Problem in calcBlueWaterConsumptionOff: ",
                 "Surface should always have greater blue water consumption than drip"))
   }

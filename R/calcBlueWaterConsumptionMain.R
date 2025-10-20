@@ -42,6 +42,9 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
                        lpjmlversion = lpjml, climatetype = climatetype,
                        aggregate = FALSE)[, selectyears, ]
 
+  # store unit for meta data
+  unit <- getFromComment(transp, "unit")
+
   ####################
   ### Calculations ###
   ####################
@@ -59,7 +62,6 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   bwc1st <- add_dimension(bwc1st, dim = 3.1, add = "system",
                           nm = c("drip", "sprinkler", "surface"))
   getSets(bwc1st) <- c("x", "y", "iso", "year", "system", "crop")
-  unit <- getFromComment(transp, "unit")
   # Sprinkler system
   bwc1st[, , "sprinkler"] <- transp + evap + interc
   # Drip system
