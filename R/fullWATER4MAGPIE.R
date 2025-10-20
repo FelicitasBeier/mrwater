@@ -8,7 +8,7 @@
 #' @param climatetype climate model and rcp
 #' @author Felicitas Beier
 
-fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0:ssp370") {
+fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0:ssp370") {
 
   #### Additional settings ####
 
@@ -78,8 +78,8 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
              yieldcalib = yieldcalib, comAg = comAg,
              fossilGW = fossilGW, transDist = transDist,
              multicropping = multicropping,
-             landScen, cropmix = cropmix,
-             aggregate = FALSE, file = paste0("pia", "0.5", ".mz"))
+             landScen = landScen, cropmix = cropmix,
+             aggregate = FALSE, file = paste0("pia", "_0.5", ".mz"))
 
   # Question (Jan): Can I remove one dimension here in full-function? or do I need a separate function for that?
   calcOutput("PotWater", lpjml = lpjml, climatetype = climatetype,
@@ -90,8 +90,8 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0
              yieldcalib = yieldcalib, comAg = comAg,
              fossilGW = fossilGW, transDist = transDist,
              multicropping = multicropping,
-             landScen, cropmix = cropmix,
-             aggregate = FALSE, file = paste0("piww", "0.5", ".mz"))
+             landScen = landScen, cropmix = cropmix,
+             aggregate = FALSE, file = paste0("piww", "_0.5", ".mz"))
 
   # To Do: remove non-renewable GW from this PIWW and report separately
 

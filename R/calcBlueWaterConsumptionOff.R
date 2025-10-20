@@ -146,7 +146,7 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
 
   ### To Do:
   ### Check whether bconsGrassYr and bconsGrass are negative: set to 0 (before making difference)
-  ### Also: if this is the case: find handeling of setting respective yields to zero as well.
+  ### Also: if this is the case: find handling of setting respective yields to zero as well.
 
   # Set negative grass BWC to 0
   grassBWC2nd[grassBWC2nd < 0] <- 0
@@ -195,11 +195,12 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   bwc2nd[bwc2nd < 0] <- 0
 
   # Check system blue water consumption
-  if (any(bwc2nd[, , "sprinkler"] < bwc2nd[, , "surface"])) {
+  if (any(bwc2nd[, , "sprinkler"] <= bwc2nd[, , "surface"])) {
     stop(paste0("Problem in calcBlueWaterConsumptionOff: ",
-                "Sprinkler should always have greater blue water consumption than surface."))
+                "Sprinkler should always have greater blue water consumption than surface.",
+                print()))
   }
-  if (any(bwc2nd[, , "surface"] < bwc2nd[, , "drip"])) {
+  if (any(bwc2nd[, , "surface"] <= bwc2nd[, , "drip"])) {
     stop(paste0("Problem in calcBlueWaterConsumptionOff: ",
                 "Surface should always have greater blue water consumption than drip"))
   }
