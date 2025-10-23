@@ -48,7 +48,7 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
   # total land area (Note: constant over the years)
   # excluding urban area
   landarea <- dimSums(calcOutput("LanduseInitialisation",
-                                 cellular = TRUE, cells = "lpjcell",
+                                 cellular = TRUE,
                                  nclasses = "seven", input_magpie = TRUE,
                                  years = "y1995",
                                  aggregate = FALSE)[, , "urban", invert = TRUE],
@@ -57,13 +57,13 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
                                      iniyear),
                             selectyears)
 
-  # To Do: include urban land expansion (for differnet scenarios)
+  # To Do: include urban land expansion (for different scenarios)
   # and make output of calcAreaPotIrrig scenario-specific
   # Note: then urban area must be left in above!
   # Note: follow-up functions must be adjusted
   # exclude urban area
   # urbanLand <- calcOutput("UrbanLandFuture", subtype = "LUH2v2",
-  #                         timestep = "yearly", cells = "lpjcell",
+  #                         timestep = "yearly",
   #                         aggregate = FALSE)[, selectyears, ]
   # getItems(urbanLand, dim = 3) <- gsub("SSP", "ssp", getItems(urbanLand, dim = 3)) # nolint: comment_code_linter
 
@@ -71,11 +71,10 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
   # excluding land that is marginal under irrigated conditions (< suitability index of 0.33)
   landEXCLmarginal <- toolFillYears(setYears(collapseNames(calcOutput("AvlCropland", luhBaseYear = iniyear,
                                                                       aggregate = FALSE,
-                                                                      marginal_land = "no_marginal:irrigated",
-                                                                      cells = "lpjcell")),
+                                                                      marginal_land = "no_marginal:irrigated")),
                                              iniyear),
                                     selectyears)
-  # Correct mismatch areas between Zabel and LUH
+  # Correct mismatch areas between Zabel and LanduseInitialisation data
   landEXCLmarginal <- pmin(landEXCLmarginal, landarea)
 
   # Read in areas that are already irrigated
@@ -92,7 +91,7 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
   ######################
   # Future protection scenarios
   conservationAreas <- toolFillYears(setYears(calcOutput("ConservationPriorities",
-                                                         nclasses = "seven", cells = "lpjcell",
+                                                         nclasses = "seven",
                                                          aggregate = FALSE),
                                               iniyear),
                                      selectyears)
@@ -102,7 +101,7 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
 
   # WDPA protection baseline
   wdpa <- dimSums(calcOutput("ProtectedAreaBaseline", nclasses = "seven",
-                             cells = "lpjcell", magpie_input = TRUE,
+                             magpie_input = TRUE,
                              aggregate = FALSE)[, , "urban", invert = TRUE],
                   dim = 3)
   if (any(selectyears > as.integer(gsub("y", "", tail(getItems(wdpa, dim = 2), n = 1))))) {
@@ -135,7 +134,7 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
   }
 
   # Correct mismatch between protected area and landarea
-  protectArea <- pmin(protectArea, landarea)
+  protectArea <- pmin(protectArea, landarea)              #### To Do: should this be landarea or landEXCLmarginal?
 
   #####################################################
   ### Available land (dependent on chosen scenario) ###
@@ -152,12 +151,11 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
     # including land that is marginal under irrigated conditions (< suitability index of 0.33)
     landINCLmarginal <- toolFillYears(setYears(collapseNames(calcOutput("AvlCropland", luhBaseYear = iniyear,
                                                                         aggregate = FALSE,
-                                                                        marginal_land = "all_marginal:irrigated",
-                                                                        cells = "lpjcell")),
+                                                                        marginal_land = "all_marginal:irrigated")),
                                                iniyear),
                                       selectyears)
-    # Correct mismatch areas between Zabel and LUH
-    landEXCLmarginal <- pmin(landINCLmarginal, landarea)
+    # Correct mismatch areas between Zabel and LanduseInitialisation data
+    landINCLmarginal <- pmin(landINCLmarginal, landarea)
     # areas that are currently irrigated must also be suitable under irrigated conditions
     landINCLmarginal <- pmax(landINCLmarginal, comIrrigArea)
     # calculate marginal land

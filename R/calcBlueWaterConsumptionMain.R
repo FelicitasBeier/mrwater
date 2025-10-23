@@ -83,6 +83,7 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
     # To Do: Double-check numbers and then remove warning
     # Jan: warning makes sense here? (Because we know it occurs, as long as they are
     # just a few cases, it's not really a problem.)
+    # Jens: Is it ok if we already remove it here (before the toolBWCregression?)
   }
   bwc1st[bwc1st < 0] <- 0
 
