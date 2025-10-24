@@ -114,7 +114,7 @@ calcYieldgainPotential <- function(scenario, selectyears, iniyear, lpjml, climat
                        selectyears = selectyears, iniyear = iniyear,
                        landScen = landScen,
                        cropmix = cropmix, cropAggregation = FALSE,
-                       comagyear = FALSE,
+                       comAg = FALSE,
                        aggregate = FALSE)
     croplist    <- getItems(area, dim = "crop")
 

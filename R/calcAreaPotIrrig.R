@@ -33,7 +33,7 @@
 #' @importFrom magclass collapseNames getCells getYears getNames dimSums time_interpolate
 #' @importFrom mstools toolHoldConstant toolGetMappingCoord2Country
 
-calcAreaPotIrrig <- function(selectyears, comAg,              ### To Do: change comagyear to comAg everywhere where function is called
+calcAreaPotIrrig <- function(selectyears, comAg,
                              cropAggregation, cropmix,
                              iniyear, landScen) {
 
