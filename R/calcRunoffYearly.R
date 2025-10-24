@@ -28,11 +28,14 @@ calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
                   aggregate = FALSE)
   #### To Do (Feli, Kristine): handle aggregation to yearly before harmonization (in calcLPJmLTransform)
   x <- dimSums(x, dim = "month")
+
   # LUH landarea (in Mha)
-  landArea <- setYears(collapseNames(dimSums(readSource("LUH2v2", subtype = "states",
-                                                        convert = "onlycorrect")[, "y1995", ],
-                                             dim = 3)),
+  landArea <- setYears(dimSums(calcOutput("LUH3", yrs = iniyear,
+                                          landuseTypes = "LUH3", irrigation = FALSE,
+                                          cellular = TRUE,  aggregate = FALSE),
+                               dim = 3),
                        NULL)
+
   ### Transformation to flow on land ###
   # Transformation factor: 1 m^3/ha = 1e-6 mio. m^3/ha
   # Transformation factor: 1 Mha    = 1e+6 ha

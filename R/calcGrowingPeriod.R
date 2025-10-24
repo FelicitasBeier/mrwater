@@ -104,7 +104,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
     # Step 2 remove crops that have an irrigated yield below 10% of global average
     #        (total cell area as aggregation weight)
     ####################################################################################
-    area   <- dimSums(calcOutput("LUH2v2", cellular = TRUE, cells = "lpjcell",
+    area   <- dimSums(calcOutput("LUH3", cellular = TRUE,
                                  aggregate = FALSE, years = "y1995"),
                       dim = 3)
     yields <- collapseNames(yields[, , goodCrops])

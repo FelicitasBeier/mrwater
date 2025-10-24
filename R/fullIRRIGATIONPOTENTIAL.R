@@ -371,7 +371,8 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              file = "protectedAreas.mz")
 
   # Area that is potentially available for irrigated agriculture
-  calcOutput("AreaPotIrrig", selectyears = plotyear, comagyear = NULL,
+  calcOutput("AreaPotIrrig", selectyears = plotyear, comAg = FALSE,
+             cropAggregation = TRUE, cropmix = cropmix,
              landScen = paste0("potCropland:", protectLand),
              aggregate = FALSE,
              file = "avlIrrigarea_pot.mz")
@@ -445,7 +446,7 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = plotyear,
              cropmix = cropmix, yieldcalib = yieldcalib,
-             comagyear = NULL,
+             comAg = FALSE,
              irrigationsystem = irrigationsystem,
              landScen = paste0("potCropland:", "NULL"),
              multicropping = multicropping, aggregate = FALSE,
@@ -455,7 +456,7 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = plotyear,
              cropmix = cropmix, yieldcalib = yieldcalib,
-             comagyear = NULL,
+             comAg = FALSE,
              irrigationsystem = irrigationsystem,
              landScen = paste0("potCropland:", "NULL"),
              multicropping = multicropping, aggregate = FALSE,
@@ -465,7 +466,7 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              lpjml = lpjml, climatetype = climatetype,
              iniyear = iniyear, selectyears = plotyear,
              cropmix = cropmix, yieldcalib = yieldcalib,
-             comagyear = NULL,
+             comAg = FALSE,
              irrigationsystem = irrigationsystem,
              landScen = paste0("potCropland:", "NULL"),
              multicropping = multicropping, aggregate = FALSE,

@@ -24,11 +24,12 @@ calcRunoffMonthly <- function(lpjml, climatetype) {
   x  <- calcOutput("LPJmLTransform", subtype = "pnv:runoff", stage = "raw:cut",
                    lpjmlversion = lpjml, climatetype = climatetype,
                    aggregate = FALSE)
+
   # LUH landarea (in Mha)
-  landArea <- setYears(collapseNames(dimSums(readSource("LUH2v2",
-                                                        subtype = "states",
-                                                        convert = "onlycorrect")[, "y1995", ],
-                                             dim = 3)),
+  landArea <- setYears(dimSums(calcOutput("LUH3", yrs = iniyear,
+                                          landuseTypes = "LUH3", irrigation = FALSE,
+                                          cellular = TRUE,  aggregate = FALSE),
+                               dim = 3),
                        NULL)
 
   ### Transformation to flow on land ###

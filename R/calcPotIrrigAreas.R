@@ -130,7 +130,6 @@ calcPotIrrigAreas <- function(cropAggregation,
     } else {
       m <- FALSE
     }
-    comagyear <- iniyear
 
     # Actually committed irrigated area (crop-specific) (in Mha)
     # including non-renewable groundwater (if activated)
@@ -178,7 +177,6 @@ calcPotIrrigAreas <- function(cropAggregation,
     # Cropmix is not changed if there are no committed agricultural uses
     cmix <- cropmix
     # No water or areas committed to current agricultural uses
-    comagyear <- NULL
     comAgArea <- 0
     comWatWW  <- comWatWC <- avlWatWC
     comWatWW[, , ] <- 0
@@ -206,12 +204,12 @@ calcPotIrrigAreas <- function(cropAggregation,
   # Irrigation water requirements (in mio. m^3)
   # for expansion of irrigation into currently rainfed areas (i.e. beyond committed agricultural
   # use and beyond expansion of multiple cropping on currently irrigated areas if activated.
-  # Note: These are already accounted (subtracted) when comagyear is not NULL)
+  # Note: These are already accounted (subtracted) when comAg is TRUE)
   watReq   <- calcOutput("FullIrrigationRequirement", selectyears = selectyears,
                          lpjml = lpjml, climatetype = climatetype, iniyear = iniyear,
                          irrigationsystem = irrigationsystem, landScen = landScen,
                          cropmix = cropmix, multicropping = multicropping,
-                         comagyear = comagyear,
+                         comAg = comAg,
                          aggregate = FALSE)
   watReqWW <- watReqWC <- new.magpie(cells_and_regions = getItems(avlWatWW, dim = 1),
                                      years = getItems(avlWatWW, dim = 2),
@@ -225,10 +223,11 @@ calcPotIrrigAreas <- function(cropAggregation,
   # (excluding already committed areas if comAg is activated)
   areaPotIrrig <- calcOutput("AreaPotIrrig",
                              selectyears = selectyears, iniyear = iniyear,
-                             landScen = landScen, comagyear = comagyear,
+                             cropAggregation = TRUE, cropmix = cmix, #### To Do: figure out whether this should be cmix or cropmix and whether need to use aggregated or crop-specific here (see below)
+                             landScen = landScen, comAg = comAg,
                              aggregate = FALSE)
 
-  # share of requirements that can be fulfilled given available water; if >1 whole area can be irrigated
+  # share of requirements that can be fulfilled given available water; if >1: whole area can be irrigated
   irrigareaWW <- pmin(avlWatWW / watReqWW, 1) * areaPotIrrig
   # cells with no water requirements also get no irrigated area assigned
   irrigareaWW[watReqWW == 0] <- 0

@@ -182,20 +182,13 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
   if (allocationrule == "optimization") {
 
-    if (comAg == TRUE) {
-      # accounting in potentials
-      comagyear <- iniyear
-    } else if (comAg == FALSE) {
-      # committed agriculture not accounted in potentials (full potential)
-      comagyear <- NULL
-    }
     # Global cell rank based on yield gain potential by irrigation
     # of chosen crop mix
     glocellrank <- setYears(calcOutput("IrrigCellranking",
                                        cellrankyear = selectyears,
                                        lpjml = lpjml, climatetype = climatetype, method = rankmethod,
                                        cropmix = cropmix, iniyear = iniyear, yieldcalib = yieldcalib,
-                                       comagyear = comagyear,
+                                       comAg = comAg,
                                        irrigationsystem = irrigationsystem,
                                        landScen = landScen,
                                        multicropping = as.logical(stringr::str_split(multicropping, ":")[[1]][1]),

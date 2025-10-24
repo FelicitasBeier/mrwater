@@ -151,11 +151,10 @@ calcCropProductionRevenue <- function(outputtype, scenario, management, area,
       cropmix <- cmix <- "hist_irrig"
     }
     # all of available croparea (in Mha)
-    cropareaTotal <- calcOutput("CropAreaPotIrrig",
-                                cropmix = cmix,
-                                landScen = landScen,
+    cropareaTotal <- calcOutput("AreaPotIrrig", comAg = FALSE,
                                 selectyears = selectyears, iniyear = iniyear,
-                                comagyear = NULL,
+                                cropAggregation = FALSE, cropmix = cmix,
+                                landScen = landScen,
                                 aggregate = FALSE)
 
     # Crop-specific (potentially) irrigated areas (in Mha)

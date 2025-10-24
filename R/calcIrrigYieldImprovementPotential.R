@@ -16,10 +16,8 @@
 #'                      "GLO" for global average prices, or
 #'                      "ISO" for country-level prices
 #' @param iniyear       initialization year for food price and cropmix area
-#' @param comagyear     if !NULL: already irrigated area is subtracted;
-#'                      if NULL: total potential land area is used;
-#'                      year specified here is the year of the initialization
-#'                      used for cropland area initialization in calcIrrigatedArea
+#' @param comAg         If TRUE: committed irrigated areas are subtracted,
+#'                      if FALSE: total potential croparea is used
 #' @param cropmix       Selected cropmix for which yield improvement potential
 #'                      is calculated (options:
 #'                      "hist_irrig" for historical cropmix on currently irrigated area,
@@ -56,7 +54,7 @@
 
 calcIrrigYieldImprovementPotential <- function(lpjml, climatetype, unit,
                                                iniyear, selectyears,
-                                               comagyear,
+                                               comAg,
                                                cropmix, landScen, irrigationsystem,
                                                yieldcalib, multicropping) {
 
@@ -114,11 +112,12 @@ calcIrrigYieldImprovementPotential <- function(lpjml, climatetype, unit,
       u <- "mio. USD05"
 
       # croparea per crop given chosen land scenario (in Mha)
-      # (excluding already committed agricultural areas if comagyear != NULL)
-      croparea <- calcOutput("CropAreaPotIrrig",
+      # (excluding already committed agricultural areas if comAg is TRUE)
+      croparea <- calcOutput("AreaPotIrrig", comAg = comAg,
                               selectyears = selectyears, iniyear = iniyear,
-                              comagyear = comagyear,
-                              cropmix = cropmix, landScen = landScen,
+                              comAg = comAg,
+                              cropAggregation = FALSE, cropmix = cropmix,
+                              landScen = landScen,
                               aggregate = FALSE)
 
       # absolute irrigation yield gain on available area
