@@ -169,9 +169,9 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
     if (landScen == "currCropland") {
 
       # Total current physical cropland per cell:
-      landAVL <- dimSums(calcOutput("CropareaAdjusted", iniyear = iniyear,
+      landAVL <- toolFillYears(dimSums(calcOutput("CropareaAdjusted", iniyear = iniyear,
                                     aggregate = FALSE),
-                         dim = 3)
+                         dim = 3), selectyears)
       # Only cropland that is suitable under irrigated conditions according
       # to Zabel can be used for irrigation
       landAVL <- pmin(landAVL, landEXCLmarginal)
@@ -181,9 +181,9 @@ calcAreaPotIrrig <- function(selectyears, comagyear, iniyear, landScen) {
     if (landScen == "currIrrig") {
 
       # Total irrigated physical cropland per cell:
-      landAVL <- dimSums(collapseNames(calcOutput("CropareaAdjusted", iniyear = iniyear,
+      landAVL <- toolFillYears(dimSums(collapseNames(calcOutput("CropareaAdjusted", iniyear = iniyear,
                                                   aggregate = FALSE)[, , "irrigated"]),
-                         dim = 3)
+                         dim = 3), selectyears)
 
       # Only cropland that is suitable under irrigated conditions according
       # to Zabel can be used for irrigation
