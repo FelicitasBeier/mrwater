@@ -30,7 +30,8 @@ calcRunoffYearly <- function(selectyears, lpjml, climatetype) {
   x <- dimSums(x, dim = "month")
 
   # LUH landarea (in Mha)
-  landArea <- setYears(dimSums(calcOutput("LUH3", yrs = iniyear,
+  # Note: Since land area is constant, any year can be chosen
+  landArea <- setYears(dimSums(calcOutput("LUH3", yrs = selectyears[[1]],
                                           landuseTypes = "LUH3", irrigation = FALSE,
                                           cellular = TRUE,  aggregate = FALSE),
                                dim = 3),
