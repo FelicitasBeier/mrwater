@@ -166,7 +166,7 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
     wcShr[wcShr > 1] <- 1
 
     # Area Actually Committed for Irrigation given available water (in Mha)
-    out <- comArea * wcShr
+    out <- comArea * pmin(wcShr, wwShr)
   }
 
   # Check for NAs and negative values
