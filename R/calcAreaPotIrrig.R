@@ -255,8 +255,8 @@ calcAreaPotIrrig <- function(selectyears, comAg,
 
     # sanity check
     if (cropmix == "hist_rainf") {
-      warning("Is the combination of arguments `cropmix = hist_rainf` and `comAg = TRUE` intended?
-              It likely leads to mismatches in areas and potentially to negative CropAreaPotIrrig values.")
+      warning("Is the combination of arguments `cropmix = hist_rainf` and `comAg = TRUE` intended? ",
+              "It likely leads to mismatches in areas and potentially to negative CropAreaPotIrrig values.")
     }
 
     # subtract physical area already reserved for irrigation

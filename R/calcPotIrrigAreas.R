@@ -223,7 +223,7 @@ calcPotIrrigAreas <- function(cropAggregation,
   # (excluding already committed areas if comAg is activated)
   areaPotIrrig <- calcOutput("AreaPotIrrig",
                              selectyears = selectyears, iniyear = iniyear,
-                             cropAggregation = TRUE, cropmix = cmix, #### To Do: figure out whether this should be cmix or cropmix and whether need to use aggregated or crop-specific here (see below)
+                             cropAggregation = TRUE, cropmix = cropmix,
                              landScen = landScen, comAg = comAg,
                              aggregate = FALSE)
 
