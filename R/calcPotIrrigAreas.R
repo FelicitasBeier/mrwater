@@ -248,6 +248,7 @@ calcPotIrrigAreas <- function(cropAggregation,
   cropareaShr <- calcOutput("CropAreaShare",
                             iniyear = iniyear, cropmix = cmix,
                             aggregate = FALSE)
+  cropareaShr <- toolFillYears(cropareaShr, years = getItems(irrigatableArea, dim = "year"))
   cropOrder <- getItems(cropareaShr, dim = "crop")
   # Exclude areas where no water is required for irrigation
   # from additionally irrigated areas as it is not required there
