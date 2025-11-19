@@ -138,6 +138,11 @@ calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lp
     ### Harmonize WATERGAP and ISIMIP data (WATERGAP trends scaled to ISIMIP historical data)
     # Ref_year: 2010 because both ISIMIP historical (available until 2014) and WATERGAP (available from 2005)
     baseyear        <- "y2010"
+    if (!(baseyear %in% selectyears ||
+          as.numeric(sub("^y", "", baseyear)) %in% selectyears)) {
+      stop(paste0("The years (`selectyears`) in calcWaterUseNonAg does not ",
+                  "contain the baseyear ", baseyear, "."))
+    }
     yearsHarmonized <- paste0("y", seq(2010, 2020))
     yearsWATERGAP   <- getYears(watdemWATERGAP)
     yISIMIP         <- as.numeric(gsub("y", "", getYears(watdemISIMIP)))
@@ -296,9 +301,9 @@ calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lp
 
   if (datasource != "WATCH_ISIMIP_WATERGAP") {
     # Correct mismatches of withdrawal and consumption (withdrawals > consumption)
-    watdemNonAg[, , "withdrawal"]  <- pmax(collapseDim(watdemNonAg[, , "withdrawal"]), 
+    watdemNonAg[, , "withdrawal"]  <- pmax(collapseDim(watdemNonAg[, , "withdrawal"]),
                                            collapseDim(watdemNonAg[, , "consumption"]))
-    watdemNonAg[, , "consumption"] <- pmax(collapseDim(watdemNonAg[, , "consumption"]), 
+    watdemNonAg[, , "consumption"] <- pmax(collapseDim(watdemNonAg[, , "consumption"]),
                                            0.01 * collapseDim(watdemNonAg[, , "withdrawal"]))
   }
 
