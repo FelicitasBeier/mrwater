@@ -42,7 +42,11 @@ fullWATER4MAGPIE <- function(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0
 
   # 14_yields
   # irrigated and rainfed yields with different aggregation weights
-  # calcOutput("Yields", source = c(lpjml = lpjml, isimip = isimip), climatetype = climatetype,
+  # calcOutput("YieldsMAgPIE",
+  #            datasource = c(lpjml = lpjml, isimip = isimip),
+  #            climatetype = climatetype,
+  #            multicropping = multicropping,
+  #            calibration = NULL,
   #            round = 2, years = lpjYears,
   #            aggregate = "cluster",
   #            outputStatistics = stats, file = paste0("lpj_yields_", ctype, ".mz"),

@@ -114,16 +114,18 @@ calcPotMulticroppingShare <- function(scenario, lpjml, climatetype,
   # To Do (discuss with Jens): double-check (should this be 0 or very small?)
 
   # Crop yield in main season (in tDM/ha per year):
-  crpYldFirst <- calcOutput("Yields", multicropping = FALSE,
+  crpYldFirst <- calcOutput("YieldsMAgPIEcrops", multicropping = FALSE,
                             selectyears = selectyears,
-                            datasource = c(lpjml = lpjml, isimip = NULL),
+                            lpjml = lpjml,
                             climatetype = climatetype,
+                            calibration = NULL,
                             aggregate = FALSE)
   # Crop yield in the entire year under multiple cropping (in tDM/ha per year):
-  crpYldYear <- calcOutput("Yields", multicropping = multicropping,
+  crpYldYear <- calcOutput("YieldsMAgPIEcrops", multicropping = multicropping,
                            selectyears = selectyears,
-                           datasource = c(lpjml = lpjml, isimip = NULL),
+                           lpjml = lpjml,
                            climatetype = climatetype,
+                           calibration = NULL,
                            aggregate = FALSE)
   # Crop yield in the second season (in tDM/ha per year):
   # Note: very low second season yields are already capped in calcYieldsLPJmL

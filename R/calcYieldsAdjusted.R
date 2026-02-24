@@ -85,12 +85,16 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
     }
 
     # read in cellular LPJmL yields calibrated to FAO country values of iniyear [in tDM/ha]
-    yields <- calcOutput("YieldsCalibrated", datasource = c(lpjml = lpjml, isimip = NULL),
-                         climatetype = climatetype, refYear = iniyear,
+    yields <- calcOutput("YieldsMAgPIEcrops",
+                         lpjml = lpjml,
+                         climatetype = climatetype,
                          selectyears = selectyears,
-                         areaSource = "LandInG", refYields = refYields,
-                         average = average, aggregation = aggregation,
-                         multicropping = multicropping, marginal_land = "no_marginal:irrigated",
+                         multicropping = multicropping,
+                         calibration = list(refYear = iniyear,
+                                            refYields = refYields,
+                                            areaSource = "LandInG",
+                                            average = average,
+                                            aggregation = aggregation),
                          aggregate = FALSE)
 
     description <- "LPJmL yields calibrated to FAO yield levels for all different (MAgPIE) crop types"
@@ -98,10 +102,13 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
   } else {
 
     # read in cellular LPJmL yields [in tDM/ha]
-    yields <- calcOutput("Yields", datasource = c(lpjml = lpjml, isimip = NULL),
+    yields <- calcOutput("YieldsMAgPIEcrops",
+                         lpjml = lpjml,
                          climatetype = climatetype,
-                         multicropping = multicropping, marginal_land = "no_marginal:irrigated",
-                         selectyears = selectyears, aggregate = FALSE)
+                         selectyears = selectyears,
+                         multicropping = multicropping,
+                         calibration = NULL,
+                         aggregate = FALSE)
 
     description <- "LPJmL yields for all different (MAgPIE) crop types"
 
