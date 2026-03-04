@@ -22,12 +22,15 @@
 
 calcCropareaAdjusted <- function(iniyear, dataset = "LandInG", sectoral = "kcr") {
 
+  # To Do: This function can eventually be replaced with the new calcCroparea
+  # from the cropareaUpdate. Replace all function calls accordingly
+
   # read in physical croparea per crop and management type (in Mha)
   if (dataset == "LUH") {
 
     phys <- calcOutput("Croparea", years = iniyear, physical = TRUE,
                        sectoral = sectoral, irrigation = TRUE,
-                       cells = "lpjcell", cellular = TRUE,
+                       cellular = TRUE,
                        aggregate = FALSE)
     map             <- toolGetMappingCoord2Country()
     getCells(phys)  <- paste(map$coords, map$iso, sep = ".")
@@ -35,7 +38,7 @@ calcCropareaAdjusted <- function(iniyear, dataset = "LandInG", sectoral = "kcr")
   } else if (dataset == "LandInG") {
 
     phys <- calcOutput("CropareaLandInG", physical = TRUE, sectoral = sectoral,
-                       cellular = TRUE, cells = "lpjcell", irrigation = TRUE,
+                       cellular = TRUE, irrigation = TRUE,
                        selectyears = iniyear, aggregate = FALSE)
 
   } else {
