@@ -4,7 +4,7 @@
 \alias{fullWATER4MAGPIE}
 \title{fullWATER4MAGPIE}
 \usage{
-fullWATER4MAGPIE(lpjml = "lpjml5.9.16-m1", climatetype = "MRI-ESM2-0:ssp370")
+fullWATER4MAGPIE(lpjml = "lpjml5.9.16-m2", climatetype = "MRI-ESM2-0:ssp370")
 }
 \arguments{
 \item{lpjml}{lpjml version}

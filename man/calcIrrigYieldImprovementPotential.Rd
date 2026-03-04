@@ -10,7 +10,7 @@ calcIrrigYieldImprovementPotential(
   unit,
   iniyear,
   selectyears,
-  comagyear,
+  comAg,
   cropmix,
   landScen,
   irrigationsystem,
@@ -38,10 +38,8 @@ Price aggregation:
 
 \item{selectyears}{Years to be returned by the function}
 
-\item{comagyear}{if !NULL: already irrigated area is subtracted;
-if NULL: total potential land area is used;
-year specified here is the year of the initialization
-used for cropland area initialization in calcIrrigatedArea}
+\item{comAg}{If TRUE: committed irrigated areas are subtracted,
+if FALSE: total potential croparea is used}
 
 \item{cropmix}{Selected cropmix for which yield improvement potential
 is calculated (options:

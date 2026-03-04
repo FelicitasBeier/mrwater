@@ -25,7 +25,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.16-m1",
                          climatetype = "MRI-ESM2-0:ssp370",
                          stage = "harmonized2020", seasonality = "grper") {
 
-  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
+  cfg <- mrlandcore:::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                         climatetype = climatetype)
 
   ######################################################

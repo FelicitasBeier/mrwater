@@ -29,7 +29,7 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   refYears <- c(1985:2014)
 
   # extract LPJmL version information
-  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
+  cfg <- mrlandcore:::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                         climatetype = climatetype)
 
   # retrieve ecosystem preservation status:
