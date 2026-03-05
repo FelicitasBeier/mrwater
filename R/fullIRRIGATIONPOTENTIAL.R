@@ -381,6 +381,7 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
   calcOutput("LPJmLTransform", subtype = "mdischarge",
              lpjmlversion = lpjml, climatetype = climatetype,
              stage = "raw", aggregate = FALSE,
+             monthly = TRUE,
              file = "LPJmL_monthlyDischarge.mz")
 
   # Share current irrigation water that can be fulfilled by available water resources

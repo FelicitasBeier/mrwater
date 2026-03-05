@@ -37,6 +37,7 @@ calcAvlWater <- function(lpjml = "lpjml5.9.16-m1",
     ### Monthly Discharge (unit (after calcLPJmL): mio. m^3/month)
     monthDischargeMAG <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                     lpjmlversion = cfg$readinVersion, climatetype = climatetype,
+                                    monthly = TRUE,
                                     stage = "raw:cut", aggregate = FALSE)
 
     ### Monthly Runoff (raw) (in mio. m^3/month)

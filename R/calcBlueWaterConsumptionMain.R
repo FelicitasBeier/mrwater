@@ -32,14 +32,17 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   # transpiration (in m^3/ha)
   transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = "cropsIR"),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, ]
   # evaporation (in m^3/ha)
   evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = "cropsIR"),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, ]
   # interception (in m^3/ha)
   interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = "cropsIR"),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, ]
 
   # store unit for meta data

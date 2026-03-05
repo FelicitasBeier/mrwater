@@ -57,14 +57,17 @@ calcEvapotranspiration <- function(selectyears, runtype,
   # transpiration (in m^3/ha)
   transp <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "transp", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, mngt]
   # evaporation (in m^3/ha)
   evap   <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "evap", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, mngt]
   # interception (in m^3/ha)
   interc <- calcOutput("LPJmLHarmonize", subtype = .subtype(x = "interc", runfolder = runfolder),
                        lpjmlversion = lpjml, climatetype = climatetype,
+                       monthly = FALSE,
                        aggregate = FALSE)[, selectyears, mngt]
   # extract unit
   unit <- getFromComment(transp, "unit")

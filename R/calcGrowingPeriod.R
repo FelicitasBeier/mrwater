@@ -58,16 +58,19 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
     yields <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsIR:pft_harvestc",
                                        lpjmlversion = lpjml, climatetype = climatetype,
                                        stage = "raw:cut",
+                                       monthly = FALSE,
                                        aggregate = FALSE)[, , "irrigated"])
 
     # Load Sowing dates from LPJmL (use just rainfed dates since they do not differ for irrigated and rainfed)
     sowd <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsRF:sdate",
                                      lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
+                                     monthly = FALSE,
                                      aggregate = FALSE)[, , "rainfed"])
     hard <- collapseNames(calcOutput("LPJmLTransform", subtype = "cropsRF:hdate",
                                      lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                      stage = "raw:cut",
+                                     monthly = FALSE,
                                      aggregate = FALSE)[, , "rainfed"])
 
     goodCrops <- lpj2mag$MAgPIE[which(lpj2mag$LPJmL5 %in% getItems(sowd, dim = 3))]

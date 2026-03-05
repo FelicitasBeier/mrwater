@@ -39,6 +39,7 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
   # Monthly Discharge from LPJmL (raw: including variation)
   monthlyDischargeLPJmL <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                       lpjmlversion = lpjml, climatetype = climatetype,
+                                      monthly = TRUE,
                                       stage = "raw:cut", aggregate = FALSE)
 
   # To Do: calculate it back to daily

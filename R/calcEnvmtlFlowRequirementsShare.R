@@ -38,6 +38,7 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
   monthlyDischarge <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
                                  lpjmlversion = cfg$readinVersion, climatetype = cfg$baselineHist,
+                                 monthly = TRUE,
                                  stage = "raw:cut", years = refYears, aggregate = FALSE)
 
   # Transform to array (faster calculation)

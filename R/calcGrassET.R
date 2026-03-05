@@ -32,18 +32,22 @@ calcGrassET <- function(selectyears, lpjml, climatetype, season) {
   # irrigated grass ET in entire year
   yearlyIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIR:et_grass_ir",
                                 lpjmlversion = lpjml, climatetype = climatetype,
+                                monthly = FALSE,
                                 aggregate = FALSE)[, selectyears, "irrigated"]
   # rainfed grass ET in entire year
   yearlyRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRF:et_grass_rf",
                               lpjmlversion = lpjml, climatetype = climatetype,
+                              monthly = FALSE,
                               aggregate = FALSE)[, selectyears, "rainfed"]
   # irrigated grass ET in irrigated growing period of crop
   grperIrrigated <- calcOutput("LPJmLHarmonize", subtype = "cropsIR:cft_et_grass_ir",
                                lpjmlversion = lpjml, climatetype = climatetype,
+                               monthly = FALSE,
                                aggregate = FALSE)[, selectyears, "irrigated"]
   # rainfed grass ET in rainfed growing period of crop
   grperRainfed <- calcOutput("LPJmLHarmonize", subtype = "cropsRF:cft_et_grass_rf",
                              lpjmlversion = lpjml, climatetype = climatetype,
+                             monthly = FALSE,
                              aggregate = FALSE)[, selectyears, "rainfed"]
 
   ########################
