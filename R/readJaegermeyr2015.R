@@ -58,7 +58,7 @@ readJaegermeyr2015 <- function(subtype) {
   } else if (subtype == "systemSuitability") {
 
     # Irrigation system suitability by LPJmL crop type
-    x <- read.csv("Jaegermeyr2015_Table2_kcr.csv")
+    x <- read.csv("Jaegermeyr2015_Table2_main.csv")
     x <- as.magpie(x)
     getSets(x) <- c("region", "year", "crop", "system")
 
