@@ -27,7 +27,7 @@ downloadJaegermeyr2015 <- function(subtype) {
   if (subtype == "systemShare") {
     fname <- "Jaegermeyr-2015-supplement_shr.csv"
   } else if (subtype == "systemSuitability") {
-    fname <- "Jaegermeyr2015_Table2_kcr.csv"
+    fname <- "Jaegermeyr2015_Table2_main.csv"
   }
 
   # download data
