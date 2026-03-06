@@ -4,6 +4,8 @@
 #'
 #' @param cropAggregation   TRUE (aggregated Potentially Irrigated Areas (PIAs)),
 #'                          FALSE (crop-specific PIAs)
+#' @param cropAggregation   TRUE (grid cell data is aggregated to country-level),
+#'                          FALSE (grid cell data is returned)
 #' @param lpjml             LPJmL version used
 #' @param climatetype       Switch between different climate scenarios or
 #'                          historical baseline "GSWP3-W5E5:historical"
@@ -81,7 +83,7 @@
 #' @importFrom madrat calcOutput
 #' @importFrom magclass collapseNames add_dimension add_columns mbind
 
-calcPotIrrigAreas <- function(cropAggregation,
+calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
                               lpjml, climatetype,
                               selectyears, iniyear,
                               efrMethod, accessibilityrule,
@@ -291,6 +293,11 @@ calcPotIrrigAreas <- function(cropAggregation,
   } else {
     description <- paste0("Crop-specific area that can be irrigated ",
                           "given land and water constraints")
+  }
+
+  if (countryAggregation) {
+    out <- dimSums(out, dim = c("x", "y"))
+    description <- paste0(description, " at country level resolution")
   }
 
   return(list(x            = out,
