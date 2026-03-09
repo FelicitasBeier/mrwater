@@ -39,12 +39,14 @@ calcAvlWater <- function(lpjml = "lpjml5.9.16-m1",
                                     lpjmlversion = cfg$readinVersion, climatetype = climatetype,
                                     monthly = TRUE,
                                     stage = "raw:cut", aggregate = FALSE)
+    getItems(monthDischargeMAG, dim = "month") <- c(1:12)
 
     ### Monthly Runoff (raw) (in mio. m^3/month)
     yrs <- getItems(monthDischargeMAG, dim = 2)
     monthRunoffMAG <- calcOutput("RunoffMonthly", lpjml = cfg$readinVersion,
                                  climatetype = climatetype,
                                  aggregate = FALSE)[, yrs, ]
+    getItems(monthRunoffMAG, dim = "month") <- c(1:12)
 
     ## River basin water allocation algorithm:
     # Read in river structure
