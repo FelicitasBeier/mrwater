@@ -13,3 +13,4 @@
 ^vignettes/.lintr$
 ^Makefile$
 ^.*CITATION.cff$
+^\.claude$
