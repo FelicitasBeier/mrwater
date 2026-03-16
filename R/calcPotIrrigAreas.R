@@ -4,7 +4,7 @@
 #'
 #' @param cropAggregation   TRUE (aggregated Potentially Irrigated Areas (PIAs)),
 #'                          FALSE (crop-specific PIAs)
-#' @param cropAggregation   TRUE (grid cell data is aggregated to country-level),
+#' @param countryAggregation TRUE (grid cell data is aggregated to country-level),
 #'                          FALSE (grid cell data is returned)
 #' @param lpjml             LPJmL version used
 #' @param climatetype       Switch between different climate scenarios or

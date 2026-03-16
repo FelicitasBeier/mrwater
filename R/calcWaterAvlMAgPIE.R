@@ -66,6 +66,7 @@
 #'                          unfulfilled water demand by surrounding cell water availability
 #' @param usagetype         Water usage type to be returned.
 #'                          Options: "withdrawal", "consumption"
+#' @param countryAggregation TRUE (grid cell data is aggregated to country-level),
 #'
 #' @importFrom stringr str_split
 #' @importFrom madrat calcOutput
@@ -83,7 +84,7 @@ calcWaterAvlMAgPIE <- function(lpjml, selectyears, climatetype, efrMethod,
                          accessibilityrule, rankmethod, yieldcalib, allocationrule,
                          gainthreshold, irrigationsystem, iniyear,
                          landScen, cropmix, comAg, fossilGW,
-                         multicropping, transDist, usagetype) {
+                         multicropping, transDist, usagetype, countryAggregation = FALSE) {
 
   # potential water usage (PIWW and PIWC)
   potWaterUsage <- calcOutput("PotWater", lpjml = lpjml, climatetype = climatetype,
@@ -100,22 +101,34 @@ calcWaterAvlMAgPIE <- function(lpjml, selectyears, climatetype, efrMethod,
   } else if (usagetype == "consumption") {
     potWaterUsage  <- potWaterUsage[, , c("wat_ag_wc", "wat_gw_wc", "wat_tot_wc")]
   }
-  getItems(potWaterUsage, dim = "wtype") <- c("ren_ag", "gw", "tot")
-  names(dimnames(potWaterUsage))[["d3.1"]] <- "source"
+  getItems(potWaterUsage, dim = "wtype") <- c("ren_ag", "nonren_ag", "tot")
+  names(dimnames(potWaterUsage))[[3]] <- "EFP.scen.source"
 
   # renewable water resources available for agriculture
-  watAvlAg <- potWaterUsage[, , "ren_ag"]
+  watAvlAg <- potWaterUsage[, , "ren_ag"] - collapseNames(potWaterUsage[, , "nonren_ag"])
   # non-renewable (fossil) groundwater resources (based on current excessive withdrawals)
-  watGW <- potWaterUsage[, , "gw"]
+  watGW <- potWaterUsage[, , "nonren_ag"]
   # water (renewable and groundwater) reserved for non-agricultural usage
-  watReservedNonAg <- potWaterUsage[, , "tot"] - potWaterUsage[, , "ren_ag"]
+  watReservedNonAg <- potWaterUsage[, , "tot"] - collapseNames(potWaterUsage[, , "ren_ag"])
   getItems(watReservedNonAg, dim = 3) <- "res_nonAg"
 
   out <- mbind(watAvlAg, watGW, watReservedNonAg)
 
+  if (any(out < 0)) {
+    stop("calcWaterAvlMAgPIE returns negative values for water availability.
+         Please check what's wrong and correct.")
+  }
+
+  description  <- "potential water availability for different uses by source"
+  # Aggregate to country level
+  if (countryAggregation) {
+    out <- dimSums(out, dim = c("x", "y"))
+    description <- paste0(description, " at country level resolution")
+  }
+
   return(list(x            = out,
               weight       = NULL,
               unit         = "mio. m^3",
-              description  = "potential water availability for different uses by source",
+              description  = description,
               isocountries = FALSE))
 }
