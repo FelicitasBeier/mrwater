@@ -81,13 +81,7 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
   if (any(is.na(bwc1st))) {
     stop("calcBlueWaterConsumptionMain produced NA irrigation water requirements")
   }
-  if (any(bwc1st < 0)) {
-    warning("calcBlueWaterConsumptionMain produced negative values")
-    # To Do: Double-check numbers and then remove warning
-    # Jan: warning makes sense here? (Because we know it occurs, as long as they are
-    # just a few cases, it's not really a problem.)
-    # Jens: Is it ok if we already remove it here (before the toolBWCregression?)
-  }
+  # Remove negative consumptive irrigation water requirements in main season
   bwc1st[bwc1st < 0] <- 0
 
   return(list(x = bwc1st,

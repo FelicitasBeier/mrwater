@@ -110,7 +110,7 @@ calcWaterAvlMAgPIE <- function(lpjml, selectyears, climatetype, efrMethod,
   watGW <- potWaterUsage[, , "nonren_ag"]
   # water (renewable and groundwater) reserved for non-agricultural usage
   watReservedNonAg <- potWaterUsage[, , "tot"] - collapseNames(potWaterUsage[, , "ren_ag"])
-  getItems(watReservedNonAg, dim = 3) <- "res_nonAg"
+  getItems(watReservedNonAg, dim = "source") <- "res_nonAg"
 
   out <- mbind(watAvlAg, watGW, watReservedNonAg)
 
