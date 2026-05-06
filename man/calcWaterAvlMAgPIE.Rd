@@ -22,7 +22,8 @@ calcWaterAvlMAgPIE(
   fossilGW,
   multicropping,
   transDist,
-  usagetype
+  usagetype,
+  countryAggregation = FALSE
 )
 }
 \arguments{
@@ -104,6 +105,8 @@ unfulfilled water demand by surrounding cell water availability}
 
 \item{usagetype}{Water usage type to be returned.
 Options: "withdrawal", "consumption"}
+
+\item{countryAggregation}{TRUE (grid cell data is aggregated to country-level),}
 }
 \value{
 magpie object in cellular resolution

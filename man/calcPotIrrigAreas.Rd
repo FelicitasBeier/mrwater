@@ -27,7 +27,10 @@ calcPotIrrigAreas(
 )
 }
 \arguments{
-\item{cropAggregation}{TRUE (grid cell data is aggregated to country-level),
+\item{cropAggregation}{TRUE (aggregated Potentially Irrigated Areas (PIAs)),
+FALSE (crop-specific PIAs)}
+
+\item{countryAggregation}{TRUE (grid cell data is aggregated to country-level),
 FALSE (grid cell data is returned)}
 
 \item{lpjml}{LPJmL version used}
