@@ -1,5 +1,9 @@
 #' @title calcAvlWater
 #' @description This function calculates water availability for MAgPIE retrieved from LPJmL
+#'              using the old water aggregation logic from Bonsch et al.
+#'              This function will be replaced by the mrwater logic.
+#'              It can be deleted when module 25_irrigation in MAgPIE is default
+#'              and modules 41,42,43 are retired.
 #'
 #' @param lpjml       Defines LPJmL version for crop/grass and natveg specific inputs
 #' @param climatetype Switch between different climate scenarios

@@ -462,16 +462,6 @@ fullIRRIGATIONPOTENTIAL <- function(efrMethod = "VMF:fair", accessibilityrule = 
              landScen = paste0("potCropland:", "NULL"),
              multicropping = multicropping, aggregate = FALSE,
              file = paste0("yieldgain_USDha_ISO", ".mz"))
-  # with one price for all crops
-  calcOutput("IrrigYieldImprovementPotential", unit = "USD_ha:CONST",
-             lpjml = lpjml, climatetype = climatetype,
-             iniyear = iniyear, selectyears = plotyear,
-             cropmix = cropmix, yieldcalib = yieldcalib,
-             comAg = FALSE,
-             irrigationsystem = irrigationsystem,
-             landScen = paste0("potCropland:", "NULL"),
-             multicropping = multicropping, aggregate = FALSE,
-             file = paste0("yieldgain_USDha_constant", ".mz"))
 
   # Rainfed and irrigated crop yield valued at crop-specific prices [in USD/ha]
   calcOutput("YieldsValued",

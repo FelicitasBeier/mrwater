@@ -59,7 +59,7 @@ calcOutput("ActualIrrigWatRequirements", aggregate = FALSE)
 
 }
 \seealso{
-\code{\link{calcIrrigationSystem}}, \code{\link{calcIrrigWatRequirements}}
+\code{\link{calcIrrigWatRequirements}}
 }
 \author{
 Felicitas Beier

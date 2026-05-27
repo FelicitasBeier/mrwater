@@ -30,7 +30,7 @@
 #' @author Felicitas Beier
 #'
 #' @seealso
-#' \code{\link{calcIrrigationSystem}}, \code{\link{calcIrrigWatRequirements}}
+#' \code{\link{calcIrrigWatRequirements}}
 #'
 #' @examples
 #' \dontrun{

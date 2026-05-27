@@ -71,7 +71,7 @@ separated by ":"}
 If FALSE: uncalibrated LPJmL yields are used}
 
 \item{allocationrule}{Rule to be applied for river basin discharge allocation
-across cells of river basin ("optimization", "upstreamfirst", "equality")}
+across cells of river basin ("optimization", "upstreamfirst")}
 
 \item{irrigationsystem}{Irrigation system used
 ("surface", "sprinkler", "drip", "initialization")}

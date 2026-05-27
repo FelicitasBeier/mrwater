@@ -7,8 +7,7 @@
 #' @param selectyears   Years to be returned by the function
 #' @param priceAgg      Price aggregation:
 #'                      "GLO" for global average prices, or
-#'                      "ISO" for country-level prices, or
-#'                      "CONST" for same price for all crops
+#'                      "ISO" for country-level prices
 #' @param iniyear       initialization year for food price and cropmix area
 #' @param yieldcalib    If TRUE: LPJmL yields calibrated to FAO country yield in iniyear
 #'                      Also needs specification of refYields, separated by ":".
@@ -109,14 +108,9 @@ calcYieldsValued <- function(lpjml, climatetype, priceAgg,
 
     p <- p[getItems(yields, dim = "iso"), , ]
 
-  } else if (priceAgg == "CONST") {
-
-    p       <- pGLO
-    p[, , ] <- 571.5455 # 691.9 (median price) # 571.5455 (mean yield value gain) # 117.93 (mean yield value gain)
-
   } else {
     stop("Problem in calcYieldsValued:
-          Please select price aggregation level to GLO or ISO or CONST via
+          Please select price aggregation level to GLO or ISO via
           the unit argument.")
   }
 

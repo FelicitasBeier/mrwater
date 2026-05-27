@@ -35,7 +35,7 @@
 #'                          receives at later stage in allocation algorithm);
 #'                          separated by ":"
 #' @param allocationrule    Rule to be applied for river basin discharge allocation
-#'                          across cells of river basin ("optimization", "upstreamfirst", "equality")
+#'                          across cells of river basin ("optimization", "upstreamfirst")
 #' @param irrigationsystem  Irrigation system used
 #'                          ("surface", "sprinkler", "drip", "initialization")
 #' @param landScen          Land availability scenario consisting of two parts separated by ":":

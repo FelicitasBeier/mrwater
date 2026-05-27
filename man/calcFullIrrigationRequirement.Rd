@@ -48,13 +48,13 @@ or selection of proxycrops)}
 Multiple Cropping Suitability mask selected
 (mask can be:
 "none": no mask applied (only for development purposes)
-"actual:total": currently multicropped areas calculated from total harvested areas
+"actual:total": currently multiple cropped areas calculated from total harvested areas
                 and total physical areas per cell from readLandInG
 "actual:crop" (crop-specific), "actual:irrigation" (irrigation-specific),
 "actual:irrig_crop" (crop- and irrigation-specific) "total"
-"potential:endogenous": potentially multicropped areas given
+"potential:endogenous": potentially multiple cropped areas given
                         temperature and productivity limits
-"potential:exogenous": potentially multicropped areas given
+"potential:exogenous": potentially multiple cropped areas given
                        GAEZ suitability classification)
 (e.g. TRUE:actual:total; TRUE:none; FALSE)}
 }
