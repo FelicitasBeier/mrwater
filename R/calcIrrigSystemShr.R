@@ -72,7 +72,6 @@ calcIrrigSystemShr <- function(iniyear) {
   # Bananas; Plantains that are reported to be irrigated in some place,
   # we assume that all irrigation systems are suitable for this category.
   irrigSuit[, , "cassav_sp"] <- 1
-  ### ToDo: use FAO country-share of cassava in cassav_sp category and assign irrigSystem share accordingly?
 
   # empty MAgPIE object with correct dimensionality
   out <- irrigShr * irrigSuit

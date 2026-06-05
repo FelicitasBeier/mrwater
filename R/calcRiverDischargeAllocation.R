@@ -223,17 +223,21 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
     # In case of optimization, glocellrank differs in each year:
     for (y in selectyears) {
-      for (scen in scenarios) {
-        # Loop in ranked cell order
-        for (o in (1:max(glocellrank[, y, ], na.rm = TRUE))) {
-          # Extract the cell number
-          glocellrankName <- names(which(glocellrank[, y, ] == o))
-          c <- rs$cells[rs$isoCoord == ifelse(grepl("B_", glocellrankName),
-                                              gsub("B_", "", glocellrankName),
-                                              ifelse(grepl("A_", glocellrankName),
-                                                     gsub("A_", "", glocellrankName),
-                                                     glocellrankName))]
+      # determine cell ranking for current year
+      gcr <- glocellrank[, y, ]
+      maxRank <- max(gcr, na.rm = TRUE)
 
+      # Loop in ranked cell order
+      for (o in seq_len(maxRank)) {
+        # Extract the cell number
+        glocellrankName <- names(which(gcr == o))
+        c <- rs$cells[rs$isoCoord == ifelse(grepl("B_", glocellrankName),
+                                             gsub("B_", "", glocellrankName),
+                                            ifelse(grepl("A_", glocellrankName),
+                                                   gsub("A_", "", glocellrankName),
+                                                   glocellrankName))]
+        # Select inputs for different scenarios
+        for (scen in scenarios) {
           # Only run for cells where water required
           if (currReqWW[c, y, scen] > 1e-4) {
             # Select relevant cells (for performance reasons)
@@ -257,7 +261,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
             inoutLIST <- list(discharge = discharge[selectCells, y, scen],
                               prevReservedWW = prevReservedWW[selectCells, y, scen])
 
-            tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
+            tmp <- mrwater:::toolRiverDischargeAllocation(c = c, rs = rs,
                                                 downCells = downCells,
                                                 transDist = transDist,
                                                 iteration = "main",
