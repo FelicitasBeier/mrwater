@@ -44,12 +44,12 @@ calcIrrigCropYieldGain <- function(lpjml, climatetype, priceAgg,
 
   # read in cellular lpjml yields
   yields   <- calcOutput("YieldsValued",
-                          lpjml = lpjml, climatetype = climatetype,
-                          iniyear = iniyear, selectyears = selectyears,
-                          yieldcalib = yieldcalib,
-                          priceAgg = priceAgg,
-                          multicropping = multicropping,
-                          aggregate = FALSE)
+                         lpjml = lpjml, climatetype = climatetype,
+                         iniyear = iniyear, selectyears = selectyears,
+                         yieldcalib = yieldcalib,
+                         priceAgg = priceAgg,
+                         multicropping = multicropping,
+                         aggregate = FALSE)
 
   # calculate yield gain per crop
   yieldGain <- (collapseNames(yields[, , "irrigated"]) -

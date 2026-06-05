@@ -28,7 +28,8 @@
 #'                         or drip, surface, sprinkler for full irrigation by selected system
 #' @param landScen         Land availability scenario consisting of two parts separated by ":":
 #'                         1. available land scenario (currCropland, currIrrig, potCropland)
-#'                         2. protection scenario (WDPA, or one of the scenarios available in calcConservationPriorities,
+#'                         2. protection scenario (WDPA, or one of the scenarios
+#'                         available in calcConservationPriorities,
 #'                            e.g., 30by20, BH, BH_IFL, PBL_HalfEarth,
 #'                            or NA for no protection).
 #'                         For case of no land protection select "NA" in second part of argument
@@ -83,7 +84,6 @@ calcIrrigYieldImprovementPotential <- function(lpjml, climatetype, unit,
 
   # Selected crops
   if (!is.null(cropmix)) {
-
     # description of output
     description <- "Yield improvement potential through irrigation
                     given cropmix croparea share"
@@ -99,7 +99,6 @@ calcIrrigYieldImprovementPotential <- function(lpjml, climatetype, unit,
 
     # Unit of irrigation yield gain to be returned
     if (unit == "USD_ha") {
-
       # Relative yield gain (in terms of area)
       u <- "USD05 per ha"
 
@@ -107,24 +106,22 @@ calcIrrigYieldImprovementPotential <- function(lpjml, climatetype, unit,
       yieldGain <- dimSums(cropareaShr * yieldGain, dim = "crop")
 
     } else if (unit == "USD") {
-
       # Absolute yield gain (total profit on land)
       u <- "mio. USD05"
 
       # croparea per crop given chosen land scenario (in Mha)
       # (excluding already committed agricultural areas if comAg is TRUE)
       croparea <- calcOutput("AreaPotIrrig", comAg = comAg,
-                              selectyears = selectyears, iniyear = iniyear,
-                              comAg = comAg,
-                              cropAggregation = FALSE, cropmix = cropmix,
-                              landScen = landScen,
-                              aggregate = FALSE)
+                             selectyears = selectyears, iniyear = iniyear,
+                             comAg = comAg,
+                             cropAggregation = FALSE, cropmix = cropmix,
+                             landScen = landScen,
+                             aggregate = FALSE)
 
       # absolute irrigation yield gain on available area
       yieldGain <- dimSums(yieldGain * croparea, dim = "crop")
 
     } else if (unit == "USD_m3") {
-
       # Relative yield gain (in terms of volume)
       u <- "USD05 per m^3"
 

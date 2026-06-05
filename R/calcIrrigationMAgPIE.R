@@ -28,7 +28,6 @@
 calcIrrigationDataMAgPIE <- function(output,
                                      lpjml, climatetype,
                                      selectyears, iniyear) {
-
   # Helper function: keep only those arguments that belong to respective calcFunction
   .filterArgs <- function(args, fun) {
     args[names(args) %in% names(formals(fun))]
@@ -70,91 +69,91 @@ calcIrrigationDataMAgPIE <- function(output,
   scenarioArgs <- list(
     # Taking the Green Road: sustainability
     ssp1 = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                fossilGW = FALSE, # environment: no non-renewable groundwater use
-                landScen = "potCropland:30by30", # environment: no irrigation in certain areas
-                accessibilityrule = "CV:2", # technology
-                irrigationsystem = "drip", # technology
-                transDist = 200, # technology
-                allocationrule = "optimization", # economics
-                rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
-                gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:30by30", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "drip", # technology
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Sustainable development: economy-driven innovation
     sdpEI = list(efrMethod = "Smakhtin:natural", # environment: very high EFP
-                 fossilGW = FALSE, # environment: no non-renewable groundwater use
-                 landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
-                 accessibilityrule = "CV:2", # technology
-                 irrigationsystem = "drip", # technology: high efficiency
-                 transDist = 200, # technology
-                 allocationrule = "optimization", # economics
-                 rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
-                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "drip", # technology: high efficiency
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Sustainable development: resilient communities
     sdpRC = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                 fossilGW = FALSE, # environment: no non-renewable groundwater use
-                 landScen = "potCropland:30by30", # environment: no irrigation in certain areas
-                 accessibilityrule = "CV:2", # technology
-                 irrigationsystem = "sprinkler", # technology: medium efficiency
-                 transDist = 200, # technology
-                 allocationrule = "optimization", # economics
-                 rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
-                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:30by30", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "sprinkler", # technology: medium efficiency
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Sustainable development: managing the global commons
     sdpMC = list(efrMethod = "Smakhtin:natural", # environment: very high EFP
-                 fossilGW = FALSE, # environment: no non-renewable groundwater use
-                 landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
-                 accessibilityrule = "CV:2", # technology
-                 irrigationsystem = "drip", # technology: high efficiency
-                 transDist = 200, # technology
-                 allocationrule = "optimization", # economics
-                 rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
-                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "drip", # technology: high efficiency
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Middle of the Road
     ssp2 = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                fossilGW = FALSE, # environment: no non-renewable groundwater use
-                landScen = "potCropland:WDPA", # environment: no irrigation in certain areas
-                accessibilityrule = "CV:2", # technology
-                irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
-                allocationrule = "optimization", # economics
-                rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return, but with reduced potential (slightly less optimal)
-                gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:WDPA", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "initialization", # technology
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return, but with reduced potential (slightly less optimal)
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Rocky Road: Regional rivalry
     ssp3 = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                fossilGW = FALSE, # environment: no non-renewable groundwater use
-                landScen = "potCropland:30by30", # environment: no irrigation in certain areas
-                accessibilityrule = "CV:2", # technology
-                irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
-                allocationrule = "upstreamfirst", # economics
-                rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
-                gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:30by30", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "initialization", # technology
+      transDist = 200, # technology
+      allocationrule = "upstreamfirst", # economics
+      rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # A Road Divided: Inequality
     ssp4 = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                fossilGW = FALSE, # environment: no non-renewable groundwater use
-                landScen = "potCropland:30by30", # environment: no irrigation in certain areas
-                accessibilityrule = "CV:2", # technology
-                irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
-                allocationrule = "optimization", # economics
-                rankmethod = "USD_m3:ISO:TRUE", # economics: ranking by relative volumetric return and full potential based on country-level prices
-                gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:30by30", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "initialization", # technology
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:ISO:TRUE", # economics: ranking by relative volumetric return and full potential based on country-level prices
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     ),
     # Taking the Highway: Fossil-fuel-driven development
     ssp5 = list(efrMethod = "VMF:fair", # environment: environmental flow protection following VMF
-                fossilGW = FALSE, # environment: no non-renewable groundwater use
-                landScen = "potCropland:30by30", # environment: no irrigation in certain areas
-                accessibilityrule = "CV:2", # technology
-                irrigationsystem = "drip", # technology
-                transDist = 200, # technology
-                allocationrule = "optimization", # economics
-                rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return and reduced potential
-                gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
+      fossilGW = FALSE, # environment: no non-renewable groundwater use
+      landScen = "potCropland:30by30", # environment: no irrigation in certain areas
+      accessibilityrule = "CV:2", # technology
+      irrigationsystem = "drip", # technology
+      transDist = 200, # technology
+      allocationrule = "optimization", # economics
+      rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return and reduced potential
+      gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
     )
   )
 
@@ -193,13 +192,16 @@ calcIrrigationDataMAgPIE <- function(output,
 
   # Description
   if (output == "PotIrrigAreas") {
-    description <- "Potentially irrigated area (PIA) for different scenarios given available water and land"
+    description <- paste0("Potentially irrigated area (PIA) for different scenarios ",
+                          "given available water and land")
     unit <- "Mha"
   } else if (output == "WaterAvlMAgPIE") {
-    description <- "Potential irrigation water withdrawals (PIWW) for different scenarios given available water and land"
+    description <- paste0("Potential irrigation water withdrawals (PIWW) for different ",
+                          "scenarios given available water and land")
     unit <- "mio. m^3"
   } else {
-    stop("Invalid output argument. Please choose either 'PotIrrigAreas' or 'WaterAvlMAgPIE'.")
+    stop("Invalid output argument.
+         Please choose either 'PotIrrigAreas' or 'WaterAvlMAgPIE'.")
   }
 
   # Question (Jan): no weight required because areas are already in absolute values (Mha) and not in relative shares

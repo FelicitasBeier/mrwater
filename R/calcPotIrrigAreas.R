@@ -41,7 +41,8 @@
 #'                          ("surface", "sprinkler", "drip", "initialization")
 #' @param landScen          Land availability scenario consisting of two parts separated by ":":
 #'                          1. available land scenario (currCropland, currIrrig, potCropland)
-#'                          2. protection scenario (WDPA, or one of the scenarios available in calcConservationPriorities,
+#'                          2. protection scenario (WDPA, or one of the scenarios
+#'                          available in calcConservationPriorities,
 #'                             e.g., 30by20, BH, BH_IFL, PBL_HalfEarth,
 #'                             or NA for no protection).
 #'                          For case of no land protection select "NA" in second part of argument
@@ -91,7 +92,6 @@ calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
                               gainthreshold, irrigationsystem, landScen,
                               cropmix, comAg, fossilGW,
                               multicropping, transDist) {
-
   # Ensure that cropmix argument is set correctly
   if (grepl("hist", cropmix)) {
     if (grepl("currIrrig", landScen)) {
@@ -117,7 +117,6 @@ calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
   scenarios <- getItems(avlWatWW, dim = 3)
 
   if (comAg) {
-
     # Cropmix for non-committed areas
     if (grepl("hist", cropmix)) {
       cmix <- "hist_rainf"
@@ -175,7 +174,6 @@ calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
       comWatWW <- comWatWW + collapseNames(currHumanAdd[, , "currHumanWWtotal"])
     }
   } else {
-
     # Cropmix is not changed if there are no committed agricultural uses
     cmix <- cropmix
     # No water or areas committed to current agricultural uses

@@ -81,10 +81,10 @@
 #' }
 
 calcWaterAvlMAgPIE <- function(lpjml, selectyears, climatetype, efrMethod,
-                         accessibilityrule, rankmethod, yieldcalib, allocationrule,
-                         gainthreshold, irrigationsystem, iniyear,
-                         landScen, cropmix, comAg, fossilGW,
-                         multicropping, transDist, usagetype, countryAggregation = FALSE) {
+                               accessibilityrule, rankmethod, yieldcalib, allocationrule,
+                               gainthreshold, irrigationsystem, iniyear,
+                               landScen, cropmix, comAg, fossilGW,
+                               multicropping, transDist, usagetype, countryAggregation = FALSE) {
 
   # potential water usage (PIWW and PIWC)
   potWaterUsage <- calcOutput("PotWater", lpjml = lpjml, climatetype = climatetype,
