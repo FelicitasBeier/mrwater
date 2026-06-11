@@ -24,6 +24,8 @@
 #' @importFrom stringr str_split
 #' @importFrom madrat calcOutput
 #' @importFrom magclass collapseNames add_dimension add_columns mbind
+#'
+#' @export
 
 calcIrrigationDataMAgPIE <- function(output,
                                      lpjml, climatetype,
