@@ -2,6 +2,7 @@
 
 export(calcEconOfIrrig)
 export(calcGrowingPeriod)
+export(calcIrrigationDataMAgPIE)
 export(calcMissingWater)
 export(calcNonrenGroundwatUse)
 export(calcRiverRoutingInputs)

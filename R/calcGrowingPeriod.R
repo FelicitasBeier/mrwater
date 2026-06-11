@@ -27,7 +27,7 @@ calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
                               stage = "harmonized2020",
                               yield_ratio = 0.1) { # nolint
 
-  cfg <- mrlandcore:::toolLPJmLHarmonize(lpjmlversion = lpjml,
+  cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                         climatetype = climatetype)
 
   if (stage %in% c("raw", "smoothed")) {
