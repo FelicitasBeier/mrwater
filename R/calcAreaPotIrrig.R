@@ -54,7 +54,7 @@ calcAreaPotIrrig <- function(selectyears, comAg,
   landSCEN <- as.list(strsplit(landScen, split = ":"))[[1]][1]
 
   # Setting selection for cropmix
-  if (grepl("hist", cropmix)) {
+  if (any(grepl("hist", cropmix))) {
     # If current irrigation is chosen as land scenario,
     # the crop mix should be hist_irrig accordingly
     if (grepl("currIrrig", landSCEN)) {

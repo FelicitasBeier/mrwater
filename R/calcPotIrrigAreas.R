@@ -93,7 +93,7 @@ calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
                               cropmix, comAg, fossilGW,
                               multicropping, transDist) {
   # Ensure that cropmix argument is set correctly
-  if (grepl("hist", cropmix)) {
+  if (any(grepl("hist", cropmix))) {
     if (grepl("currIrrig", landScen)) {
       cropmix <- "hist_irrig"
     }
@@ -118,7 +118,7 @@ calcPotIrrigAreas <- function(cropAggregation, countryAggregation = FALSE,
 
   if (comAg) {
     # Cropmix for non-committed areas
-    if (grepl("hist", cropmix)) {
+    if (any(grepl("hist", cropmix))) {
       cmix <- "hist_rainf"
     } else {
       cmix <- cropmix
