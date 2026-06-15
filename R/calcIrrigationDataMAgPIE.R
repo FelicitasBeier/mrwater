@@ -55,7 +55,7 @@ calcIrrigationDataMAgPIE <- function(output,
                      selectyears = selectyears,
                      iniyear = iniyear,
                      comAg = TRUE,
-                     cropmix = c("maize", "rapeseed", "puls_pro"),
+                     cropmix = "hist_total", # c("maize", "rapeseed", "puls_pro"), (switch to proxy crops when ready)
                      yieldcalib = "TRUE:TRUE:actual:irrig_crop",
                      multicropping = "TRUE:actual:irrig_crop") # To Do: decide on default argument (or make scenario-dependent)
 
