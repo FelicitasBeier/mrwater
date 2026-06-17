@@ -73,7 +73,7 @@ calcAreaPotIrrig <- function(selectyears, comAg,
 
 
   # total land area (Note: constant over the years)
-  # excluding urban area
+  # excluding urban area times croparea share to obtain crop-specific areas
   landarea <- cropareaShr * dimSums(calcOutput("LanduseInitialisation",
                                                cellular = TRUE,
                                                nclasses = "seven", input_magpie = TRUE,
@@ -151,8 +151,9 @@ calcAreaPotIrrig <- function(selectyears, comAg,
     # additional protection by scenario
     protectArea <- conservationAreas + wdpa
 
-    # select protection scenario
-    protectArea <- collapseNames(protectArea[, , protectSCEN])
+    # select protection scenario and multiply with croparea to obtain crop-specific areas
+    # assuming same protection share excluded from each crop
+    protectArea <- cropareaShr * collapseNames(protectArea[, , protectSCEN])
 
   } else {
 
@@ -162,7 +163,7 @@ calcAreaPotIrrig <- function(selectyears, comAg,
   }
 
   # Correct mismatch between protected area and landarea
-  protectArea <- pmin(protectArea, landarea)      #### To Do: check whether this should this be landarea or landEXCLmarginal?
+  protectArea <- pmin(protectArea, landarea)
 
   #####################################################
   ### Available land (dependent on chosen scenario) ###
