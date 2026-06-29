@@ -168,17 +168,19 @@ calcIrrigationDataMAgPIE <- function(output,
                            dim = 3.1, add = "scen25", nm = "ssp2efp")
   ssp3    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp3)[, , "off"][, , "ssp3"]),
                            dim = 3.1, add = "scen25", nm = "ssp3")
-  ssp4    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp4)[, , "off"][, , "ssp4"]),
-                           dim = 3.1, add = "scen25", nm = "ssp4")
+  # To Do: implement full set of SSP/SDP scenarios
+  ssp4 <- ssp5 <- sdpEI <- sdpRC <- sdpMC <- NULL
+  #ssp4    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp4)[, , "off"][, , "ssp3"]),
+  #                         dim = 3.1, add = "scen25", nm = "ssp4")
   # To do (SSP4): implement EFP protection based on development status
-  ssp5    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp5)[, , "on"][, , "ssp5"]),
-                           dim = 3.1, add = "scen25", nm = "ssp5")
-  sdpEI   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpEI)[, , "on"][, , "sdpEI"]),
-                           dim = 3.1, add = "scen25", nm = "sdpEI")
-  sdpRC   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpRC)[, , "on"][, , "sdpRC"]),
-                           dim = 3.1, add = "scen25", nm = "sdpRC")
-  sdpMC   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpMC)[, , "on"][, , "sdpMC"]),
-                           dim = 3.1, add = "scen25", nm = "sdpMC")
+  #ssp5    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp5)[, , "on"][, , "ssp5"]),
+  #                         dim = 3.1, add = "scen25", nm = "ssp5")
+  #sdpEI   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpEI)[, , "on"][, , "sdpEI"]),
+  #                         dim = 3.1, add = "scen25", nm = "sdpEI")
+  #sdpRC   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpRC)[, , "on"][, , "sdpRC"]),
+  #                         dim = 3.1, add = "scen25", nm = "sdpRC")
+  #sdpMC   <- add_dimension(collapseNames(.runCalc(scenarioArgs$sdpMC)[, , "on"][, , "sdpMC"]),
+  #                         dim = 3.1, add = "scen25", nm = "sdpMC")
 
 
   out <- mbind(ssp1 = ssp1, ssp2 = ssp2, ssp2efp = ssp2efp,
