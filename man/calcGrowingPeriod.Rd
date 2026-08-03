@@ -5,7 +5,7 @@
 \title{calcGrowingPeriod}
 \usage{
 calcGrowingPeriod(
-  lpjml = "lpjml5.9.16-m1",
+  lpjml = "lpjml5.10.0-m4",
   climatetype = "MRI-ESM2-0:ssp370",
   stage = "harmonized2020",
   yield_ratio = 0.1

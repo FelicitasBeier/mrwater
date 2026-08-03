@@ -34,32 +34,25 @@ readISIMIPinputs <- function(subtype = "ISIMIP3b:water:histsoc.waterabstraction"
    }
 
     # List of input files
-    input <- list()
-    input <- c(paste0(folder, "/domww_", readyears, ".nc"),
+    input <- c(paste0(folder, "/domwc_", readyears, ".nc"),
+               paste0(folder, "/domww_", readyears, ".nc"),
                paste0(folder, "/indwc_", readyears, ".nc"),
                paste0(folder, "/indww_", readyears, ".nc"))
 
     ## Read in data
-    # read in raster brick
-    brick        <- suppressWarnings(brick(paste0(folder, "/domwc_", readyears, ".nc")))
-    # start year (with name X0) is 1901:
-    names(brick) <- paste0("y", round(as.numeric(gsub("X", "", names(brick))), 0) + 1901)
-    # transform to magpie object with coordinate data
-    x            <- as.magpie(brick)
-    getNames(x)  <- brick@title
-
-    # append data
+    xList <- list()
     for (i in seq_along(input)) {
 
-      brick         <- suppressWarnings(brick(input[i]))
+      r <- suppressWarnings(terra::rast(input[i]))
       # start year (with name X0) is 1901:
-      names(brick)  <- paste0("y", round(as.numeric(gsub("X", "", names(brick))), 0) + 1901)
+      names(r) <- paste0("y", seq_len(terra::nlyr(r)) - 1 + 1901)
       # transform to magpie object with coordinate data
-      tmp           <- as.magpie(brick)
-      getNames(tmp) <- brick@title
+      tmp           <- as.magpie(r)
+      getNames(tmp) <- terra::longnames(r)
 
-      x   <- mbind(x, tmp)
+      xList[[i]] <- tmp
     }
+    x <- mbind(xList)
 
     # Unit transformation (from m3/yr to mio. m3/yr):
     x <- x / 1000000

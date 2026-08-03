@@ -22,10 +22,13 @@
 #'
 #' @export
 
-calcGrowingPeriod <- function(lpjml = "lpjml5.9.16-m1",
+calcGrowingPeriod <- function(lpjml = "lpjml5.10.0-m4",
                               climatetype = "MRI-ESM2-0:ssp370",
                               stage = "harmonized2020",
                               yield_ratio = 0.1) { # nolint
+
+  ### Note: This function is deprecated. It can be deleted once the mrwater
+  ###       integration is complete.
 
   cfg <- mrlandcore::toolLPJmLHarmonize(lpjmlversion = lpjml,
                                         climatetype = climatetype)
