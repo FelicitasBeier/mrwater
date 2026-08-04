@@ -29,8 +29,10 @@ readISIMIPinputs <- function(subtype = "ISIMIP3b:water:histsoc.waterabstraction"
     # Time frame to be read in
     if (time == "histsoc") {
       readyears  <- paste0(time, "_annual_1901_2014")
+      startYear  <- 1901
    } else if (time == "2015soc") {
       readyears  <- paste0(time, "_annual_2015_2100")
+      startYear  <- 2015
    }
 
     # List of input files
@@ -44,8 +46,7 @@ readISIMIPinputs <- function(subtype = "ISIMIP3b:water:histsoc.waterabstraction"
     for (i in seq_along(input)) {
 
       r <- suppressWarnings(terra::rast(input[i]))
-      # start year (with name X0) is 1901:
-      names(r) <- paste0("y", seq_len(terra::nlyr(r)) - 1 + 1901)
+      names(r) <- paste0("y", seq_len(terra::nlyr(r)) - 1 + startYear)
       # transform to magpie object with coordinate data
       tmp           <- as.magpie(r)
       getNames(tmp) <- terra::longnames(r)
