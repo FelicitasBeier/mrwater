@@ -88,7 +88,7 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              file = "LandingHARV.mz")
 
   # fallow land (in Mha)
-  calcOutput("FallowLand", years = selectyears, aggregate = FALSE,
+  calcOutput("FallowLandInG", years = selectyears, aggregate = FALSE,
              file = "fallowLand.mz")
 
   ######################
