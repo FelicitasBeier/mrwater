@@ -58,7 +58,7 @@ A BibTeX entry for LaTeX users is
 @Misc{,
   title = {mrwater: madrat based MAgPIE water Input Data Library},
   author = {Felicitas Beier and Jens Heinke and Kristine Karstens and Benjamin Leon Bodirsky and Jan Philipp Dietrich},
-  date = {2026-08-06},
+  date = {2026-08-07},
   year = {2026},
   url = {https://github.com/pik-piam/mrwater},
   note = {Version: 1.15.0},
