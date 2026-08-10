@@ -23,9 +23,9 @@
 #'
 
 toolRiverDischargeAllocation <- function(rs, c,
-                                        downCells,
-                                        iteration, transDist,
-                                        inLIST, inoutLIST) {
+                                         downCells,
+                                         iteration, transDist,
+                                         inLIST, inoutLIST) {
   # Inputs
   currReqWW <- inLIST$currReqWW
   currReqWC <- inLIST$currReqWC
@@ -111,7 +111,7 @@ toolRiverDischargeAllocation <- function(rs, c,
         # If withdrawal constraint not fulfilled in neighbor cell:
         # jump directly to next neighbor
         if (discharge[names(n)] - prevReservedWW[names(n)] <= 0) {
-          break
+          next
         }
         # Select relevant cells
         selectCells        <- c(n, rs$downstreamcells[[n]])
