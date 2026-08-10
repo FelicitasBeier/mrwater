@@ -84,9 +84,9 @@ calcYieldsValued <- function(lpjml, climatetype, priceAgg,
 
     # fill countries that have zeros over whole time period with GLO values
     for (i in getItems(p, dim = 1)) {
-      p[i, , where(dimSums(p[i, , ],
-                           dim = 2) == 0)$true$data] <- pGLO[, , where(dimSums(p[i, , ],
-                                                                               dim = 2) == 0)$true$data]
+      # crops with zeros over the whole time period
+      zeroCrops <- where(dimSums(p[i, , ], dim = 2) == 0)$true$data
+      p[i, , zeroCrops] <- pGLO[, , zeroCrops]
     }
 
     # fill missing time gaps
@@ -94,12 +94,15 @@ calcYieldsValued <- function(lpjml, climatetype, priceAgg,
 
     for (c in getItems(p, dim = 3)) {
       for (i in getItems(p, dim = 1)) {
-        if (length(where(is.na(p[i, , c]))$true$years) > 0) {
+        # years with missing values
+        naYears <- where(is.na(p[i, , c]))$true$years
+
+        if (length(naYears) > 0) {
 
           tmp <- p[i, , c]
-          tmp <- tmp[, where(is.na(p[i, , c]))$true$years, invert = TRUE]
+          tmp <- tmp[, naYears, invert = TRUE]
 
-          p[i, , c] <- time_interpolate(tmp, where(is.na(p[i, , c]))$true$years,
+          p[i, , c] <- time_interpolate(tmp, naYears,
                                         integrate_interpolated_years = TRUE,
                                         extrapolation_type = "constant")
         }
