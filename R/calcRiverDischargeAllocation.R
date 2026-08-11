@@ -223,9 +223,10 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
     isoCoordToCell <- setNames(rs$cells, rs$isoCoord)
 
     # Pre-compute downstream and allocation subsets per cell
-    allocationDownCells <- allocationSelectCells <- vector("list", length(rs$cells))
+    allocationDownCells <- allocationSelectCells <- allocationNeighborSelectCells <-
+      vector("list", length(rs$cells))
     for (cell in rs$cells) {
-      neighborCells <- if (transDist > 0) rs$neighborcell[[cell]] else NULL
+      neighborCells <- if (transDist != 0) rs$neighborcell[[cell]] else NULL
       if (length(rs$downstreamcells[neighborCells]) > 0) {
         neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
       }
@@ -235,10 +236,23 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         downCells <- c(downCells, unlist(rs$downstreamcells[[cell]]))
       }
 
+      neighborSelectCells <- NULL
+      if (transDist != 0 && length(neighborCells) > 0) {
+        neighborSelectCells <- vector("list", length(neighborCells))
+        names(neighborSelectCells) <- neighborCells
+        for (n in neighborCells) {
+          tmp <- c(n, rs$downstreamcells[[n]])
+          names(tmp) <- rs$isoCoord[tmp]
+          neighborSelectCells[[as.character(n)]] <- tmp
+        }
+      }
+
       # list of downstream cells of relevant cell in c-loop
       allocationDownCells[[cell]] <- downCells
       # list of all relevant cells of relevant cell in c-loop
       allocationSelectCells[[cell]] <- unique(c(cell, downCells, neighborCells))
+      # list of all relevant cells per neighbor cell in c-loop
+      allocationNeighborSelectCells[[cell]] <- neighborSelectCells
     }
 
     # In case of optimization, glocellrank differs in each year:
@@ -278,6 +292,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
             tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                                 downCells = downCells,
+                                                neighborSelectCells = allocationNeighborSelectCells[[c]],
                                                 transDist = transDist,
                                                 iteration = "main",
                                                 inoutLIST = inoutLIST,
