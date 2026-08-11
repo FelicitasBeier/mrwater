@@ -224,24 +224,8 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
     # Pre-compute downstream and allocation subsets per cell
     allocationDownCells <- allocationSelectCells <- vector("list", length(rs$cells))
-    allocationNeighborSelectCells <- NULL
-    if (transDist != 0) {
-      allocationNeighborSelectCells <- vector("list", length(rs$cells))
-    }
     for (cell in rs$cells) {
       neighborCells <- if (transDist != 0) rs$neighborcell[[cell]] else NULL
-
-      neighborSelectCells <- NULL
-      if (transDist != 0 && length(neighborCells) > 0) {
-        neighborSelectCells <- vector("list", length(neighborCells))
-        names(neighborSelectCells) <- neighborCells
-        for (n in neighborCells) {
-          tmp <- c(n, rs$downstreamcells[[n]])
-          names(tmp) <- rs$isoCoord[tmp]
-          neighborSelectCells[[as.character(n)]] <- tmp
-        }
-        allocationNeighborSelectCells[[cell]] <- neighborSelectCells
-      }
       if (length(rs$downstreamcells[neighborCells]) > 0) {
         neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
       }
@@ -292,14 +276,8 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
             inoutLIST <- list(discharge = tmpDischarge[selectCells],
                               prevReservedWW = tmpPrevReservedWW[selectCells])
 
-            neighborSelectCells <- NULL
-            if (transDist != 0) {
-              neighborSelectCells <- allocationNeighborSelectCells[[c]]
-            }
-
             tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                                 downCells = downCells,
-                                                neighborSelectCells = neighborSelectCells,
                                                 transDist = transDist,
                                                 iteration = "main",
                                                 inoutLIST = inoutLIST,

@@ -11,9 +11,6 @@
 #'                       unfulfilled water demand by surrounding cell water availability
 #' @param c              Current cell for which water shall be allocated
 #' @param downCells      Downstream cells of c
-#' @param neighborSelectCells Optionally: precomputed named list of neighbor-cell
-#'                       downstream cells (only required for main allocation
-#'                       with transDist != 0)
 #' @param rs             River structure with information on upstreamcells,
 #'                       downstreamcells and neighboring cells and distances
 #' @param inLIST         List of objects that are inputs to the function
@@ -27,7 +24,6 @@
 
 toolRiverDischargeAllocation <- function(rs, c,
                                          downCells,
-                                         neighborSelectCells = NULL,
                                          iteration, transDist,
                                          inLIST, inoutLIST) {
   # Inputs
@@ -107,21 +103,19 @@ toolRiverDischargeAllocation <- function(rs, c,
         !is.null(neighborsOfC) &&
         length(neighborsOfC) > 0 &&
         (missingWW > 1e-4 || missingWC > 1e-4)) {
-      if (is.null(neighborSelectCells)) {
-        stop("neighborSelectCells required for main allocation with transDist != 0")
-      }
-
       # Water Allocation in neighboring cells of c
       # Loop over neighbor cells (by distance) until water requirements fulfilled
       for (n in neighborsOfC) {
 
-        selectCells <- neighborSelectCells[[as.character(n)]]
-        names(n) <- names(selectCells)[1]
+        names(n) <- rs$isoCoord[n]
         # If withdrawal constraint not fulfilled in neighbor cell:
         # jump directly to next neighbor
         if (discharge[names(n)] - prevReservedWW[names(n)] <= 0) {
           next
         }
+        # Select relevant cells
+        selectCells        <- c(n, rs$downstreamcells[[n]])
+        names(selectCells) <- rs$isoCoord[selectCells]
         # Function inputs
         inLISTneighbor    <- list(currReqWW = missingWW,
                                   currReqWC = missingWC)
