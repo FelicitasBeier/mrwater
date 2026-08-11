@@ -252,20 +252,29 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         stop("Could not map all ranked cells to river structure cells")
       }
 
-      # Loop in ranked cell order
-      for (c in rankedCells) {
-        # Select inputs for different scenarios
-        for (scen in scenarios) {
+      for (scen in scenarios) {
+        # Select scenario and reduce object size (for performance)
+        tmpDischarge      <- discharge[, y, scen]
+        tmpPrevReservedWW <- prevReservedWW[, y, scen]
+        tmpCurrReqWW      <- currReqWW[, y, scen]
+        tmpCurrReqWC      <- currReqWC[, y, scen]
+        tmpFromNeighborWC <- fromNeighborWC[, y, scen]
+        tmpFromNeighborWW <- fromNeighborWW[, y, scen]
+        tmpCurrWWlocal    <- currWWlocal[, y, scen]
+        tmpCurrWClocal    <- currWClocal[, y, scen]
+
+        # Loop in ranked cell order
+        for (c in rankedCells) {
           # Only run for cells where water required
-          if (currReqWW[c, y, scen] > 1e-4) {
+          if (tmpCurrReqWW[c] > 1e-4) {
             # Select relevant cells from pre-computed list
             downCells   <- allocationDownCells[[c]]
             selectCells <- allocationSelectCells[[c]]
             # Function inputs
-            inLIST    <- list(currReqWW = currReqWW[c, y, scen],
-                              currReqWC = currReqWC[c, y, scen])
-            inoutLIST <- list(discharge = discharge[selectCells, y, scen],
-                              prevReservedWW = prevReservedWW[selectCells, y, scen])
+            inLIST    <- list(currReqWW = tmpCurrReqWW[c],
+                              currReqWC = tmpCurrReqWC[c])
+            inoutLIST <- list(discharge = tmpDischarge[selectCells],
+                              prevReservedWW = tmpPrevReservedWW[selectCells])
 
             tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                                 downCells = downCells,
@@ -274,14 +283,22 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
                                                 inoutLIST = inoutLIST,
                                                 inLIST = inLIST)
 
-            discharge[selectCells, y, scen]      <- tmp$discharge
-            prevReservedWW[selectCells, y, scen] <- tmp$prevReservedWW
-            fromNeighborWC[c, y, scen] <- fromNeighborWC[c, y, scen] + tmp$fromNeighborWC
-            fromNeighborWW[c, y, scen] <- fromNeighborWW[c, y, scen] + tmp$fromNeighborWW
-            currWWlocal[c, y, scen]    <- currWWlocal[c, y, scen] + tmp$currWWlocal
-            currWClocal[c, y, scen]    <- currWClocal[c, y, scen] + tmp$currWClocal
+            tmpDischarge[selectCells]      <- tmp$discharge
+            tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
+            tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
+            tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
+            tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
+            tmpCurrWClocal[c]    <- tmpCurrWClocal[c] + tmp$currWClocal
           }
         }
+
+        # Save result for respective scenario
+        discharge[, y, scen]      <- tmpDischarge
+        prevReservedWW[, y, scen] <- tmpPrevReservedWW
+        fromNeighborWC[, y, scen] <- tmpFromNeighborWC
+        fromNeighborWW[, y, scen] <- tmpFromNeighborWW
+        currWWlocal[, y, scen]    <- tmpCurrWWlocal
+        currWClocal[, y, scen]    <- tmpCurrWClocal
       }
     }
 
