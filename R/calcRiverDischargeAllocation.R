@@ -227,14 +227,6 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
       vector("list", length(rs$cells))
     for (cell in rs$cells) {
       neighborCells <- if (transDist != 0) rs$neighborcell[[cell]] else NULL
-      if (length(rs$downstreamcells[neighborCells]) > 0) {
-        neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
-      }
-
-      downCells <- NULL
-      if (length(rs$downstreamcells[[cell]]) > 0) {
-        downCells <- c(downCells, unlist(rs$downstreamcells[[cell]]))
-      }
 
       neighborSelectCells <- NULL
       if (transDist != 0 && length(neighborCells) > 0) {
@@ -245,6 +237,14 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
           names(tmp) <- rs$isoCoord[tmp]
           neighborSelectCells[[as.character(n)]] <- tmp
         }
+      }
+      if (length(rs$downstreamcells[neighborCells]) > 0) {
+        neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
+      }
+
+      downCells <- NULL
+      if (length(rs$downstreamcells[[cell]]) > 0) {
+        downCells <- c(downCells, unlist(rs$downstreamcells[[cell]]))
       }
 
       # list of downstream cells of relevant cell in c-loop

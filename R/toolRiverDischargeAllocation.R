@@ -105,6 +105,7 @@ toolRiverDischargeAllocation <- function(rs, c,
     # Neighbor Irrigation (under "optimization" scenario)
     if ((transDist != 0) &&
         !is.null(neighborsOfC) &&
+        length(neighborsOfC) > 0 &&
         (missingWW > 1e-4 || missingWC > 1e-4)) {
       if (is.null(neighborSelectCells)) {
         stop("neighborSelectCells required for main allocation with transDist != 0")

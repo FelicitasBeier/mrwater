@@ -22,8 +22,7 @@ toolRiverDischargeUpdate <- function(rs, runoffWOEvap, watCons,
 
   # helper variables in correct dimension
   # (initialized to zero)
-  inflow <- numeric(length(runoffWOEvap) + 1)
-  avlWat <- discharge <- numeric(length(runoffWOEvap))
+  inflow <- avlWat <- discharge <- numeric(length(runoffWOEvap))
 
   ###########################################
   ###### River Discharge Calculation ########
@@ -34,11 +33,7 @@ toolRiverDischargeUpdate <- function(rs, runoffWOEvap, watCons,
     # Ordering grid cells from upstream to downstream
     cellsCalc <- cellsCalc[order(rs$calcorder[cellsCalc], decreasing = FALSE)]
   }
-  nextCellsCalc <- rs$nextcell[cellsCalc]
-  nextCellsCalc[nextCellsCalc <= 0] <- length(inflow)
-
-  for (i in seq_along(cellsCalc)) {
-    c <- cellsCalc[i]
+  for (c in cellsCalc) {
 
     # available water in cell
     avlWat[c] <- inflow[c] + runoffWOEvap[c]
@@ -47,7 +42,9 @@ toolRiverDischargeUpdate <- function(rs, runoffWOEvap, watCons,
     discharge[c] <- avlWat[c] - watCons[c]
 
     # inflow into nextcell
-    inflow[nextCellsCalc[i]] <- inflow[nextCellsCalc[i]] + discharge[c]
+    if (rs$nextcell[c] > 0) {
+      inflow[rs$nextcell[c]] <- inflow[rs$nextcell[c]] + discharge[c]
+    }
   }
 
   # Check for NAs
