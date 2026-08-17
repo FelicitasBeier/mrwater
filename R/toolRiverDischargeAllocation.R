@@ -34,15 +34,32 @@ toolRiverDischargeAllocation <- function(rs, c,
   # i.e. objects that are updated by this function)
   discharge      <- inoutLIST$discharge[drop = FALSE]
   prevReservedWW <- inoutLIST$prevReservedWW[drop = FALSE]
+  # Global cell IDs represented by the local discharge vector. Keeping this
+  # mapping allows position-based indexing below instead of repeated name lookup.
+  cells          <- inoutLIST$cells
+  if (is.null(cells)) {
+    # Fallback for direct calls that do not pass the cell mapping.
+    if (length(discharge) == 1) {
+      cells <- c
+    } else {
+      cells <- match(names(discharge), rs$isoCoord)
+      if (anyNA(cells)) {
+        stop("Could not map discharge names to river structure cells")
+      }
+    }
+  }
 
   # Selected cells
-  if (length(discharge) == 1) {
-    cell <- 1
-  } else {
-    cell <- rs$isoCoord[c]
+  # Convert global cell IDs to local vector positions in discharge/prevReservedWW.
+  cell <- match(c, cells)
+  if (is.na(cell)) {
+    stop("Current cell is not part of selected discharge cells")
   }
   if (length(downCells) > 0) {
-    downCells <- rs$isoCoord[downCells]
+    downCells <- match(downCells, cells)
+    if (anyNA(downCells)) {
+      stop("Downstream cells are not part of selected discharge cells")
+    }
   }
   allCells <- c(cell, downCells)
 
@@ -100,27 +117,34 @@ toolRiverDischargeAllocation <- function(rs, c,
     neighborsOfC <- rs$neighborcell[[c]]
     # Neighbor Irrigation (under "optimization" scenario)
     if ((transDist != 0) &&
-        !is.null(neighborsOfC) &&
-        length(neighborsOfC) > 0 &&
-        (missingWW > 1e-4 || missingWC > 1e-4)) {
+          !is.null(neighborsOfC) &&
+          length(neighborsOfC) > 0 &&
+          (missingWW > 1e-4 || missingWC > 1e-4)) {
       # Water Allocation in neighboring cells of c
       # Loop over neighbor cells (by distance) until water requirements fulfilled
       for (n in neighborsOfC) {
 
-        names(n) <- rs$isoCoord[n]
         # If withdrawal constraint not fulfilled in neighbor cell:
         # jump directly to next neighbor
-        if (discharge[names(n)] - prevReservedWW[names(n)] <= 0) {
+        neighborCell <- match(n, cells)
+        if (is.na(neighborCell)) {
+          stop("Neighbor cell is not part of selected discharge cells")
+        }
+        if (discharge[neighborCell] - prevReservedWW[neighborCell] <= 0) {
           next
         }
         # Select relevant cells
-        selectCells        <- c(n, rs$downstreamcells[[n]])
-        names(selectCells) <- rs$isoCoord[selectCells]
+        selectCells <- c(n, rs$downstreamcells[[n]])
+        selectedCells <- match(selectCells, cells)
+        if (anyNA(selectedCells)) {
+          stop("Neighbor downstream cells are not part of selected discharge cells")
+        }
         # Function inputs
         inLISTneighbor    <- list(currReqWW = missingWW,
                                   currReqWC = missingWC)
-        inoutLISTneighbor <- list(discharge = discharge[names(selectCells)],
-                                  prevReservedWW = prevReservedWW[names(selectCells)])
+        inoutLISTneighbor <- list(discharge = discharge[selectedCells],
+                                  prevReservedWW = prevReservedWW[selectedCells],
+                                  cells = selectCells)
 
         # Neighbor Water Provision
         tmp <- toolRiverDischargeAllocation(c = n, rs = rs,
@@ -129,8 +153,8 @@ toolRiverDischargeAllocation <- function(rs, c,
                                             iteration = "neighbor",
                                             inLIST = inLISTneighbor,
                                             inoutLIST = inoutLISTneighbor)
-        discharge[names(selectCells)]       <- tmp$discharge
-        prevReservedWW[names(selectCells)]  <- tmp$prevReservedWW
+        discharge[selectedCells]      <- tmp$discharge
+        prevReservedWW[selectedCells] <- tmp$prevReservedWW
 
         # update reserved water in respective neighboring cell (current cell)
         fromNeighborWW <- fromNeighborWW + tmp$currWWlocal
