@@ -54,9 +54,27 @@ toolNeighborUpDownProvision <- function(rs, transDist,
   cellsDischargeList <- lapply(seq_len(l),
                                function(cell) as.integer(c(cell,
                                                            rs$downstreamcells[[cell]])))
-  dischargeUpdateCells <- seq_len(l)
-  dischargeUpdateCells <- dischargeUpdateCells[order(rs$calcorder[dischargeUpdateCells],
+  directUpstreamList <- vector("list", l)
+  for (cell in seq_len(l)) {
+    nextCell <- rs$nextcell[cell]
+    if (nextCell > 0) {
+      directUpstreamList[[nextCell]] <- c(directUpstreamList[[nextCell]], cell)
+    }
+  }
+  directUpstreamCell <- integer(l)
+  for (cell in seq_len(l)) {
+    nUpstream <- length(directUpstreamList[[cell]])
+    if (nUpstream == 1L) {
+      directUpstreamCell[cell] <- directUpstreamList[[cell]]
+    } else if (nUpstream > 1L) {
+      directUpstreamCell[cell] <- -1L
+    }
+  }
+  directUpstreamList <- lapply(directUpstreamList,
+                               function(upstreamCells) {
+                                 upstreamCells[order(rs$calcorder[upstreamCells],
                                                      decreasing = FALSE)]
+                               })
 
   # initialize objects
   fracFulfilled <- missWW
@@ -97,6 +115,7 @@ toolNeighborUpDownProvision <- function(rs, transDist,
       tmpMissWC <- missWC[, y, scen]
       tmpPrevWW <- prevWW[, y, scen]
       tmpPrevWC <- prevWC[, y, scen]
+      tmpRunoffWOEvap <- listNeighborIN$runoffWOEvap[, y, scen]
 
       ###################################################
       ### Iterations of Neighbor Cell Water Provision ###
@@ -165,6 +184,8 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         cellsCalc <- unique(c(cellsCalc, unlist(rs$downstreamcells[cellsCalc])))
         cellsCalc <- cellsCalc[order(rs$calcorder[cellsCalc], decreasing = FALSE)]
 
+        dischargeBeforeNeighborRound <- tmpDischarge
+
         # Repeat Upstream-Downstream Reservation for
         # neighboring cells
         for (c in cellsCalc) {
@@ -197,11 +218,19 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         tmpRequestWWlocal <- fracFulfilled * tmpRequestWWtotal
         tmpPrevWW <- tmpPrevWW + tmpRequestWWlocal
 
-        # Update discharge given reserved water (consumptive)
-        tmpDischarge <- toolRiverDischargeUpdate(rs = rs,
-                                                 runoffWOEvap = listNeighborIN$runoffWOEvap[, y, scen],
-                                                 watCons = tmpPrevWC,
-                                                 cellsCalc = dischargeUpdateCells)
+        # Update only cells affected by additional consumptive use in this
+        # neighbor round. The discharge effect of a consumption change propagates
+        # from the giving cell through all downstream cells.
+        cellsDischargeUpdate <- unique(unlist(cellsDischargeList[which(tmpRequestWClocal != 0)],
+                                              use.names = FALSE))
+        cellsDischargeUpdate <- cellsDischargeUpdate[order(rs$calcorder[cellsDischargeUpdate],
+                                                           decreasing = FALSE)]
+        tmpDischarge <- toolRiverDischargeUpdateAffectedCells(runoffWOEvap = tmpRunoffWOEvap,
+                                                              watCons = tmpPrevWC,
+                                                              cellsCalc = cellsDischargeUpdate,
+                                                              previousDischarge = dischargeBeforeNeighborRound,
+                                                              directUpstreamList = directUpstreamList,
+                                                              directUpstreamCell = directUpstreamCell)
 
         # Assign reserved flows to cell that had requested the water
         fracFromNeighbor <- .assignToMain(requestingList = requestingList,
