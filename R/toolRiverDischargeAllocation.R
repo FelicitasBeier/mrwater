@@ -115,12 +115,11 @@ toolRiverDischargeAllocation <- function(rs, c,
     missingWC <- currReqWC - currWClocal
 
     neighborsOfC <- rs$neighborcell[[c]]
-    # Neighbor Irrigation (under "optimization" scenario)
+    # Neighbor Water Provision
     if ((transDist != 0) &&
           !is.null(neighborsOfC) &&
           length(neighborsOfC) > 0 &&
           (missingWW > 1e-4 || missingWC > 1e-4)) {
-      # Water Allocation in neighboring cells of c
       # Loop over neighbor cells (by distance) until water requirements fulfilled
       for (n in neighborsOfC) {
 
@@ -130,7 +129,8 @@ toolRiverDischargeAllocation <- function(rs, c,
         if (is.na(neighborCell)) {
           stop("Neighbor cell is not part of selected discharge cells")
         }
-        if (discharge[neighborCell] - prevReservedWW[neighborCell] <= 0) {
+        avlWatWWNeighbor <- discharge[neighborCell] - prevReservedWW[neighborCell]
+        if (avlWatWWNeighbor <= 0) {
           next
         }
         # Select relevant cells
@@ -139,30 +139,33 @@ toolRiverDischargeAllocation <- function(rs, c,
         if (anyNA(selectedCells)) {
           stop("Neighbor downstream cells are not part of selected discharge cells")
         }
-        # Function inputs
-        inLISTneighbor    <- list(currReqWW = missingWW,
-                                  currReqWC = missingWC)
-        inoutLISTneighbor <- list(discharge = discharge[selectedCells],
-                                  prevReservedWW = prevReservedWW[selectedCells],
-                                  cells = selectCells)
+        # Allocation from selected neighbor cell
+        if (missingWW > 0 && avlWatWWNeighbor > 0) {
+          fracNeighbor <- min(avlWatWWNeighbor / missingWW, 1)
 
-        # Neighbor Water Provision
-        tmp <- toolRiverDischargeAllocation(c = n, rs = rs,
-                                            downCells = selectCells[-1],
-                                            transDist = 0,
-                                            iteration = "neighbor",
-                                            inLIST = inLISTneighbor,
-                                            inoutLIST = inoutLISTneighbor)
-        discharge[selectedCells]      <- tmp$discharge
-        prevReservedWW[selectedCells] <- tmp$prevReservedWW
+          if (missingWC > 0 && length(selectedCells) > 1) {
+            downstreamNeighborCells <- selectedCells[-1]
+            avlWatWC <- max(min(discharge[downstreamNeighborCells] -
+                                  prevReservedWW[downstreamNeighborCells]), 0)
+            fracNeighbor <- min(avlWatWC / missingWC, fracNeighbor)
+          }
+        } else {
+          fracNeighbor <- 0
+        }
+
+        neighborWClocal <- missingWC * fracNeighbor
+        neighborWWlocal <- missingWW * fracNeighbor
+
+        discharge[selectedCells] <- discharge[selectedCells] - neighborWClocal
+        prevReservedWW[neighborCell] <- prevReservedWW[neighborCell] + neighborWWlocal
 
         # update reserved water in respective neighboring cell (current cell)
-        fromNeighborWW <- fromNeighborWW + tmp$currWWlocal
-        fromNeighborWC <- fromNeighborWC + tmp$currWClocal
+        fromNeighborWW <- fromNeighborWW + neighborWWlocal
+        fromNeighborWC <- fromNeighborWC + neighborWClocal
 
         # Update locally missing water in c
-        missingWW <- missingWW - tmp$currWWlocal
-        missingWC <- missingWC - tmp$currWClocal
+        missingWW <- missingWW - neighborWWlocal
+        missingWC <- missingWC - neighborWClocal
 
         # Checks
         if (round(missingWW, digits = 4) < 0) {
