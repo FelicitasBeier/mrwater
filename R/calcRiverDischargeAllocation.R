@@ -224,10 +224,12 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
     # Pre-compute downstream and allocation subsets per cell
     allocationDownCells <- allocationSelectCells <- vector("list", length(rs$cells))
+    allocationCells <- vector("list", length(rs$cells))
     for (cell in rs$cells) {
       neighborCells <- if (transDist != 0) rs$neighborcell[[cell]] else NULL
+      neighborDownCells <- NULL
       if (length(rs$downstreamcells[neighborCells]) > 0) {
-        neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
+        neighborDownCells <- unlist(rs$downstreamcells[neighborCells])
       }
 
       downCells <- NULL
@@ -238,7 +240,30 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
       # list of downstream cells of relevant cell in c-loop
       allocationDownCells[[cell]] <- downCells
       # list of all relevant cells of relevant cell in c-loop
-      allocationSelectCells[[cell]] <- unique(c(cell, downCells, neighborCells))
+      selectCells <- unique(c(cell, downCells, neighborCells, neighborDownCells))
+      allocationSelectCells[[cell]] <- selectCells
+      localCell <- match(cell, selectCells)
+      localDownCells <- match(downCells, selectCells)
+      invalidLocalCells <- is.na(localCell) ||
+        anyNA(localDownCells)
+      if (invalidLocalCells) {
+        stop("Could not precompute local allocation cells")
+      }
+      allocationCells[[cell]] <- list(cells = selectCells,
+                                      localCell = localCell,
+                                      localDownCells = localDownCells)
+      if (length(neighborCells) > 0) {
+        allocationCells[[cell]]$neighborCells <- neighborCells
+        allocationCells[[cell]]$neighborCell <- match(neighborCells, selectCells)
+        allocationCells[[cell]]$neighborSelectedCells <- lapply(neighborCells, function(n) {
+          match(c(n, rs$downstreamcells[[n]]), selectCells)
+        })
+        invalidNeighborCells <- anyNA(allocationCells[[cell]]$neighborCell) ||
+          any(vapply(allocationCells[[cell]]$neighborSelectedCells, anyNA, logical(1)))
+        if (invalidNeighborCells) {
+          stop("Could not precompute local neighbor allocation cells")
+        }
+      }
     }
 
     # In case of optimization, glocellrank differs in each year:
@@ -270,19 +295,17 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
             # Select relevant cells from pre-computed list
             downCells   <- allocationDownCells[[c]]
             selectCells <- allocationSelectCells[[c]]
-            # Function inputs
-            inLIST    <- list(currReqWW = tmpCurrReqWW[c],
-                              currReqWC = tmpCurrReqWC[c])
+            inLIST <- list(currReqWW = tmpCurrReqWW[c],
+                           currReqWC = tmpCurrReqWC[c],
+                           allocationCells = allocationCells[[c]])
             inoutLIST <- list(discharge = tmpDischarge[selectCells],
-                              prevReservedWW = tmpPrevReservedWW[selectCells],
-                              cells = selectCells)
-
+                              prevReservedWW = tmpPrevReservedWW[selectCells])
             tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                                 downCells = downCells,
                                                 transDist = transDist,
                                                 iteration = "main",
-                                                inoutLIST = inoutLIST,
-                                                inLIST = inLIST)
+                                                inLIST = inLIST,
+                                                inoutLIST = inoutLIST)
 
             tmpDischarge[selectCells]      <- tmp$discharge
             tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW

@@ -45,6 +45,19 @@ toolNeighborUpDownProvision <- function(rs, transDist,
   l <- length(rs$cells)
   maxNeighbors <- max(lengths(rs$neighborcell))
 
+  # Store sorted neighbor lists in a rectangular matrix so one neighbor rank can
+  # be selected for many requesting cells at once inside the allocation rounds.
+  # Rows are main cells; columns are neighbor rank by transport distance.
+  neighborCellMatrix <- matrix(NA, nrow = l, ncol = maxNeighbors)
+  if (maxNeighbors > 0) {
+    for (cell in seq_len(l)) {
+      neighbors <- rs$neighborcell[[cell]]
+      if (!is.null(neighbors) && length(neighbors) > 0) {
+        neighborCellMatrix[cell, seq_along(neighbors)] <- as.integer(neighbors)
+      }
+    }
+  }
+
   # Pre-compute upstream-/downstream-cell subsets per cell.
   # River topology is invariant across years, scenarios and neighbor rounds,
   # so these subsets are built once here before the allocation loops.
@@ -64,10 +77,10 @@ toolNeighborUpDownProvision <- function(rs, transDist,
   directUpstreamCell <- integer(l)
   for (cell in seq_len(l)) {
     nUpstream <- length(directUpstreamList[[cell]])
-    if (nUpstream == 1L) {
+    if (nUpstream == 1) {
       directUpstreamCell[cell] <- directUpstreamList[[cell]]
-    } else if (nUpstream > 1L) {
-      directUpstreamCell[cell] <- -1L
+    } else if (nUpstream > 1) {
+      directUpstreamCell[cell] <- -1
     }
   }
   directUpstreamList <- lapply(directUpstreamList,
@@ -138,40 +151,52 @@ toolNeighborUpDownProvision <- function(rs, transDist,
           flaggedEmpty[unlist(cellsRequestList[flag], use.names = FALSE)] <- TRUE
         }
 
-        # neighbor cells that will be skipped
-        nskipped <- numeric(l)
-
         cellsRequestingNeighborWater <- which(tmpMissWW > 0)
 
-        # Loop over main cells (k) to request water from neighbors (n)
+        # Select the next usable neighbor for each requesting main cell in this
+        # neighbor-distance round.
         requestingList <- vector("list", l)
-        for (k in cellsRequestingNeighborWater) {
+        if (length(cellsRequestingNeighborWater) > 0) {
+          neighborPosition <- rep.int(i, length(cellsRequestingNeighborWater))
+          selectedNeighbor <- neighborCellMatrix[cbind(cellsRequestingNeighborWater,
+                                                       neighborPosition)]
 
-          # neighbors of main cell k (extracted once)
-          neighborsOfK <- rs$neighborcell[[k]]
-
-          if (!is.null(neighborsOfK) &&
-              !is.na(neighborsOfK[nskipped[k] + i])) {
-
-            # Select cells that may provide water
-            n <- neighborsOfK[nskipped[k] + i]
-            while (!is.na(n) && flaggedEmpty[n]) {
-              nskipped[k] <- nskipped[k] + 1
-              n <- neighborsOfK[nskipped[k] + i]
+          # If the selected neighbor has insufficient available water, move only
+          # those requesting cells to their next neighbor rank until a usable
+          # neighbor is found or the neighbor list is exhausted.
+          validNeighbor <- !is.na(selectedNeighbor)
+          while (any(validNeighbor & flaggedEmpty[selectedNeighbor])) {
+            skipped <- validNeighbor & flaggedEmpty[selectedNeighbor]
+            neighborPosition[skipped] <- neighborPosition[skipped] + 1
+            skippedIndex <- which(skipped)
+            validPosition <- neighborPosition[skippedIndex] <= maxNeighbors
+            selectedNeighbor[skippedIndex] <- NA
+            if (any(validPosition)) {
+              updateIndex <- skippedIndex[validPosition]
+              updateRows <- cbind(cellsRequestingNeighborWater[updateIndex],
+                                  neighborPosition[updateIndex])
+              selectedNeighbor[updateIndex] <- neighborCellMatrix[updateRows]
             }
+            validNeighbor <- !is.na(selectedNeighbor)
+          }
 
-            # Assign water requested by main cell k from neighboring cell n
-            if (!is.na(n)) {
-              tmpRequestWWlocal[n] <- tmpRequestWWlocal[n] + tmpMissWW[k]
-              tmpRequestWClocal[n] <- tmpRequestWClocal[n] + tmpMissWC[k]
+          requestingCells <- cellsRequestingNeighborWater[validNeighbor]
+          givingCells <- selectedNeighbor[validNeighbor]
+          if (length(givingCells) > 0) {
 
-              # Extract list of cells that have requested water from neighbor cell
-              if (is.null(requestingList[[n]])) {
-                requestingList[[n]] <- k
-              } else {
-                requestingList[[n]] <- c(requestingList[[n]], k)
-              }
-            }
+            # Sum all requests by giving neighbor cell and keep the reverse
+            # mapping needed later to assign fulfilled water back to main cells.
+            requestWWByGiving <- rowsum(tmpMissWW[requestingCells],
+                                        givingCells,
+                                        reorder = FALSE)
+            requestWCByGiving <- rowsum(tmpMissWC[requestingCells],
+                                        givingCells,
+                                        reorder = FALSE)
+            givingCellsUnique <- as.integer(rownames(requestWWByGiving))
+            tmpRequestWWlocal[givingCellsUnique] <- requestWWByGiving[, 1]
+            tmpRequestWClocal[givingCellsUnique] <- requestWCByGiving[, 1]
+            requestingSplit <- split(requestingCells, givingCells)
+            requestingList[as.integer(names(requestingSplit))] <- requestingSplit
           }
         }
         # Total water requested in this round of neighbor water provision
@@ -212,8 +237,10 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         # Water reserved in this round is reserved as previous use
         # before next round of neighbor water provision
         tmpPrevWC <- tmpPrevWC + tmpRequestWClocal
+        # Convert the possibly reduced consumptive request into a fulfillment
+        # fraction relative to the original request of this neighbor round.
         fracFulfilled <- ifelse(tmpRequestWCtotal > 0,
-                                tmpRequestWClocal / tmpRequestWCtotal, #### CHECK: Does this make sense? Or has tmpRequestWCtotal been adjusted in-between?
+                                tmpRequestWClocal / tmpRequestWCtotal,
                                 0)
         tmpRequestWWlocal <- fracFulfilled * tmpRequestWWtotal
         tmpPrevWW <- tmpPrevWW + tmpRequestWWlocal

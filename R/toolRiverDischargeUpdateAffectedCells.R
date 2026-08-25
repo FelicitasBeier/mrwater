@@ -29,10 +29,10 @@ toolRiverDischargeUpdateAffectedCells <- function(runoffWOEvap, watCons,
     # select upstream cell of current cell
     upstreamCell <- directUpstreamCell[c]
 
-    if (upstreamCell > 0L) {
+    if (upstreamCell > 0) {
       # re-calculate inflow from upstream cell
       inflow <- discharge[upstreamCell]
-    } else if (upstreamCell == 0L) {
+    } else if (upstreamCell == 0) {
       inflow <- 0
     } else {
       inflow <- 0
