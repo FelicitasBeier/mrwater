@@ -111,7 +111,7 @@ toolRiverDischargeAllocation <- function(rs, c,
         # If withdrawal constraint not fulfilled in neighbor cell:
         # jump directly to next neighbor
         if (discharge[names(n)] - prevReservedWW[names(n)] <= 0) {
-          break # To Do: this should be next (just temporary test to find bug)
+          next
         }
         # Select relevant cells
         selectCells        <- c(n, rs$downstreamcells[[n]])
