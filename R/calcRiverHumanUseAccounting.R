@@ -424,11 +424,19 @@ calcRiverHumanUseAccounting <- function(iteration,
   }
   # Total water (summed basin discharge + consumed)
   # must be same as natural summed basin discharge
-  if (any(abs(round(dimSums(natDischarge[unique(rs$endcell), , ],
-                            dim = 1) - totalWat,
-                    digits = 6)) > 1e-6)) {
-    stop("In calcRiverHumanUseAccounting:
-          Water has been lost during the Neighbor Water Provision Algorithm")
+  waterBalanceResidual <- dimSums(natDischarge[unique(rs$endcell), , ],
+                                  dim = 1) - totalWat
+  # tolerance for check (unit is mio. m^3), so: 1 m^3
+  tolerance <- 1e-06
+  maxResidual <- max(abs(waterBalanceResidual), na.rm = TRUE)
+
+  if (maxResidual >= tolerance) {
+    stop(paste0(
+      "In calcRiverHumanUseAccounting:\n",
+      "          Water has been lost during the Neighbor Water Provision Algorithm. ",
+      "Water balance residual exceeds tolerance. ",
+      "max abs residual = ", signif(maxResidual, 6), " mio. m^3"
+    ))
   }
 
   # Description

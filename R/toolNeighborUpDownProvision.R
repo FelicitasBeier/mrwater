@@ -35,19 +35,19 @@ toolNeighborUpDownProvision <- function(rs, transDist,
                                         listNeighborIN) {
 
   # read-in inputs
-  prevWW <- listNeighborIN$prevReservedWW
-  prevWC <- listNeighborIN$prevReservedWC
-  missWW <- listNeighborIN$missingWW
-  missWC <- listNeighborIN$missingWC
+  prevWW    <- listNeighborIN$prevReservedWW
+  prevWC    <- listNeighborIN$prevReservedWC
+  missWW    <- listNeighborIN$missingWW
+  missWC    <- listNeighborIN$missingWC
   discharge <- listNeighborIN$discharge
   inaccD    <- listNeighborIN$inaccD
 
-  l <- length(rs$cells)
+  l            <- length(rs$cells)
   maxNeighbors <- max(lengths(rs$neighborcell))
 
   # Store sorted neighbor lists in a rectangular matrix so one neighbor rank can
   # be selected for many requesting cells at once inside the allocation rounds.
-  # Rows are main cells; columns are neighbor rank by transport distance.
+  # Rows are main cells; columns are neighbor cells, ranked by transport distance.
   neighborCellMatrix <- matrix(NA, nrow = l, ncol = maxNeighbors)
   if (maxNeighbors > 0) {
     for (cell in seq_len(l)) {
@@ -95,23 +95,45 @@ toolNeighborUpDownProvision <- function(rs, transDist,
   toNeighborWW <- toNeighborWC <- fracFulfilled
   fromNeighborWW <- fromNeighborWC <- fracFulfilled
 
-  ### Internal Function ###
+  ######################################
+  ### Internal Function for neighbor ###
+  ### cell water allocation          ###
+  ######################################
   # assign fulfilled water to neighbor cell that requested water
-  .assignToMain <- function(requestingList,
+  .assignToMain <- function(requestingCellsByGivingCell,
+                            cellsGiving,
                             missing, toNeighbor) {
     fracAssigned <- numeric(length(missing))
-    cellsGiving  <- which(toNeighbor > 0)
+    # `cellsGiving` contains the neighbor-cell indices that received a request
+    # in this round. Only some of them can actually fulfill requested water after
+    # upstream/downstream accounting (cellsGivingFulfilled).
+    cellsGivingFulfilled <- toNeighbor[cellsGiving] > 0
+    cellsGiving <- cellsGiving[cellsGivingFulfilled]
+    # list of requesting cells by giving cell:
+    # each list element contains the cells requesting water from one giving neighbor cell.
+    # The list names are the giving-cell indices, and the list values are the requesting-cell indices
+    requestingCellsByGivingCell <- requestingCellsByGivingCell[cellsGivingFulfilled]
 
-    for (s in cellsGiving) {
-      cellReceiving <- requestingList[[s]]
+    # Loop through neighbor cells
+    for (i in seq_along(cellsGiving)) {
+      # `i` is the position in the grouped list of giving neighbor cells
+      # `s` is the actual giving-cell index used for vector lookups
+      s <- cellsGiving[i]
+      cellReceiving <- requestingCellsByGivingCell[[i]]
+      # Missing consumptive water in the main cells that requested water from
+      # giving neighbor cell s. These values determine each receiver's share.
       missReceiving <- missing[cellReceiving]
       shr           <- missReceiving / sum(missReceiving)
       # volume assigned to neighbor
       fromNeighbor <- shr * toNeighbor[s]
 
-      fracAssigned[cellReceiving] <- ifelse(missReceiving > 0,
-                                            fromNeighbor / missReceiving,
-                                            0)
+      # Only cells with positive missing water can receive a non-zero
+      # fulfillment fraction; zero-missing cells stay at the initialized 0.
+      positiveReceiving <- missReceiving > 0
+      if (any(positiveReceiving)) {
+        fracAssigned[cellReceiving[positiveReceiving]] <-
+          (fromNeighbor / missReceiving)[positiveReceiving]
+      }
     }
     return(fracAssigned)
   }
@@ -154,8 +176,10 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         cellsRequestingNeighborWater <- which(tmpMissWW > 0)
 
         # Select the next usable neighbor for each requesting main cell in this
-        # neighbor-distance round.
-        requestingList <- vector("list", l)
+        # neighbor-distance round. The mapping is first represented per
+        # requesting cell, then grouped below by the selected giving cell.
+        requestingCellsByGivingCell <- list()
+        cellsGiving <- integer(0)
         if (length(cellsRequestingNeighborWater) > 0) {
           neighborPosition <- rep.int(i, length(cellsRequestingNeighborWater))
           selectedNeighbor <- neighborCellMatrix[cbind(cellsRequestingNeighborWater,
@@ -181,22 +205,25 @@ toolNeighborUpDownProvision <- function(rs, transDist,
           }
 
           requestingCells <- cellsRequestingNeighborWater[validNeighbor]
-          givingCells <- selectedNeighbor[validNeighbor]
-          if (length(givingCells) > 0) {
+          givingCellsByRequest <- selectedNeighbor[validNeighbor]
+          if (length(givingCellsByRequest) > 0) {
 
-            # Sum all requests by giving neighbor cell and keep the reverse
-            # mapping needed later to assign fulfilled water back to main cells.
-            requestWWByGiving <- rowsum(tmpMissWW[requestingCells],
-                                        givingCells,
-                                        reorder = FALSE)
-            requestWCByGiving <- rowsum(tmpMissWC[requestingCells],
-                                        givingCells,
-                                        reorder = FALSE)
-            givingCellsUnique <- as.integer(rownames(requestWWByGiving))
-            tmpRequestWWlocal[givingCellsUnique] <- requestWWByGiving[, 1]
-            tmpRequestWClocal[givingCellsUnique] <- requestWCByGiving[, 1]
-            requestingSplit <- split(requestingCells, givingCells)
-            requestingList[as.integer(names(requestingSplit))] <- requestingSplit
+            # Sum all requests by giving neighbor cell. `givingCellsByRequest`
+            # has one entry per requesting cell, while `givingCellsUnique` has
+            # one entry per neighbor cell that receives a request in this round.
+            requestByGiving <- rowsum(cbind(tmpMissWW[requestingCells],
+                                            tmpMissWC[requestingCells]),
+                                      givingCellsByRequest,
+                                      reorder = FALSE)
+            givingCellsUnique <- as.integer(rownames(requestByGiving))
+            tmpRequestWWlocal[givingCellsUnique] <- requestByGiving[, 1]
+            tmpRequestWClocal[givingCellsUnique] <- requestByGiving[, 2]
+            # Reverse map from giving neighbor cell to all main cells that
+            # requested water from it. Names are actual giving-cell indices;
+            # list positions are aligned with `cellsGiving`.
+            requestingCellsByGivingCell <-
+              split(requestingCells, givingCellsByRequest)
+            cellsGiving <- as.integer(names(requestingCellsByGivingCell))
           }
         }
         # Total water requested in this round of neighbor water provision
@@ -239,9 +266,10 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         tmpPrevWC <- tmpPrevWC + tmpRequestWClocal
         # Convert the possibly reduced consumptive request into a fulfillment
         # fraction relative to the original request of this neighbor round.
-        fracFulfilled <- ifelse(tmpRequestWCtotal > 0,
-                                tmpRequestWClocal / tmpRequestWCtotal,
-                                0)
+        fracFulfilled <- numeric(l)
+        requestedWC <- tmpRequestWCtotal > 0
+        fracFulfilled[requestedWC] <-
+          (tmpRequestWClocal / tmpRequestWCtotal)[requestedWC]
         tmpRequestWWlocal <- fracFulfilled * tmpRequestWWtotal
         tmpPrevWW <- tmpPrevWW + tmpRequestWWlocal
 
@@ -260,7 +288,9 @@ toolNeighborUpDownProvision <- function(rs, transDist,
                                                               directUpstreamCell = directUpstreamCell)
 
         # Assign reserved flows to cell that had requested the water
-        fracFromNeighbor <- .assignToMain(requestingList = requestingList,
+        fracFromNeighbor <- .assignToMain(requestingCellsByGivingCell =
+                                            requestingCellsByGivingCell,
+                                          cellsGiving = cellsGiving,
                                           missing = tmpMissWC,
                                           toNeighbor = tmpRequestWClocal)
 

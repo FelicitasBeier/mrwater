@@ -287,33 +287,31 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         tmpFromNeighborWW <- fromNeighborWW[, y, scen]
         tmpCurrWWlocal    <- currWWlocal[, y, scen]
         tmpCurrWClocal    <- currWClocal[, y, scen]
+        activeRankedCells <- rankedCells[tmpCurrReqWW[rankedCells] > 1e-4]
 
         # Loop in ranked cell order
-        for (c in rankedCells) {
-          # Only run for cells where water required
-          if (tmpCurrReqWW[c] > 1e-4) {
-            # Select relevant cells from pre-computed list
-            downCells   <- allocationDownCells[[c]]
-            selectCells <- allocationSelectCells[[c]]
-            inLIST <- list(currReqWW = tmpCurrReqWW[c],
-                           currReqWC = tmpCurrReqWC[c],
-                           allocationCells = allocationCells[[c]])
-            inoutLIST <- list(discharge = tmpDischarge[selectCells],
-                              prevReservedWW = tmpPrevReservedWW[selectCells])
-            tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
-                                                downCells = downCells,
-                                                transDist = transDist,
-                                                iteration = "main",
-                                                inLIST = inLIST,
-                                                inoutLIST = inoutLIST)
+        for (c in activeRankedCells) {
+          # Select relevant cells from pre-computed list
+          downCells   <- allocationDownCells[[c]]
+          selectCells <- allocationSelectCells[[c]]
+          inLIST <- list(currReqWW = tmpCurrReqWW[c],
+                         currReqWC = tmpCurrReqWC[c],
+                         allocationCells = allocationCells[[c]])
+          inoutLIST <- list(discharge = tmpDischarge[selectCells],
+                            prevReservedWW = tmpPrevReservedWW[selectCells])
+          tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
+                                              downCells = downCells,
+                                              transDist = transDist,
+                                              iteration = "main",
+                                              inLIST = inLIST,
+                                              inoutLIST = inoutLIST)
 
-            tmpDischarge[selectCells]      <- tmp$discharge
-            tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
-            tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
-            tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
-            tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
-            tmpCurrWClocal[c]    <- tmpCurrWClocal[c] + tmp$currWClocal
-          }
+          tmpDischarge[selectCells]      <- tmp$discharge
+          tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
+          tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
+          tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
+          tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
+          tmpCurrWClocal[c]    <- tmpCurrWClocal[c] + tmp$currWClocal
         }
 
         # Save result for respective scenario
@@ -397,11 +395,19 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
   natDischarge <- .transformObject(x = collapseNames(natDischarge[, , "discharge_nat"]),
                                    gridcells = gridcells,
                                    years = selectyears, names = dimnames)
-  if (any(round(dimSums(natDischarge[unique(rs0$endcell), , ],
-                        dim = 1) - totalWat[, , 1],
-                digits = 6) != 0)) {
-    stop("In calcRiverDischargeAllocation:
-          Water has been lost during the Neighbor Water Provision Algorithm")
+  waterBalanceResidual <- dimSums(natDischarge[unique(rs0$endcell), , ],
+                                  dim = 1) - totalWat[, , 1]
+  # tolerance for check (unit is mio. m^3), so: 1 m^3
+  tolerance <- 1e-06
+  maxResidual <- max(abs(waterBalanceResidual), na.rm = TRUE)
+
+  if (maxResidual >= tolerance) {
+    stop(paste0(
+      "In calcRiverDischargeAllocation:\n",
+      "          Water has been lost during the Neighbor Water Provision Algorithm. ",
+      "Water balance residual exceeds tolerance. ",
+      "max abs residual = ", signif(maxResidual, 6), " mio. m^3"
+    ))
   }
 
   # Check whether discharge inaccessibility constraint is violated
