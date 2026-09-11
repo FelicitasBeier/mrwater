@@ -224,10 +224,12 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
     # Pre-compute downstream and allocation subsets per cell
     allocationDownCells <- allocationSelectCells <- vector("list", length(rs$cells))
+    allocationCells <- vector("list", length(rs$cells))
     for (cell in rs$cells) {
-      neighborCells <- if (transDist > 0) rs$neighborcell[[cell]] else NULL
+      neighborCells <- if (transDist != 0) rs$neighborcell[[cell]] else NULL
+      neighborDownCells <- NULL
       if (length(rs$downstreamcells[neighborCells]) > 0) {
-        neighborCells <- c(neighborCells, unlist(rs$downstreamcells[neighborCells]))
+        neighborDownCells <- unlist(rs$downstreamcells[neighborCells])
       }
 
       downCells <- NULL
@@ -238,7 +240,30 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
       # list of downstream cells of relevant cell in c-loop
       allocationDownCells[[cell]] <- downCells
       # list of all relevant cells of relevant cell in c-loop
-      allocationSelectCells[[cell]] <- unique(c(cell, downCells, neighborCells))
+      selectCells <- unique(c(cell, downCells, neighborCells, neighborDownCells))
+      allocationSelectCells[[cell]] <- selectCells
+      localCell <- match(cell, selectCells)
+      localDownCells <- match(downCells, selectCells)
+      invalidLocalCells <- is.na(localCell) ||
+        anyNA(localDownCells)
+      if (invalidLocalCells) {
+        stop("Could not precompute local allocation cells")
+      }
+      allocationCells[[cell]] <- list(cells = selectCells,
+                                      localCell = localCell,
+                                      localDownCells = localDownCells)
+      if (length(neighborCells) > 0) {
+        allocationCells[[cell]]$neighborCells <- neighborCells
+        allocationCells[[cell]]$neighborCell <- match(neighborCells, selectCells)
+        allocationCells[[cell]]$neighborSelectedCells <- lapply(neighborCells, function(n) {
+          match(c(n, rs$downstreamcells[[n]]), selectCells)
+        })
+        invalidNeighborCells <- anyNA(allocationCells[[cell]]$neighborCell) ||
+          any(vapply(allocationCells[[cell]]$neighborSelectedCells, anyNA, logical(1)))
+        if (invalidNeighborCells) {
+          stop("Could not precompute local neighbor allocation cells")
+        }
+      }
     }
 
     # In case of optimization, glocellrank differs in each year:
@@ -252,36 +277,50 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         stop("Could not map all ranked cells to river structure cells")
       }
 
-      # Loop in ranked cell order
-      for (c in rankedCells) {
-        # Select inputs for different scenarios
-        for (scen in scenarios) {
-          # Only run for cells where water required
-          if (currReqWW[c, y, scen] > 1e-4) {
-            # Select relevant cells from pre-computed list
-            downCells   <- allocationDownCells[[c]]
-            selectCells <- allocationSelectCells[[c]]
-            # Function inputs
-            inLIST    <- list(currReqWW = currReqWW[c, y, scen],
-                              currReqWC = currReqWC[c, y, scen])
-            inoutLIST <- list(discharge = discharge[selectCells, y, scen],
-                              prevReservedWW = prevReservedWW[selectCells, y, scen])
+      for (scen in scenarios) {
+        # Select scenario and reduce object size (for performance)
+        tmpDischarge      <- discharge[, y, scen]
+        tmpPrevReservedWW <- prevReservedWW[, y, scen]
+        tmpCurrReqWW      <- currReqWW[, y, scen]
+        tmpCurrReqWC      <- currReqWC[, y, scen]
+        tmpFromNeighborWC <- fromNeighborWC[, y, scen]
+        tmpFromNeighborWW <- fromNeighborWW[, y, scen]
+        tmpCurrWWlocal    <- currWWlocal[, y, scen]
+        tmpCurrWClocal    <- currWClocal[, y, scen]
+        activeRankedCells <- rankedCells[tmpCurrReqWW[rankedCells] > 1e-4]
 
-            tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
-                                                downCells = downCells,
-                                                transDist = transDist,
-                                                iteration = "main",
-                                                inoutLIST = inoutLIST,
-                                                inLIST = inLIST)
+        # Loop in ranked cell order
+        for (c in activeRankedCells) {
+          # Select relevant cells from pre-computed list
+          downCells   <- allocationDownCells[[c]]
+          selectCells <- allocationSelectCells[[c]]
+          inLIST <- list(currReqWW = tmpCurrReqWW[c],
+                         currReqWC = tmpCurrReqWC[c],
+                         allocationCells = allocationCells[[c]])
+          inoutLIST <- list(discharge = tmpDischarge[selectCells],
+                            prevReservedWW = tmpPrevReservedWW[selectCells])
+          tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
+                                              downCells = downCells,
+                                              transDist = transDist,
+                                              iteration = "main",
+                                              inLIST = inLIST,
+                                              inoutLIST = inoutLIST)
 
-            discharge[selectCells, y, scen]      <- tmp$discharge
-            prevReservedWW[selectCells, y, scen] <- tmp$prevReservedWW
-            fromNeighborWC[c, y, scen] <- fromNeighborWC[c, y, scen] + tmp$fromNeighborWC
-            fromNeighborWW[c, y, scen] <- fromNeighborWW[c, y, scen] + tmp$fromNeighborWW
-            currWWlocal[c, y, scen]    <- currWWlocal[c, y, scen] + tmp$currWWlocal
-            currWClocal[c, y, scen]    <- currWClocal[c, y, scen] + tmp$currWClocal
-          }
+          tmpDischarge[selectCells]      <- tmp$discharge
+          tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
+          tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
+          tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
+          tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
+          tmpCurrWClocal[c]    <- tmpCurrWClocal[c] + tmp$currWClocal
         }
+
+        # Save result for respective scenario
+        discharge[, y, scen]      <- tmpDischarge
+        prevReservedWW[, y, scen] <- tmpPrevReservedWW
+        fromNeighborWC[, y, scen] <- tmpFromNeighborWC
+        fromNeighborWW[, y, scen] <- tmpFromNeighborWW
+        currWWlocal[, y, scen]    <- tmpCurrWWlocal
+        currWClocal[, y, scen]    <- tmpCurrWClocal
       }
     }
 
@@ -356,11 +395,19 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
   natDischarge <- .transformObject(x = collapseNames(natDischarge[, , "discharge_nat"]),
                                    gridcells = gridcells,
                                    years = selectyears, names = dimnames)
-  if (any(round(dimSums(natDischarge[unique(rs0$endcell), , ],
-                        dim = 1) - totalWat[, , 1],
-                digits = 6) != 0)) {
-    stop("In calcRiverDischargeAllocation:
-          Water has been lost during the Neighbor Water Provision Algorithm")
+  waterBalanceResidual <- dimSums(natDischarge[unique(rs0$endcell), , ],
+                                  dim = 1) - totalWat[, , 1]
+  # tolerance for check (unit is mio. m^3), so: 1 m^3
+  tolerance <- 1e-06
+  maxResidual <- max(abs(waterBalanceResidual), na.rm = TRUE)
+
+  if (maxResidual >= tolerance) {
+    stop(paste0(
+      "In calcRiverDischargeAllocation:\n",
+      "          Water has been lost during the Neighbor Water Provision Algorithm. ",
+      "Water balance residual exceeds tolerance. ",
+      "max abs residual = ", signif(maxResidual, 6), " mio. m^3"
+    ))
   }
 
   # Check whether discharge inaccessibility constraint is violated

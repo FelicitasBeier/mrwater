@@ -165,7 +165,7 @@ calcIrrigationDataMAgPIE <- function(output,
   ssp2    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp2)[, , "off"][, , "ssp2"]),
                            dim = 3.1, add = "scen25", nm = "ssp2")
   ssp2efp <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp2)[, , "on"][, , "ssp2"]),
-                           dim = 3.1, add = "scen25", nm = "ssp2efp")
+                           dim = 3.1, add = "scen25", nm = "ssp2efp") ### To Do: call calc only once and subset after for those with identical arguments.
   ssp3    <- add_dimension(collapseNames(.runCalc(scenarioArgs$ssp3)[, , "off"][, , "ssp3"]),
                            dim = 3.1, add = "scen25", nm = "ssp3")
   # To Do: implement full set of SSP/SDP scenarios

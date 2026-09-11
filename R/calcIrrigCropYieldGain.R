@@ -61,7 +61,8 @@ calcIrrigCropYieldGain <- function(lpjml, climatetype, priceAgg,
   }
 
   if (any(yieldGain < 0)) {
-    warning("There are negative yield gains for certain crops. These are set to 0.
+    message("There are negative yield gains through irrigation for certain crops.
+            These are set to 0.
             Under single cropping, this is possible when the growing period is shifted
             together with irrigation.")
   }
