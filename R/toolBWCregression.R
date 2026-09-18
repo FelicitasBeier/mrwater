@@ -70,9 +70,17 @@ toolBWCregression <- function(y, x) {
     }
   }
 
-  # Check
-  mstools::toolExpectTrue(all(r2 > 0.7, na.rm = TRUE), "BWC regression has acceptable R2",
-                          level = 0, falseStatus = "warn")
+  # Check goodness of fit
+  r2min <- min(r2, na.rm = TRUE)
+  r2minWhere <- magclass::where(r2 == r2min)$true$individual
+  r2minWhere <- paste0(r2minWhere[, 2], "/", r2minWhere[, 3],
+                       collapse = "; ")
+
+  # Return note for low R2
+  mstools::toolExpectTrue(all(r2 > 0.7, na.rm = TRUE),
+                          paste0("BWC regression has acceptable R2: minimum R2 = ",
+                                 round(r2min, digits = 3), " for ", r2minWhere),
+                          level = 0, falseStatus = "note")
 
   # Save table with regression outputs for checking
   tmp        <- as.data.frame(tmp)[, c("Region", "Data1", "Data2", "Value")]
