@@ -83,13 +83,14 @@ toolBWCregression <- function(y, x) {
                           level = 0, falseStatus = "note")
 
   # Save table with regression outputs for checking
-  tmp        <- as.data.frame(tmp)[, c("Region", "Data1", "Data2", "Value")]
-  names(tmp) <- c("Regression", "System", "Crop", "Value")
+  tmp        <- as.data.frame(tmp)[, c("Year", "Region", "Data1", "Data2", "Value")]
+  names(tmp) <- c("Year", "Regression", "System", "Crop", "Value")
   tmp$Value  <- round(tmp$Value, digits = 2)
   tmp        <- paste0(capture.output({
     write.csv(tmp, row.names = FALSE)
   }))
-  writeLines(tmp, "BWCregression.log")
+  writeLines(tmp, sprintf("BWCregression_%s.log",
+                          format(Sys.time(), "%Y%m%dT%H%M%S")))
 
   out <- list(a = a,
               b = b,
