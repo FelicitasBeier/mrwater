@@ -65,7 +65,7 @@ calcBlueWaterConsumption <- function(selectyears, iniyear,
   # but proxied with an LPJmL crop with seasonality ("groundnut").
   # Therefore, both single and multiple cropping blue water consumption has to be adjusted
   # by assigning both seasons water requirements to this crop
-  if (lpj2mag$LPJmL5[lpj2mag$MAgPIE == "oilpalm"] == "groundnut") {
+  if (lpj2mag$LPJmL5[lpj2mag$MAgPIE == "oilpalm"] == "oil crops groundnut") {
     bwc1st[, , "oilpalm"] <- bwc1st[, , "oilpalm"] + bwc2nd[, , "oilpalm"]
   }
 
