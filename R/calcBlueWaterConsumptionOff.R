@@ -192,12 +192,12 @@ calcBlueWaterConsumptionOff <- function(selectyears, iniyear,
   if (any(bwc2nd < 0)) {
     # warning only if more than 1% are negative
     for (i in getItems(bwc2nd, dim = 3)) {
-      condition <- bwc2nd[, , i]
-      if (sum(condition) / sum(!condition) > 0.01) {
-        stop(paste0("More than 1% of the grid cells have negative
-                    blue water consumption in the off season
-                    for crop ", i, ".
-                    Check calcBlueWaterConsumptionOff!"))
+      # share of negative values (over grid cells and years) for this system and crop
+      shrNegative <- mean(bwc2nd[, , i] < 0)
+      if (shrNegative > 0.01) {
+        vcat(0, paste0(round(shrNegative * 100, digits = 1), "% of the values have negative ",
+                       "blue water consumption in the off season for ", i, ". ",
+                       "They are set to 0. Check calcBlueWaterConsumptionOff!"))
       }
     }
   }
