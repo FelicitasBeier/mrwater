@@ -156,10 +156,10 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
     # cap above (pmin) is applied to withdrawal and consumption separately and can bind for one only.
     # The smaller share sets the area below.
     if (any(abs(wwShr - wcShr) > 1e-3)) {
-      stop("There seems to be a mismatch in consumption and withdrawal ",
-           "in calcIrrigAreaActuallyCommitted. ",
-           "Please make sure that the fulfilled ratio is the same ",
-           "for consumption and withdrawal")
+      warning("There seems to be a mismatch in consumption and withdrawal ",
+              "in calcIrrigAreaActuallyCommitted. ",
+              "Please make sure that the fulfilled ratio is the same ",
+              "for consumption and withdrawal")
     }
     if (any(round(max(wcShr), digits = 6) > 1)) {
       stop("The actually irrigated area is over-fulfilled. This should not be the case.
