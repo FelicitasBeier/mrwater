@@ -155,12 +155,11 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
     # The two shares can differ by more than rounding, probably because the fossil groundwater
     # cap above (pmin) is applied to withdrawal and consumption separately and can bind for one only.
     # The smaller share sets the area below.
-    if (any(abs(wwShr - wcShr) > 1e-3)) {
-      warning("There seems to be a mismatch in consumption and withdrawal ",
-              "in calcIrrigAreaActuallyCommitted. ",
-              "Please make sure that the fulfilled ratio is the same ",
-              "for consumption and withdrawal")
-    }
+    mstools::toolExpectTrue(all(abs(wwShr - wcShr) <= 1e-3),
+                            paste0("Fulfilled ratios of consumption and withdrawal agree to 1e-3 ",
+                                   "in calcIrrigAreaActuallyCommitted (largest difference: ",
+                                   signif(max(abs(wwShr - wcShr)), 2), ")"),
+                            level = 0, falseStatus = "note")
     if (any(round(max(wcShr), digits = 6) > 1)) {
       stop("The actually irrigated area is over-fulfilled. This should not be the case.
            It may be related to the fossilGW argument. Please check mrwater::calcIrrigAreaActuallyCommitted.")
