@@ -67,12 +67,14 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   ######################################
   # Blue water consumption regressions #
   ######################################
+  # The interim outputs are the filtered inputs of the regression. Cells that are left out
+  # of the regression are NA on purpose, so the NA warning is switched off here
   calcOutput("BlueWaterConsumptionOff", selectyears = selectyears, iniyear = iniyear,
              lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsCrop",
-             aggregate = FALSE, file = "BWCcrop.mz")
+             aggregate = FALSE, warnNA = FALSE, file = "BWCcrop.mz")
   calcOutput("BlueWaterConsumptionOff", selectyears = selectyears, iniyear = iniyear,
              lpjml = lpjml, climatetype = climatetype, interim = "TRUE:bconsGrass",
-             aggregate = FALSE, file = "BWCgrass.mz")
+             aggregate = FALSE, warnNA = FALSE, file = "BWCgrass.mz")
 
   ####################
   # CURRENT CROPAREA #

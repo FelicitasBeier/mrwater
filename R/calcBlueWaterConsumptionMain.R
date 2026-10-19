@@ -82,7 +82,9 @@ calcBlueWaterConsumptionMain <- function(selectyears, lpjml, climatetype) {
     stop("calcBlueWaterConsumptionMain produced NA irrigation water requirements")
   }
   # Remove negative consumptive irrigation water requirements in main season
-  bwc1st[bwc1st < 0] <- 0
+  # and report how many values and how much water this removes (a note, not a warning)
+  negative <- bwc1st < 0
+  bwc1st[negative] <- 0
 
   return(list(x = bwc1st,
               weight = NULL,
