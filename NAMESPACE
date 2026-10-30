@@ -69,7 +69,6 @@ importFrom(magpiesets,
   addLocation,
   findset
 )
-importFrom(mrlandcore,toolLPJmLVersion)
 importFrom(mstools,
   toolCell2isoCell,
   toolCoord2Isocell,
