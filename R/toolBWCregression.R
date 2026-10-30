@@ -80,7 +80,7 @@ toolBWCregression <- function(y, x) {
   mstools::toolExpectTrue(all(r2 > 0.7, na.rm = TRUE),
                           paste0("BWC regression has acceptable R2: minimum R2 = ",
                                  round(r2min, digits = 3), " for ", r2minWhere),
-                          level = 0, falseStatus = "note")
+                          falseStatus = "note")
 
   # Save table with regression outputs for checking
   tmp        <- as.data.frame(tmp)[, c("Year", "Region", "Data1", "Data2", "Value")]
