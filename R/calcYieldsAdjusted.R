@@ -92,7 +92,6 @@ calcYieldsAdjusted <- function(lpjml, climatetype,
                          multicropping = multicropping,
                          calibration = list(refYear = iniyear,
                                             refYields = refYields,
-                                            areaSource = "LandInG",
                                             average = average,
                                             aggregation = aggregation),
                          aggregate = FALSE)

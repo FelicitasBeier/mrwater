@@ -84,13 +84,16 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
   #           aggregate = FALSE, file = "cropareaShr.mz")
 
   # croparea in Mha
-  calcOutput("CropareaAdjusted", iniyear = iniyear,
-             dataset = "LandInG", sectoral = "kcr",
+  calcOutput("Croparea", physical = TRUE, fallow = FALSE,
+             sectoral = "kcr", cellular = TRUE,
+             irrigation = TRUE, years = iniyear,
              aggregate = FALSE, file = "cropareaLandInG.mz")
-  #calcOutput("CropareaAdjusted", iniyear = iniyear,
-  #           dataset = "LandInG", sectoral = "lpj",
-  #           aggregate = FALSE, file = "cropareaLandInG_lpj.mz")
+  calcOutput("Croparea", physical = TRUE, fallow = FALSE,
+             sectoral = "lpj", cellular = TRUE,
+             irrigation = TRUE, years = iniyear,
+             aggregate = FALSE, file = "cropareaLandInG_lpj.mz")
 
+  # uncorrected/raw LandInG croparea
   calcOutput("CropareaLandInG", physical = TRUE, sectoral = "kcr",
              cellular = TRUE, irrigation = TRUE,
              selectyears = selectyears, aggregate = FALSE,
@@ -101,7 +104,7 @@ fullMULTICROPPING <- function(allocationrule = "optimization",
              file = "LandingHARV.mz")
 
   # fallow land (in Mha)
-  calcOutput("FallowLand", years = selectyears, aggregate = FALSE,
+  calcOutput("FallowLandInG", years = selectyears, aggregate = FALSE,
              file = "fallowLand.mz")
 
   ######################

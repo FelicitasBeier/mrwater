@@ -92,9 +92,10 @@ calcActualIrrigWatRequirements <- function(selectyears, iniyear,
   }
 
   # Weight: irrigated area (only used for aggregation)
-  irrigArea <- setYears(calcOutput("CropareaAdjusted", iniyear = iniyear,
-                                   aggregate = FALSE),
-                        NULL)
+  irrigArea <- calcOutput("Croparea", physical = TRUE, fallow = FALSE,
+                          sectoral = "kcr", cellular = TRUE,
+                          irrigation = TRUE,
+                          aggregate = FALSE)[, iniyear, ]
 
   # Small additive term to account for places with 0 irrigated area
   irrigArea <- collapseNames(irrigArea[, , "irrigated"]) + 1e-9
