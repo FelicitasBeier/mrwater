@@ -159,7 +159,7 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
                             paste0("Fulfilled ratios of consumption and withdrawal agree to 1e-3 ",
                                    "in calcIrrigAreaActuallyCommitted (largest difference: ",
                                    signif(max(abs(wwShr - wcShr)), 2), ")"),
-                            level = 0, falseStatus = "note")
+                            falseStatus = "note")
     if (any(round(max(wcShr), digits = 6) > 1)) {
       stop("The actually irrigated area is over-fulfilled. This should not be the case.
            It may be related to the fossilGW argument. Please check mrwater::calcIrrigAreaActuallyCommitted.")
