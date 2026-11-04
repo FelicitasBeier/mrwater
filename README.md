@@ -1,8 +1,8 @@
 # madrat based MAgPIE water Input Data Library
 
-R package **mrwater**, version **1.15.0**
+R package **mrwater**, version **1.15.1**
 
-[![CRAN status](https://www.r-pkg.org/badges/version/mrwater)](https://cran.r-project.org/package=mrwater) [![R build status](https://github.com/pik-piam/mrwater/workflows/check/badge.svg)](https://github.com/pik-piam/mrwater/actions) [![codecov](https://codecov.io/gh/pik-piam/mrwater/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrwater) [![r-universe](https://pik-piam.r-universe.dev/badges/mrwater)](https://pik-piam.r-universe.dev/builds)
+   [![R build status](https://github.com/pik-piam/mrwater/workflows/check/badge.svg)](https://github.com/pik-piam/mrwater/actions) [![codecov](https://codecov.io/gh/pik-piam/mrwater/branch/master/graph/badge.svg)](https://app.codecov.io/gh/pik-piam/mrwater) [![r-universe](https://pik-piam.r-universe.dev/badges/mrwater)](https://pik-piam.r-universe.dev/builds)
 
 ## Purpose and Functionality
 
@@ -21,13 +21,13 @@ The additional repository can be made available permanently by adding the line a
 
 After that the most recent version of the package can be installed using `install.packages`:
 
-```r 
+```r
 install.packages("mrwater")
 ```
 
 Package updates can be installed using `update.packages` (make sure that the additional repository has been added before running that command):
 
-```r 
+```r
 update.packages()
 ```
 
@@ -50,7 +50,7 @@ In case of questions / problems please contact Felicitas Beier <beier@pik-potsda
 
 To cite package **mrwater** in publications use:
 
-Beier F, Heinke J, Karstens K, Bodirsky B, Dietrich J (2026). "mrwater: madrat based MAgPIE water Input Data Library." Version: 1.15.0, <https://github.com/pik-piam/mrwater>.
+Beier F, Heinke J, Karstens K, Bodirsky B, Dietrich J (2026). "mrwater: madrat based MAgPIE water Input Data Library." Version: 1.15.1, <https://github.com/pik-piam/mrwater>.
 
 A BibTeX entry for LaTeX users is
 
@@ -58,9 +58,9 @@ A BibTeX entry for LaTeX users is
 @Misc{,
   title = {mrwater: madrat based MAgPIE water Input Data Library},
   author = {Felicitas Beier and Jens Heinke and Kristine Karstens and Benjamin Leon Bodirsky and Jan Philipp Dietrich},
-  date = {2026-03-31},
+  date = {2026-10-29},
   year = {2026},
   url = {https://github.com/pik-piam/mrwater},
-  note = {Version: 1.15.0},
+  note = {Version: 1.15.1},
 }
 ```
