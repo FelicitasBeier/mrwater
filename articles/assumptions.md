@@ -20,7 +20,6 @@ not required there and therefore rainfed production takes place (see
 `calcPotIrrigAreas`).
 
 ``` r
-
 print(paste0("Total rainfed area is, ",
               round(sum(rfArea), digits = 2),
               " Mha."))
@@ -41,7 +40,6 @@ i.e. 0.18% of irrigated area), areas are assigned to be irrigated (see
 accounting.
 
 ``` r
-
 print(paste0("Total irrigated area is, ",
              round(sum(irArea), digits = 2),
              " Mha."))

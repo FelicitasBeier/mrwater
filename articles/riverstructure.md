@@ -30,7 +30,6 @@ same calcorder can be calculated in parallel. `rs$coordinates` provides
 the coordinates (lon.lat) to the respective grid cell.
 
 ``` r
-
 rs <- readRDS(system.file("extdata/riverstructure_stn_coord.rds", package = "mrwater"))
 str(rs)
 #> List of 7
@@ -254,7 +253,6 @@ stored in `inst/extdata`. It returns a list of grid cells including
 their coordinates and country attribution.
 
 ``` r
-
 mississippi <- toolSelectRiverBasin(basinname = "Mississippi") 
 str(mississippi)
 #>  chr [1:1372] "-113p75.44p75.USA" "-113p25.45p25.USA" ...

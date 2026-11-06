@@ -15,7 +15,6 @@ The `mrwater` library is part of the mr-universe. For more details to
 the related libraries, please have a look at the respective libraries:
 
 ``` r
-
 library(madrat)
 library(magclass)
 library(mrcommons)
@@ -78,7 +77,6 @@ discharge and lake evaporation that are required for further
 calculations in the river routing routine.
 
 ``` r
-
 natQ <- calcOutput("RiverNaturalFlows", selectyears = 2010,
                     climatetype = "GFDL-ESM4:ssp126",
                     lpjml = c(natveg = "LPJmL4_for_MAgPIE_44ac93de",
@@ -105,7 +103,6 @@ where discharge that exceeds the 75th quantile is inaccessible to
 humans).
 
 ``` r
-
 selectyears <- 2010
 lpjml       <- c(natveg = "LPJmL4_for_MAgPIE_44ac93de", crop = "ggcmi_phase3_nchecks_bft_6277d36e")
 climatetype <- "GFDL-ESM4:ssp126"
@@ -133,7 +130,6 @@ cellular discharge respectively. They are determined through the
 following function call:
 
 ``` r
-
 humanQ <- calcOutput("RiverDischargeNatAndHuman", iniyear = 2010, comAg = TRUE,
                      selectyears = selectyears, multicropping = FALSE,
                      climatetype = climatetype, lpjml = lpjml,
@@ -203,7 +199,6 @@ irrigated and also because it fulfills a special management purpose in
 terms of pest control.
 
 ``` r
-
 croparea <- calcOutput("Croparea", years = iniyear, sectoral = "kcr",
 physical = TRUE, cells = "lpjcell", cellular = TRUE, irrigation = TRUE, aggregate = FALSE)
 ```
@@ -223,7 +218,6 @@ uses. The function returns the water that is potentially available for
 irrigation considering biophysical, economic and management constraints.
 
 ``` r
-
 iwp <- calcOutput("RiverDischargeAllocation", output = "potIrrigWat",
                    selectyears = selectyears, climatetype = climatetype, lpjml = lpjml,
                    efrMethod = efrMethod, accessibilityrule = accessibilityrule,
@@ -281,7 +275,6 @@ several proxycrop(s) can be selected. This setting is relevant when
 calculating irrigation potentials for the future).
 
 ``` r
-
 yieldGain <- calcOutput("IrrigYieldImprovementPotential", unit = "USD_ha:GLO",
                         selectyears = selectyears,
                         climatetype = climatetype, lpjml = lpjml,
@@ -326,7 +319,6 @@ can potentially be irrigated given the assumptions that are set via the
 arguments.
 
 ``` r
-
 allocationrule   <- "optimization"
 rankmethod       <- "USD_ha:TRUE"
 yieldcalib       <- TRUE
@@ -356,7 +348,6 @@ be used to create PIA curves and/or aggregated to different scales
 (e.g. country-, basin-scale).
 
 ``` r
-
 iad <- calcOutput("EconOfIrrig", scenario = "ssp2", output = "IrrigArea",
              gtrange = c(0, 250, 500, 1000, 2000, 3000), selectyears = 2010, iniyear = 2010,
              lpjml = lpjml, climatetype = climatetype, efrMethod = efrMethod, accessibilityrule = accessibilityrule,
