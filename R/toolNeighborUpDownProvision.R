@@ -167,7 +167,9 @@ toolNeighborUpDownProvision <- function(rs, transDist,
         # exclude cells with insufficient available water
         # (recomputed every neighbor round: depends on the current
         #  discharge and previously reserved withdrawal of this year/scenario)
-        flag <- which(tmpDischarge < tmpPrevWW)
+        # (Note: discharge is the outflow after local consumption,
+        #        local inflow is discharge + prevWC)
+        flag <- which(tmpDischarge + tmpPrevWC < tmpPrevWW)
         flaggedEmpty <- logical(l)
         if (length(flag) > 0) {
           flaggedEmpty[unlist(cellsRequestList[flag], use.names = FALSE)] <- TRUE

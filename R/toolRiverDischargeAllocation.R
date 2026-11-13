@@ -19,8 +19,8 @@
 #' @param inoutLIST      List of vectors that are read by this tool and returned
 #'                       after updates
 #'
-#' @return list of updated discharge, updated previous withdrawal reservation,
-#'         and fulfilled local and neighbor water withdrawals and consumption
+#' @return list of updated discharge, updated previous withdrawal and consumption
+#'         reservation, and fulfilled local and neighbor water withdrawals and consumption
 #' @author Felicitas Beier, Jens Heinke, Jan Philipp Dietrich
 #'
 
@@ -35,6 +35,10 @@ toolRiverDischargeAllocation <- function(rs, c,
   # Inputs that are also outputs, i.e. object that are updated by this function
   discharge      <- inoutLIST$discharge[drop = FALSE]
   prevReservedWW <- inoutLIST$prevReservedWW[drop = FALSE]
+  prevReservedWC <- inoutLIST$prevReservedWC[drop = FALSE]
+  if (is.null(prevReservedWC)) {
+    stop("prevReservedWC must be provided to toolRiverDischargeAllocation")
+  }
 
   # Precomputed selected-cell positions
   allocationCells <- inLIST$allocationCells
@@ -82,7 +86,10 @@ toolRiverDischargeAllocation <- function(rs, c,
   ###  Water Allocation  ###
   ##########################
   # Local water availability
-  avlWatWW <- max(discharge[cell] - prevReservedWW[cell], 0)
+  # (Note: discharge is the outflow after local consumption. Local inflow is
+  #        discharge + prevReservedWC. It is compared to previously reserved
+  #        withdrawals, which include the reserved consumption.)
+  avlWatWW <- max(discharge[cell] + prevReservedWC[cell] - prevReservedWW[cell], 0)
 
   # Is water required for withdrawal in current grid cell?
   if (currReqWW > 0 && avlWatWW > 0) {
@@ -95,7 +102,8 @@ toolRiverDischargeAllocation <- function(rs, c,
     if (currReqWC > 0 && length(downCells) > 0) {
 
       # Water availability (considering downstream availability)
-      avlWatWC <- max(min(discharge[downCells] - prevReservedWW[downCells]), 0)
+      avlWatWC <- max(min(discharge[downCells] + prevReservedWC[downCells] -
+                            prevReservedWW[downCells]), 0)
       # Update fraction of irrigation water requirements that can be fulfilled
       fracFulfilled <- min(avlWatWC / currReqWC, fracFulfilled)
     }
@@ -113,6 +121,7 @@ toolRiverDischargeAllocation <- function(rs, c,
 
   # update minimum water required in cell:
   prevReservedWW[cell] <- prevReservedWW[cell] + currWWlocal
+  prevReservedWC[cell] <- prevReservedWC[cell] + currWClocal
 
 
   # Initialize objects
@@ -152,7 +161,8 @@ toolRiverDischargeAllocation <- function(rs, c,
         if (is.na(neighborPosition)) {
           stop("Neighbor cell is not part of selected discharge cells")
         }
-        avlWatWWNeighbor <- discharge[neighborPosition] - prevReservedWW[neighborPosition]
+        avlWatWWNeighbor <- discharge[neighborPosition] + prevReservedWC[neighborPosition] -
+          prevReservedWW[neighborPosition]
         if (avlWatWWNeighbor <= 0) {
           next
         }
@@ -172,7 +182,8 @@ toolRiverDischargeAllocation <- function(rs, c,
 
           if (missingWC > 0 && length(selectedCells) > 1) {
             downstreamNeighborCells <- selectedCells[-1]
-            avlWatWC <- max(min(discharge[downstreamNeighborCells] -
+            avlWatWC <- max(min(discharge[downstreamNeighborCells] +
+                                  prevReservedWC[downstreamNeighborCells] -
                                   prevReservedWW[downstreamNeighborCells]), 0)
             fracNeighbor <- min(avlWatWC / missingWC, fracNeighbor)
           }
@@ -185,6 +196,7 @@ toolRiverDischargeAllocation <- function(rs, c,
 
         discharge[selectedCells] <- discharge[selectedCells] - neighborWClocal
         prevReservedWW[neighborPosition] <- prevReservedWW[neighborPosition] + neighborWWlocal
+        prevReservedWC[neighborPosition] <- prevReservedWC[neighborPosition] + neighborWClocal
 
         # update reserved water in respective neighboring cell (current cell)
         fromNeighborWW <- fromNeighborWW + neighborWWlocal
@@ -210,6 +222,7 @@ toolRiverDischargeAllocation <- function(rs, c,
 
   out <- list(discharge = discharge,
               prevReservedWW = prevReservedWW,
+              prevReservedWC = prevReservedWC,
               fromNeighborWC = fromNeighborWC,
               fromNeighborWW = fromNeighborWW,
               currWWlocal = currWWlocal,

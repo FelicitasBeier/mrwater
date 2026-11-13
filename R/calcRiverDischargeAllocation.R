@@ -199,6 +199,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
     scenarios      <- getItems(dischargeMAG, dim = 3)
     discharge      <- as.array(dischargeMAG)
     prevReservedWW <- as.array(collapseNames(inputData[, , "prevReservedWW"]))
+    prevReservedWC <- as.array(collapseNames(inputData[, , "prevReservedWC"]))
     currReqWW      <- as.array(collapseNames(inputData[, , "currRequestWWlocal"]))
     currReqWC      <- as.array(collapseNames(inputData[, , "currRequestWClocal"]))
     glocellrank    <- as.array(glocellrank)
@@ -281,6 +282,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         # Select scenario and reduce object size (for performance)
         tmpDischarge      <- discharge[, y, scen]
         tmpPrevReservedWW <- prevReservedWW[, y, scen]
+        tmpPrevReservedWC <- prevReservedWC[, y, scen]
         tmpCurrReqWW      <- currReqWW[, y, scen]
         tmpCurrReqWC      <- currReqWC[, y, scen]
         tmpFromNeighborWC <- fromNeighborWC[, y, scen]
@@ -298,7 +300,8 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
                          currReqWC = tmpCurrReqWC[c],
                          allocationCells = allocationCells[[c]])
           inoutLIST <- list(discharge = tmpDischarge[selectCells],
-                            prevReservedWW = tmpPrevReservedWW[selectCells])
+                            prevReservedWW = tmpPrevReservedWW[selectCells],
+                            prevReservedWC = tmpPrevReservedWC[selectCells])
           tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                               downCells = downCells,
                                               transDist = transDist,
@@ -308,6 +311,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
           tmpDischarge[selectCells]      <- tmp$discharge
           tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
+          tmpPrevReservedWC[selectCells] <- tmp$prevReservedWC
           tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
           tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
           tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
@@ -317,6 +321,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         # Save result for respective scenario
         discharge[, y, scen]      <- tmpDischarge
         prevReservedWW[, y, scen] <- tmpPrevReservedWW
+        prevReservedWC[, y, scen] <- tmpPrevReservedWC
         fromNeighborWC[, y, scen] <- tmpFromNeighborWC
         fromNeighborWW[, y, scen] <- tmpFromNeighborWW
         currWWlocal[, y, scen]    <- tmpCurrWWlocal
