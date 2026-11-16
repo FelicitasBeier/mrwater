@@ -38,12 +38,18 @@ calcIrrigationDataMAgPIE <- function(output,
 
   calcFun <- get(paste0("calc", output))
 
+  # Note: calcOutput calls with explicit type are required for the
+  #       madrat dependency detection (cache fingerprint)
+  calcCall <- switch(output,
+                     PotIrrigAreas  = function(...) calcOutput("PotIrrigAreas", aggregate = FALSE, ...),
+                     WaterAvlMAgPIE = function(...) calcOutput("WaterAvlMAgPIE", aggregate = FALSE, ...),
+                     stop("calcIrrigationDataMAgPIE: unknown output ", output))
+
   .runCalc <- function(scenArgs) {
     args <- c(commonArgs, scenArgs)
     args <- .filterArgs(args, calcFun)
 
-    do.call(calcOutput,
-            c(list(type = output, aggregate = FALSE), args))
+    do.call(calcCall, args)
   }
 
   # Scenario construction:
