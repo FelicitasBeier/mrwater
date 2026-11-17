@@ -204,6 +204,12 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
     currReqWC      <- as.array(collapseNames(inputData[, , "currRequestWClocal"]))
     glocellrank    <- as.array(glocellrank)
 
+    # Water available for withdrawal before allocation (for checks):
+    # local inflow (discharge + reserved consumption) minus reserved withdrawal
+    # (incl. inaccessible discharge). Can be negative where known uses rely on
+    # inaccessible discharge.
+    avlWatIni <- discharge + prevReservedWC - prevReservedWW
+
     # Initialize objects to be filled in Allocation Algorithm with 0
     fromNeighborWC <- fromNeighborWW <- as.array(.transformObject(x = 0, gridcells = gridcells,
                                                                   years = selectyears, names = dimnames))
@@ -413,6 +419,23 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
       "Water balance residual exceeds tolerance. ",
       "max abs residual = ", signif(maxResidual, 6), " mio. m^3"
     ))
+  }
+
+  # Check whether more than available water has been allocated (in any cell):
+  # allocation must not reduce water available for withdrawal below zero
+  # or, where it was already negative, below its initial value
+  if (allocationrule == "optimization") {
+    avlWatEnd <- discharge + prevReservedWC - prevReservedWW
+    overAllocation <- pmin(avlWatIni, 0) - avlWatEnd
+    if (any(round(overAllocation, digits = 6) > 0)) {
+      stop(paste0(
+        "In calcRiverDischargeAllocation:\n",
+        "          More than available water has been allocated ",
+        "(reserved withdrawals incl. inaccessible discharge exceed inflow). ",
+        "Affected entries: ", sum(round(overAllocation, digits = 6) > 0), ", ",
+        "max = ", signif(max(overAllocation), 6), " mio. m^3"
+      ))
+    }
   }
 
   # Check whether discharge inaccessibility constraint is violated
