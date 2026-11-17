@@ -155,9 +155,6 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
                                   inaccessibleDischarge,
                                   dischargeMAG)
 
-  # Inaccessible discharge is added to previously reserved withdrawal
-  inputData[, , "prevReservedWW"] <- inputData[, , "prevReservedWW"] + inaccessibleDischarge
-
 
   #######################################
   ###### Read in Required Inputs ########
@@ -200,19 +197,23 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
     discharge      <- as.array(dischargeMAG)
     prevReservedWW <- as.array(collapseNames(inputData[, , "prevReservedWW"]))
     prevReservedWC <- as.array(collapseNames(inputData[, , "prevReservedWC"]))
+    inaccD         <- as.array(inaccessibleDischarge)
     currReqWW      <- as.array(collapseNames(inputData[, , "currRequestWWlocal"]))
     currReqWC      <- as.array(collapseNames(inputData[, , "currRequestWClocal"]))
     glocellrank    <- as.array(glocellrank)
 
     # Water available for withdrawal before allocation (for checks):
-    # local inflow (discharge + reserved consumption) minus reserved withdrawal
-    # (incl. inaccessible discharge). Can be negative where known uses rely on
-    # inaccessible discharge.
+    # local inflow (discharge + reserved consumption) minus reserved withdrawal.
+    # Can be negative where previous uses exceed inflow.
     avlWatIni <- discharge + prevReservedWC - prevReservedWW
 
     # Initialize objects to be filled in Allocation Algorithm with 0
     fromNeighborWC <- fromNeighborWW <- as.array(.transformObject(x = 0, gridcells = gridcells,
                                                                   years = selectyears, names = dimnames))
+    # Inaccessible discharge protected from upstream consumption:
+    # only in cells that received new withdrawals in this iteration
+    protInaccD <- as.array(.transformObject(x = 0, gridcells = gridcells,
+                                            years = selectyears, names = dimnames))
     currWWlocal <- currWClocal <- as.array(.transformObject(x = 0, gridcells = gridcells,
                                                             years = selectyears, names = dimnames))
 
@@ -289,6 +290,8 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         tmpDischarge      <- discharge[, y, scen]
         tmpPrevReservedWW <- prevReservedWW[, y, scen]
         tmpPrevReservedWC <- prevReservedWC[, y, scen]
+        tmpInaccD         <- inaccD[, y, scen]
+        tmpProtInaccD     <- protInaccD[, y, scen]
         tmpCurrReqWW      <- currReqWW[, y, scen]
         tmpCurrReqWC      <- currReqWC[, y, scen]
         tmpFromNeighborWC <- fromNeighborWC[, y, scen]
@@ -304,10 +307,12 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
           selectCells <- allocationSelectCells[[c]]
           inLIST <- list(currReqWW = tmpCurrReqWW[c],
                          currReqWC = tmpCurrReqWC[c],
+                         inaccD = tmpInaccD[selectCells],
                          allocationCells = allocationCells[[c]])
           inoutLIST <- list(discharge = tmpDischarge[selectCells],
                             prevReservedWW = tmpPrevReservedWW[selectCells],
-                            prevReservedWC = tmpPrevReservedWC[selectCells])
+                            prevReservedWC = tmpPrevReservedWC[selectCells],
+                            protInaccD = tmpProtInaccD[selectCells])
           tmp <- toolRiverDischargeAllocation(c = c, rs = rs,
                                               downCells = downCells,
                                               transDist = transDist,
@@ -318,6 +323,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
           tmpDischarge[selectCells]      <- tmp$discharge
           tmpPrevReservedWW[selectCells] <- tmp$prevReservedWW
           tmpPrevReservedWC[selectCells] <- tmp$prevReservedWC
+          tmpProtInaccD[selectCells]     <- tmp$protInaccD
           tmpFromNeighborWC[c] <- tmpFromNeighborWC[c] + tmp$fromNeighborWC
           tmpFromNeighborWW[c] <- tmpFromNeighborWW[c] + tmp$fromNeighborWW
           tmpCurrWWlocal[c]    <- tmpCurrWWlocal[c] + tmp$currWWlocal
@@ -328,6 +334,7 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
         discharge[, y, scen]      <- tmpDischarge
         prevReservedWW[, y, scen] <- tmpPrevReservedWW
         prevReservedWC[, y, scen] <- tmpPrevReservedWC
+        protInaccD[, y, scen]     <- tmpProtInaccD
         fromNeighborWC[, y, scen] <- tmpFromNeighborWC
         fromNeighborWW[, y, scen] <- tmpFromNeighborWW
         currWWlocal[, y, scen]    <- tmpCurrWWlocal
@@ -423,15 +430,16 @@ calcRiverDischargeAllocation <- function(lpjml, climatetype,
 
   # Check whether more than available water has been allocated (in any cell):
   # allocation must not reduce water available for withdrawal below zero
-  # or, where it was already negative, below its initial value
+  # or, where it was already negative, below its initial value.
+  # Cells with new withdrawals must not use their inaccessible discharge.
   if (allocationrule == "optimization") {
-    avlWatEnd <- discharge + prevReservedWC - prevReservedWW
+    avlWatEnd <- discharge + prevReservedWC - prevReservedWW - protInaccD
     overAllocation <- pmin(avlWatIni, 0) - avlWatEnd
     if (any(round(overAllocation, digits = 6) > 0)) {
       stop(paste0(
         "In calcRiverDischargeAllocation:\n",
         "          More than available water has been allocated ",
-        "(reserved withdrawals incl. inaccessible discharge exceed inflow). ",
+        "(reserved withdrawals incl. protected inaccessible discharge exceed inflow). ",
         "Affected entries: ", sum(round(overAllocation, digits = 6) > 0), ", ",
         "max = ", signif(max(overAllocation), 6), " mio. m^3"
       ))
