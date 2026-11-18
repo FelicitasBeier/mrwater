@@ -16,6 +16,10 @@ toolSelectRiverBasin <- function(basinname) {
 
   # Read in basin name - endcell mapping
   basinMap <- read.csv(system.file("extdata/RiverBasinMapping.csv", package = "mrwater"))
+  if (!basinname %in% basinMap$Basin.Name) {
+    stop("River basin '", basinname, "' is not listed in RiverBasinMapping.csv. ",
+         "See inst/extdata/RiverBasinMapping.csv of mrwater for available basin names.")
+  }
 
   # Select cells that belong to selected basin
   c     <- basinMap$Endcell[basinMap$Basin.Name == basinname]

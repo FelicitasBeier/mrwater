@@ -1,17 +1,354 @@
 Basin Name,Endcell
 Mississippi,9443
-Columbia River, 2538
+Columbia River,2538
 Nile,35804
-Chang Jiang,59064
+Chang Jiang (Yangtze),59064
 Ganges,50464
 Indus,44955
 Murray,63145
-Huang He,58181
-Colorado,4089
+Huang He (Yellow River),58181
+Colorado (Gulf of California),4089
 Danube,35257
 Mekong,54662
 Parana,18169
 Syr-Darya,43774
 Amu-Darya,43578
 Orange,29805
-Guadalquivir,24809
+Guadalquivir,24808
+Amazon,19863
+Congo,28440
+Ob,45552
+Yenisey,48459
+Chad,29141
+Lena,60569
+Amur,63692
+Niger,27132
+Mackenzie,1764
+Tarim He,49415
+Volga,41125
+Zambezi,37465
+Lake Eyre,62701
+Nelson,8889
+Saint Lawrence,15563
+Orinoco,17619
+Shatt Al Arab,41233
+Yukon,244
+Jubba,39408
+Tocantins,20286
+Rio Grande,7882
+Kolyma,66416
+Sao Francisco,22315
+Dnieper,36179
+Senegal,23635
+Don,38212
+Rio De La Plata,18407
+Irrawaddy,51416
+Limpopo,36593
+Volta,25983
+Zhu,56521
+Hamun,43840
+Colorado (South Atlantic),17094
+Indigirka,65552
+Parnaiba,21670
+Pechora,42433
+Godavari,48465
+Severnaya Dvina,38718
+Churchill (Hudson-Bay),8581
+Khatanga,54924
+Salween,51952
+Magdalena,12762
+Krishna,48227
+Thelon,9296
+Hai He,57898
+Yana,62561
+Fraser,2682
+Har Us Nuur,50860
+Liao He,59213
+Olenek,58540
+Ogooue,27538
+Ural,41882
+Vistula,30894
+Kura,41377
+Lake Turkana,37510
+Rufiji,38585
+Cuvelai,30013
+Anadyr,67348
+Huai He,58624
+Pyasina,49481
+Ruvuma,38737
+Rhine,26928
+Chao Phraya,52834
+Cuanza,28753
+Song Hong (Red River),54681
+Fitzroy (Coral Sea),65579
+Elbe,27639
+Chubut,16141
+Negro (South Atlantic),16946
+Great Salt Lake,4399
+Caniapiscau,15206
+Mahanadi,49373
+Albany,11225
+Santiago,5909
+Sanaga,27792
+Burdekin,65055
+Mar Chiquita,17253
+Kuskokwim,313
+Abhe Bad,39170
+Hamun-I-Mashkel,44217
+Oder,29214
+Brazos,8309
+Loire,25574
+Mobile River,9751
+Colorado (Gulf of Mexico),8201
+Kunene,28296
+Moose,11325
+Flinders,63654
+Hayes (Hudson-Bay),8988
+Save,37134
+Severn (Hudson-Bay),9907
+Victoria,60975
+Bandama,25018
+Douro,24390
+Rhone,26820
+La Grande,11613
+Draa,24089
+Tana (Indian Ocean),38880
+Churchill (Labrador Sea),17891
+Neman,31842
+Back,8279
+Anabar,56763
+Panuco,7762
+Murchison,56767
+Daugava,33080
+Ebro,26135
+Kapuas,55464
+Comoe,25206
+Doce,21951
+Kizilirmak,37416
+Sepik,64508
+Rukwa,35905
+Mamberamo,62966
+Cauvery,47837
+Ashburton,56920
+Yaqui,4882
+Roper,62487
+Mahakam,57697
+Mezen,39827
+Sassandra,24746
+Gascoyne,56500
+Jaguaribe,22222
+Uvs Nuur,50747
+Titicaca,14520
+Seine,26153
+Dniestr,35447
+Po,28683
+Gambia,23602
+Jacui,19914
+Tagus,24313
+Jequitinhonha,22089
+Susquehanna,12333
+Guadiana,24630
+Maroni,19186
+Winisk,10389
+Copper,1287
+Alazeya,65897
+Sungai Fly,64280
+Courantyne,18491
+Baraka,38015
+Pivdenny Buh,35995
+Mitchell,63891
+Sakarya,35445
+Onega,38091
+Yalu River,59728
+Lurio,38875
+Oueme,26338
+Colville,1031
+Kouilou,28165
+Thlewiaza,8479
+Paraiba Do Sul,21714
+Narva,34514
+Garonne,25770
+Merin,19802
+De Contas,22091
+Paraguacu,22149
+Min Jiang,58450
+Penner,47976
+Saint John,15914
+Mangoky,39547
+Nadym,45978
+Daly,61207
+Moulouya,25558
+Kemijoki,33302
+Kamchatka,66481
+Cross,27429
+Maritsa River,33663
+Kuban,38053
+Lake Urmia,40229
+Skeena,2000
+Gota,28275
+Brahmani,49484
+Pangani,38433
+Apalachicola,10338
+Stikine,1864
+Seal,8477
+Susitna,1013
+Attawapiskat,11116
+Chergui,26130
+Ulungur Hu,49645
+Tsiribihina,39843
+Fortescue,57224
+Incomati,36232
+Olifants,30553
+Trinity,8418
+Eastmain,11716
+Luan He,58322
+Rajang,55997
+Gouritz,31874
+Weser,27520
+Chelif,26043
+Nueces,7886
+Batang Hari,54058
+Araguari,20085
+Qiantang Jiang,59062
+Kem,37117
+Feuilles,14816
+San Juan (Caribbean Sea),10642
+Grande Riviere De La Baleine,11958
+Pee Dee,11575
+Arnaud,14614
+Klamath,2530
+Glomaa,28148
+Tornealven,33097
+George,15941
+Gilbert,63773
+Santee,11477
+Papaloapan,8200
+Omoloy,61623
+Sebou,24804
+Damodar,49918
+Altamaha,11182
+Nushagak,562
+Itapicuru,22208
+Atrato,12173
+Kymijoki,34110
+Fuerte Nuevo,5190
+Hudson,13082
+Gurupi,20862
+Hingol,44585
+Sittang,51819
+Dasht Kaur,43926
+Dong,56661
+Purari,64697
+Lake Torrens,62926
+Tumen,61224
+Maas,26756
+Guayas,11362
+Noatak,326
+Poopo,15491
+Kobuk,346
+Chico,15053
+Riviere De La Baleine,15395
+Salsa,22090
+Vyg,37116
+Angermanalven,30715
+Palyavaam,66949
+Ntem,27790
+Pungwe,36962
+Maputo,36230
+Potomac,12190
+Great Fish,34135
+Dong Nai,54937
+Cavally,24486
+Hanjiang Xixi,57716
+Uthukela,35682
+Connecticut,13586
+Pahang,53749
+Santa Cruz,14857
+Buzi,36961
+Delaware,12621
+Kokemaenjoki,31849
+Alsek,1571
+Catatumbo,13573
+Savannah,11184
+San Pedro,5910
+Suwannee,10759
+Tuloma,36590
+Oiapoque,19873
+Concepcion,4378
+Digul,63186
+Nyanga,27780
+Coig,14655
+Lulealven,32061
+Ribeira Do Iguape,20534
+Saint Johns,11180
+Coco,10753
+Vardar,32842
+Messalo,38735
+Corubal,23703
+Roanoke,12471
+Biobio,13183
+Mono,26249
+Dordogne,25771
+Horton,2342
+Daling He,59073
+Patuca,10545
+Nakdong,60983
+Pra,25593
+Medjerda,27990
+Blackwood,57046
+Patia,11672
+Penobscot,14986
+Ulua,9846
+Esmeraldas,11469
+Pearl,9545
+Great Kei,34537
+Clutha,66867
+Saint Paul River,24091
+Paraiba,22465
+Moa,23999
+Little Mecatina,17884
+Schelde,26755
+Copiapo,14091
+Lempa,9630
+Verde,7749
+Chira,11156
+Ellice,6345
+Taku,1741
+Majes,13348
+Dramselva,28023
+Kalixalven,32685
+Tano,25399
+Suriname Rivier,18958
+Tana (Barents Sea),34731
+Struma River,33047
+Mino,24392
+Saint John River,24193
+Ocona,13184
+Motagua,9738
+Natashquan,17348
+Kinabatangan,58149
+Bengawan Solo,56370
+Tone,63670
+Mucuri,21953
+Vam Co,54803
+San Juan (North Pacific),12028
+Motala Strom,30150
+Perak,52975
+Waikato,67157
+Acarau,21911
+Ishikari,63802
+Ponoy,39142
+Karnaphuli,50576
+Rapel,13698
+Mbini,27789
+Thames,26244
+Chiloango,28441
+Merrimack,14165
+Palena,13169
+Geba,23663
+Santa,11650
+Limari,13705
+Yelcho,13170
+Huasco,13895
+Thu Bon,55217
+Olfusa,23425
