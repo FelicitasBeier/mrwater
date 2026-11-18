@@ -82,7 +82,7 @@ calcIrrigationDataMAgPIE <- function(output,
                 landScen = "potCropland:30by30", # environment: no irrigation in certain areas
                 accessibilityrule = "CV:2", # technology
                 irrigationsystem = "drip", # technology
-                transDist = 200, # technology
+                transDist = 100, # technology
                 allocationrule = "optimization", # economics
                 rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -93,7 +93,7 @@ calcIrrigationDataMAgPIE <- function(output,
                  landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
                  accessibilityrule = "CV:2", # technology
                  irrigationsystem = "drip", # technology: high efficiency
-                 transDist = 200, # technology
+                 transDist = 100, # technology
                  allocationrule = "optimization", # economics
                  rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
                  gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -104,7 +104,7 @@ calcIrrigationDataMAgPIE <- function(output,
                  landScen = "potCropland:30by30", # environment: no irrigation in certain areas
                  accessibilityrule = "CV:2", # technology
                  irrigationsystem = "sprinkler", # technology: medium efficiency
-                 transDist = 200, # technology
+                 transDist = 100, # technology
                  allocationrule = "optimization", # economics
                  rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
                  gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -115,7 +115,7 @@ calcIrrigationDataMAgPIE <- function(output,
                  landScen = "potCropland:HalfEarth", # environment: no irrigation in certain areas
                  accessibilityrule = "CV:2", # technology
                  irrigationsystem = "drip", # technology: high efficiency
-                 transDist = 200, # technology
+                 transDist = 100, # technology
                  allocationrule = "optimization", # economics
                  rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
                  gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -126,7 +126,7 @@ calcIrrigationDataMAgPIE <- function(output,
                 landScen = "potCropland:WDPA", # environment: no irrigation in certain areas
                 accessibilityrule = "CV:2", # technology
                 irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
+                transDist = 100, # technology
                 allocationrule = "optimization", # economics
                 rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return, but with reduced potential (slightly less optimal)
                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -137,7 +137,7 @@ calcIrrigationDataMAgPIE <- function(output,
                 landScen = "potCropland:30by30", # environment: no irrigation in certain areas
                 accessibilityrule = "CV:2", # technology
                 irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
+                transDist = 100, # technology
                 allocationrule = "upstreamfirst", # economics
                 rankmethod = "USD_m3:GLO:TRUE", # economics: global ranking by relative volumetric return and full potential
                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -148,7 +148,7 @@ calcIrrigationDataMAgPIE <- function(output,
                 landScen = "potCropland:30by30", # environment: no irrigation in certain areas
                 accessibilityrule = "CV:2", # technology
                 irrigationsystem = "initialization", # technology
-                transDist = 200, # technology
+                transDist = 100, # technology
                 allocationrule = "optimization", # economics
                 rankmethod = "USD_m3:ISO:TRUE", # economics: ranking by relative volumetric return and full potential based on country-level prices
                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)
@@ -159,7 +159,7 @@ calcIrrigationDataMAgPIE <- function(output,
                 landScen = "potCropland:30by30", # environment: no irrigation in certain areas
                 accessibilityrule = "CV:2", # technology
                 irrigationsystem = "drip", # technology
-                transDist = 200, # technology
+                transDist = 100, # technology
                 allocationrule = "optimization", # economics
                 rankmethod = "USD_m3:GLO:FALSE", # economics: global ranking by relative volumetric return and reduced potential
                 gainthreshold = 50 # economics (above 50 USD/ha: irrigation takes place)

@@ -128,9 +128,10 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
                               aggregate = FALSE)
     # object of correct dimensionality
     gw[, , ] <- NA
-    # Fossil groundwater pool available for irrigation (based on iniyear and EFP off)
+    # Fossil groundwater pool available for irrigation
+    # (based on iniyear, EFP off and fixed transport distance of 100 km; one pool for all scenarios)
     gw0 <- calcOutput("NonrenGroundwatUse",
-                      output = "comAg", multicropping = m,
+                      output = "comAg", multicropping = m, transDistGW = 100,
                       lpjml = lpjml, climatetype = climatetype,
                       selectyears = selectyears, iniyear = iniyear,
                       aggregate = FALSE)

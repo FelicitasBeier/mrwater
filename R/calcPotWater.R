@@ -138,11 +138,12 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
   watNonAgWC <- collapseNames(watNonAg[, , "currHumanWCtotal"])
 
   # Fossil groundwater use
+  # Note: fossil groundwater is one pool for all scenarios (fixed transport distance of 100 km)
   if (fossilGW) {
 
     # fossil groundwater used in non-agricultural sector
     gw <- calcOutput("NonrenGroundwatUse", output = "nonAg",
-                     multicropping = multicropping,
+                     multicropping = multicropping, transDistGW = 100,
                      lpjml = lpjml, climatetype = climatetype,
                      selectyears = selectyears, iniyear = iniyear,
                      aggregate = FALSE)
@@ -163,7 +164,7 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
     #       all of the fossil groundwater is available for
     #       additional irrigation (but capped at maximum area in calcPotIrrigAreas)
     gw <- calcOutput("NonrenGroundwatUse", output = "comAg",
-                     multicropping = multicropping,
+                     multicropping = multicropping, transDistGW = 100,
                      lpjml = lpjml, climatetype = climatetype,
                      selectyears = selectyears, iniyear = iniyear,
                      aggregate = FALSE)
