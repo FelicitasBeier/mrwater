@@ -64,7 +64,7 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
 
   # Missing water of past time steps is attributed to non-renewable groundwater.
   # For the future, it is fixed to the missing water of the last time step.
-  lastYr <- as.numeric(gsub("y", "", tail(magpiesets::findset("past"), n = 1)))
+  lastYr <- as.numeric(gsub("y", "", tail(magpiesets::findset("past_til2020"), n = 1)))
 
   if (is.character(selectyears)) {
     selectyears <- as.numeric(gsub("y", "", selectyears))
@@ -80,7 +80,7 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
   }
   if (iniyear > lastYr) {
     stop(paste0("Please align the initialization year ('iniyear') ",
-                "with the last year in the past (see magpiesets::findset('past')). ",
+                "with the last year in the past (see magpiesets::findset('past_til2020')). ",
                 "The 'iniyear' has to be smaller or equal to the last year."))
   }
   # include iniyear in selectyears

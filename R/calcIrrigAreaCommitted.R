@@ -1,6 +1,9 @@
 #' @title       calcIrrigAreaCommitted
-#' @description calculates area reserved for irrigation based on area irrigated
-#'              in initialization year and depreciation parameter (set to 0.1)
+#' @description calculates area reserved for irrigation: irrigated area of the
+#'              respective year until the last year with data (past_til2020),
+#'              area of the last year with data until the end of the
+#'              harmonization period (2025), afterwards reduced by
+#'              depreciation parameter (set to 0.1) every year
 #'
 #' @param iniyear        initialization year
 #' @param selectyears    select years
@@ -16,21 +19,26 @@
 #' }
 #'
 #' @importFrom madrat calcOutput
-#' @importFrom magclass collapseNames collapseDim new.magpie getCells getNames dimSums
+#' @importFrom magclass collapseNames collapseDim new.magpie getCells getNames dimSums setYears
+#' @importFrom magpiesets findset
 #' @importFrom utils tail
 
 calcIrrigAreaCommitted <- function(selectyears, iniyear, aggregateCrops = FALSE) {
 
   # Set depreciation parameter
   depreciation <- 0.1
+  # End of harmonization period (sm_fix_SSP2 in MAgPIE):
+  # committed area is fully reserved until this year and depreciates afterwards
+  harmYr <- 2025
+  # Last year with irrigated area data
+  lastYr <- as.numeric(gsub("y", "", tail(findset("past_til2020"), n = 1)))
 
-  # Read in data: crop- and water supply type specific physical crop area
-  # (in Mha) in initialization year:
-  tmp <- collapseNames(calcOutput("Croparea",
-                                  physical = TRUE, fallow = FALSE,
-                                  sectoral = "kcr", cellular = TRUE,
-                                  irrigation = TRUE,
-                                  aggregate = FALSE)[, iniyear, "irrigated"])
+  # Read in data: crop- and water supply type specific physical crop area (in Mha)
+  croparea <- collapseNames(calcOutput("Croparea",
+                                       physical = TRUE, fallow = FALSE,
+                                       sectoral = "kcr", cellular = TRUE,
+                                       irrigation = TRUE,
+                                       aggregate = FALSE)[, , "irrigated"])
 
 
   # Prepare year arguments for further usage
@@ -46,24 +54,28 @@ calcIrrigAreaCommitted <- function(selectyears, iniyear, aggregateCrops = FALSE)
                  "The 'iniyear' has to be the first year of 'selectyears' ",
                  "or lie in the past of it."))
   }
+  if (harmYr < lastYr) {
+    stop("The end of the harmonization period must not lie before the last year with data.")
+  }
+  # selectyears with and without irrigated area data
+  pstYrs <- selectyears[selectyears <= lastYr]
+  ftrYrs <- selectyears[selectyears > lastYr]
 
-  # Empty object to be filled with area reserved for irrigation in current and future time steps
-  irrigArea <- new.magpie(cells_and_regions = getCells(tmp),
-                          years = seq(iniyear, tail(selectyears, 1), by = 1),
-                          names = getNames(tmp),
+  # Empty object to be filled with area reserved for irrigation
+  irrigArea <- new.magpie(cells_and_regions = getCells(croparea),
+                          years = selectyears,
+                          names = getNames(croparea),
                           sets = c("x.y.iso", "year", "crop"))
 
-  # Each year certain share (parameter: "depreciation") of irrigated cropland is lost
-  # Note: Depreciation in yearly time-steps!
-  for (y in (iniyear:tail(selectyears, 1))) {
-    # irrigated area in respective year
-    irrigArea[, y, ] <- tmp
-    # depreciation of irrigated area
-    tmp              <- tmp * (1 - depreciation)
+  # In years with data, the area irrigated in the respective year is reserved
+  if (length(pstYrs) > 0) {
+    irrigArea[, pstYrs, ] <- croparea[, pstYrs, ]
   }
-
-  # select years to be returned
-  irrigArea <- irrigArea[, selectyears, ]
+  # Afterwards, the area of the last year with data is reserved until the end of the harmonization period.
+  # Then, each year certain share (parameter: "depreciation") of irrigated cropland is lost.
+  for (y in ftrYrs) {
+    irrigArea[, y, ] <- setYears(croparea[, lastYr, ], NULL) * (1 - depreciation)^max(0, y - harmYr)
+  }
 
   # optionally, aggregate crop dimension for total committed irrigated area
   if (aggregateCrops) {
