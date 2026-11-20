@@ -119,48 +119,46 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
   # Fossil groundwater use to fulfill committed agricultural water use
   if (fossilGW) {
 
-    # Missing water for committed agriculture for all scenarios and future years
-    gw <- missW <- calcOutput("MissingWater",
-                              output = "comAg",
-                              lpjml = lpjml, climatetype = climatetype,
-                              multicropping = m, transDistGW = transDist,
-                              selectyears = selectyears, iniyear = iniyear,
-                              aggregate = FALSE)
-    # object of correct dimensionality
-    gw[, , ] <- NA
+    # Missing water: demand of committed area that cannot be fulfilled by renewable water (in mio. m^3)
+    # (same routing and EFR setting as the renewable share above)
+    missWW <- totalIrrigReqWW - comWatWWact
+    missWC <- totalIrrigReqWC - comWatWCact
+    # correct negatives below rounding imprecision
+    missWW[missWW < 0] <- 0
+    missWC[missWC < 0] <- 0
+
     # Fossil groundwater pool available for irrigation
-    # (based on iniyear, EFP off and fixed transport distance of 100 km; one pool for all scenarios)
+    # (missing water of last year with data, EFP off and fixed transport distance of 100 km;
+    # one pool for all scenarios)
     gw0 <- calcOutput("NonrenGroundwatUse",
                       output = "comAg", multicropping = m, transDistGW = 100,
                       lpjml = lpjml, climatetype = climatetype,
                       selectyears = selectyears, iniyear = iniyear,
                       aggregate = FALSE)
-    gw[, , "withdrawal"]  <- gw0[, , "withdrawal"]
-    gw[, , "consumption"] <- gw0[, , "consumption"]
-    rm(gw0)
 
     # Only up to pool of fossil groundwater can be used to serve missing water.
     # Where less water required, only necessary amount is served.
-    gw <- pmin(gw, missW)
+    # The pool limits withdrawal and consumption jointly (same share of missing water for both),
+    # because the consumption-withdrawal ratio of the pool (fixed year) differs from the current demand.
+    shrGW <- pmin(ifelse(missWW > 0, collapseNames(gw0[, , "withdrawal"]) / missWW, 1),
+                  ifelse(missWC > 0, collapseNames(gw0[, , "consumption"]) / missWC, 1))
+    shrGW[shrGW > 1] <- 1
+    rm(gw0)
 
     # Share of Area that is irrigated given limited water availability
     # under consideration of fossil GW
     wwShr <- collapseNames(ifelse(totalIrrigReqWW > 0,
-                                  (comWatWWact + collapseNames(gw[, , "withdrawal"])) / totalIrrigReqWW,
+                                  (comWatWWact + shrGW * missWW) / totalIrrigReqWW,
                                   1))
     wcShr <- collapseNames(ifelse(totalIrrigReqWC > 0,
-                                  (comWatWCact + collapseNames(gw[, , "consumption"])) / totalIrrigReqWC,
+                                  (comWatWCact + shrGW * missWC) / totalIrrigReqWC,
                                   1))
 
     # Checks
-    # The two shares can differ by more than rounding, probably because the fossil groundwater
-    # cap above (pmin) is applied to withdrawal and consumption separately and can bind for one only.
-    # The smaller share sets the area below.
-    mstools::toolExpectTrue(all(abs(wwShr - wcShr) <= 1e-3),
-                            paste0("Fulfilled ratios of consumption and withdrawal agree to 1e-3 ",
-                                   "in calcIrrigAreaActuallyCommitted (largest difference: ",
-                                   signif(max(abs(wwShr - wcShr)), 2), ")"),
-                            falseStatus = "note")
+    if (any(round(wwShr - wcShr, digits = 4) != 0)) {
+      stop("Fulfilled ratios of consumption and withdrawal differ in calcIrrigAreaActuallyCommitted ",
+           "(largest difference: ", signif(max(abs(wwShr - wcShr)), 2), ")")
+    }
     if (any(round(max(wcShr), digits = 6) > 1)) {
       stop("The actually irrigated area is over-fulfilled. This should not be the case.
            It may be related to the fossilGW argument. Please check mrwater::calcIrrigAreaActuallyCommitted.")
