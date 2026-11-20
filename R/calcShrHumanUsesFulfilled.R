@@ -34,7 +34,7 @@
 #' calcOutput("ShrHumanUsesFulfilled", aggregate = FALSE)
 #' }
 #'
-#' @importFrom magclass collapseNames dimSums
+#' @importFrom magclass collapseNames
 #'
 #' @export
 
@@ -64,6 +64,7 @@ calcShrHumanUsesFulfilled <- function(lpjml, climatetype,
                              rankmethod = NULL, gainthreshold = NULL,
                              cropmix = NULL, yieldcalib = NULL,
                              irrigationsystem = NULL, landScen = NULL,
+                             # comAg: must be set, no effect here (only used in "potential_irrigation")
                              comAg = FALSE, aggregate = FALSE)
   fulfilledNAUww <- collapseNames(fulfilledNAU[, , "currHumanWWtotal"])
   fulfilledNAUwc <- collapseNames(fulfilledNAU[, , "currHumanWCtotal"])
@@ -79,6 +80,7 @@ calcShrHumanUsesFulfilled <- function(lpjml, climatetype,
                                rankmethod = NULL, gainthreshold = NULL,
                                cropmix = NULL, yieldcalib = NULL,
                                irrigationsystem = NULL, landScen = NULL,
+                               # comAg: must be set, no effect here (only used in "potential_irrigation")
                                comAg = FALSE, aggregate = FALSE)
   fulfilledCAUww <- collapseNames(fulfilledCAU[, , "currHumanWWtotal"])
   fulfilledCAUwc <- collapseNames(fulfilledCAU[, , "currHumanWCtotal"])
@@ -86,34 +88,11 @@ calcShrHumanUsesFulfilled <- function(lpjml, climatetype,
   ##############################
   ### Exogenous Water Demand ###
   ##############################
-  # (would be required)
-  actCAUww <- actCAUwc <- actNAUww <- actNAUwc <- new.magpie(fill = NA,
-                                                             cells_and_regions = getItems(fulfilledCAUww, dim = 1),
-                                                             years = getItems(fulfilledCAUww, dim = 2),
-                                                             names = getItems(fulfilledCAUww, dim = 3))
-  # Committed Agricultural Water (in mio. m^3)
-  # multiple cropping as of current multiple cropping pattern
-  if (as.logical(str_split(multicropping, ":")[[1]][1])) {
-    m <- "TRUE:actual:irrig_crop"
-  } else {
-    m <- as.logical(str_split(multicropping, ":")[[1]][1])
-  }
-  actCAU   <- calcOutput("WaterUseCommittedAg",
-                         lpjml = lpjml, climatetype = climatetype,
-                         selectyears = selectyears, iniyear = iniyear,
-                         multicropping = m, aggregate = FALSE)
-  actCAUww[, , ] <- collapseNames(dimSums(actCAU[, , "withdrawal"], dim = 3))
-  actCAUwc[, , ] <- collapseNames(dimSums(actCAU[, , "consumption"], dim = 3))
-
-  # Non-Agricultural Water (in mio. m^3 / yr)
-  watNonAg <- calcOutput("WaterUseNonAg",
-                         selectyears = selectyears, cells = "lpjcell",
-                         datasource = "WATERGAP_ISIMIP", usetype = "total",
-                         seasonality = "total", harmonType = "average",
-                         lpjml = NULL, climatetype = NULL, aggregate = FALSE)
-
-  actNAUww[, , ] <- collapseNames(watNonAg[, , "withdrawal"])
-  actNAUwc[, , ] <- collapseNames(watNonAg[, , "consumption"])
+  # (would be required; as requested in the river routing)
+  actNAUww <- collapseNames(fulfilledNAU[, , "demandWW"])
+  actNAUwc <- collapseNames(fulfilledNAU[, , "demandWC"])
+  actCAUww <- collapseNames(fulfilledCAU[, , "demandWW"])
+  actCAUwc <- collapseNames(fulfilledCAU[, , "demandWC"])
 
   ##########################
   ### Correct dimensions ###

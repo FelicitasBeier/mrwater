@@ -199,6 +199,9 @@ calcRiverHumanUseAccounting <- function(iteration,
   prevReservedWC <- as.array(collapseNames(inputData[, , "prevReservedWC"]))
   currRequestWWlocal <- currRequestWWtotal <- as.array(collapseNames(inputData[, , "currRequestWWlocal"]))
   currRequestWClocal <- currRequestWCtotal <- as.array(collapseNames(inputData[, , "currRequestWClocal"]))
+  # Water requested in this iteration before allocation (demand)
+  demandWW <- currRequestWWtotal
+  demandWC <- currRequestWCtotal
 
   ##################################################
   ###### Upstream-Downstream River Routing  ########
@@ -364,7 +367,9 @@ calcRiverHumanUseAccounting <- function(iteration,
                                                    # water available for specified use from local sources and surrounding cells:
                                                    "currHumanWWtotal", "currHumanWCtotal",
                                                    # water available for specified use from local sources
-                                                   "currHumanWWlocal", "currHumanWClocal"),
+                                                   "currHumanWWlocal", "currHumanWClocal",
+                                                   # water requested for specified use before allocation (demand)
+                                                   "demandWW", "demandWC"),
                                          sets = c("x.y.iso", "year", "data"),
                                          fill = NA),
                           gridcells = gridcells,
@@ -381,6 +386,9 @@ calcRiverHumanUseAccounting <- function(iteration,
   # local water use that is fulfilled by local water resources or by surrounding water available
   out[, , "currHumanWCtotal"] <- as.magpie(currRequestWCtotal, spatial = 1, temporal = 2)
   out[, , "currHumanWWtotal"] <- as.magpie(currRequestWWtotal, spatial = 1, temporal = 2)
+  # water requested for specified use before allocation (demand)
+  out[, , "demandWW"] <- as.magpie(demandWW, spatial = 1, temporal = 2)
+  out[, , "demandWC"] <- as.magpie(demandWC, spatial = 1, temporal = 2)
 
   ##############
   ### Checks ###
@@ -395,6 +403,11 @@ calcRiverHumanUseAccounting <- function(iteration,
   # (currRequestWClocal should always be smaller than currRequestWCtotal)
   if (any((out[, , "currHumanWClocal"] - out[, , "currHumanWCtotal"]) > 1e-6)) {
     stop("Too much water has been allocated
+          in calcRiverHumanUseAccounting in iteration = ", iteration, ".")
+  }
+  # Check that not more than requested has been allocated
+  if (any(currRequestWWtotal - demandWW > 1e-6) || any(currRequestWCtotal - demandWC > 1e-6)) {
+    stop("More water than requested has been allocated
           in calcRiverHumanUseAccounting in iteration = ", iteration, ".")
   }
   # Check whether more than available discharge has been reserved

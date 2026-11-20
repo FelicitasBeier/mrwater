@@ -71,7 +71,10 @@ calcIrrigAreaActuallyCommitted <- function(lpjml, climatetype,
   comWater <- calcOutput("RiverHumanUseAccounting",
                          iteration = "committed_agriculture",
                          lpjml = lpjml, climatetype = climatetype,
-                         transDist = transDist, comAg = NULL,
+                         transDist = transDist,
+                         # comAg: must be set, no effect here (only used in "potential_irrigation"); 
+                         # FALSE avoids duplicate cache entries
+                         comAg = FALSE,
                          efrMethod = efrMethod, multicropping = m,
                          selectyears = selectyears, iniyear = iniyear,
                          accessibilityrule = NULL,

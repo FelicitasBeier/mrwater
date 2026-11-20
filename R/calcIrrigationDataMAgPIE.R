@@ -204,7 +204,8 @@ calcIrrigationDataMAgPIE <- function(output,
   .runCalc <- function(type, nm, ...) {
     calcCall <- switch(type,
                        PotIrrigAreas  = function(...) calcOutput("PotIrrigAreas", aggregate = FALSE, ...),
-                       WaterAvlMAgPIE = function(...) calcOutput("WaterAvlMAgPIE", aggregate = FALSE, ...))
+                       WaterAvlMAgPIE = function(...) calcOutput("WaterAvlMAgPIE", aggregate = FALSE, ...),
+                       PotWater       = function(...) calcOutput("PotWater", aggregate = FALSE, ...))
     args <- utils::modifyList(c(commonArgs, scenarioArgs[[scen25[[nm]][["args"]]]]), list(...))
     args <- .filterArgs(args, get(paste0("calc", type)))
     return(do.call(calcCall, args))
@@ -247,52 +248,25 @@ calcIrrigationDataMAgPIE <- function(output,
 
   } else if (output == "NonAgWater") {
 
-    # Non-agricultural water demand as used in the river routing (calcRiverRoutingInputs)
-    demand <- calcOutput("WaterUseNonAg",
-                         selectyears = selectyears, cells = "lpjcell",
-                         datasource = "WATERGAP_ISIMIP", usetype = "total",
-                         seasonality = "total", harmonType = "average",
-                         lpjml = NULL, climatetype = NULL, aggregate = FALSE)
-    # Non-renewable groundwater pool for non-agricultural uses (as in calcPotWater)
-    gw <- calcOutput("NonrenGroundwatUse", output = "nonAg",
-                     multicropping = commonArgs$multicropping, transDistGW = 100,
-                     lpjml = lpjml, climatetype = climatetype,
-                     selectyears = selectyears, iniyear = iniyear,
-                     aggregate = FALSE)
-
+    # Non-agricultural water demand and the parts served from renewable sources and
+    # from non-renewable groundwater, as accounted for in calcPotWater (river routing)
     .nonAg <- function(nm) {
-      s        <- scen25[[nm]]
-      scenArgs <- scenarioArgs[[s[["args"]]]]
-      # Non-agricultural water use served from renewable sources (call as in calcPotWater)
-      served <- calcOutput("RiverHumanUseAccounting",
-                           iteration = "non_agriculture",
-                           lpjml = lpjml, climatetype = climatetype,
-                           transDist = scenArgs$transDist, comAg = NULL,
-                           efrMethod = scenArgs$efrMethod, multicropping = commonArgs$multicropping,
-                           selectyears = selectyears, iniyear = iniyear,
-                           accessibilityrule = NULL,
-                           rankmethod = NULL, gainthreshold = NULL,
-                           cropmix = NULL, yieldcalib = NULL,
-                           irrigationsystem = NULL, landScen = NULL,
-                           aggregate = FALSE)
-      served <- served[, , s[["efp"]]][, , s[["nonAg"]]]
-      served <- mbind(.setItem(served[, , "currHumanWWtotal"], add = "wtype", nm = "withdrawal"),
-                      .setItem(served[, , "currHumanWCtotal"], add = "wtype", nm = "consumption"))
-      dem    <- mbind(.setItem(demand[, , s[["nonAg"]]][, , "withdrawal"], add = "wtype", nm = "withdrawal"),
-                      .setItem(demand[, , s[["nonAg"]]][, , "consumption"], add = "wtype", nm = "consumption"))
-      served <- add_dimension(served, dim = 3.1, add = "scen25", nm = nm)
-      dem    <- add_dimension(dem, dim = 3.1, add = "scen25", nm = nm)
-
-      if (any(round(served - dem, digits = 6) > 0)) {
-        stop("mrwater::calcIrrigationDataMAgPIE: served non-agricultural water use exceeds demand")
+      s <- scen25[[nm]]
+      x <- .runCalc("PotWater", nm)[, , s[["efp"]]][, , s[["nonAg"]]]
+      .wtype <- function(item) {
+        return(mbind(.setItem(x[, , paste0(item, "_ww")], add = "wtype", nm = "withdrawal"),
+                     .setItem(x[, , paste0(item, "_wc")], add = "wtype", nm = "consumption")))
       }
+      dem    <- .wtype("wat_nonag_dem")
+      served <- .wtype("wat_nonag_ren")
       # Unmet demand: neither served from renewable sources nor from non-renewable groundwater
-      unmet <- dem - served - gw
+      unmet  <- dem - served - .wtype("wat_nonag_gw")
       unmet[unmet < 0] <- 0
 
-      return(mbind(add_dimension(dem, dim = 3.2, add = "type", nm = "demand"),
-                   add_dimension(served, dim = 3.2, add = "type", nm = "served_ren"),
-                   add_dimension(unmet, dim = 3.2, add = "type", nm = "unmet")))
+      x <- mbind(add_dimension(dem, dim = 3.1, add = "type", nm = "demand"),
+                 add_dimension(served, dim = 3.1, add = "type", nm = "served_ren"),
+                 add_dimension(unmet, dim = 3.1, add = "type", nm = "unmet"))
+      return(add_dimension(x, dim = 3.1, add = "scen25", nm = nm))
     }
     out <- mbind(lapply(names(scen25), .nonAg))
 
@@ -304,16 +278,12 @@ calcIrrigationDataMAgPIE <- function(output,
 
   } else if (output == "NonrenGW") {
 
-    # Non-renewable groundwater pool (as in calcPotWater; scenario-independent)
-    .gw <- function(gwOutput, nm) {
-      gw <- calcOutput("NonrenGroundwatUse", output = gwOutput,
-                       multicropping = commonArgs$multicropping, transDistGW = 100,
-                       lpjml = lpjml, climatetype = climatetype,
-                       selectyears = selectyears, iniyear = iniyear,
-                       aggregate = FALSE)
-      return(.setItem(gw[, , "withdrawal"], add = "source", nm = nm))
-    }
-    out <- mbind(.gw("comAg", "nonren_ag"), .gw("nonAg", "nonren_nonAg"))
+    # Non-renewable groundwater pool, as used in calcPotWater
+    # (scenario-independent: taken from the ssp2 scenario)
+    s   <- scen25[["ssp2"]]
+    x   <- .runCalc("PotWater", "ssp2")[, , s[["efp"]]][, , s[["nonAg"]]]
+    out <- mbind(.setItem(x[, , "wat_gw_ww"], add = "source", nm = "nonren_ag"),
+                 .setItem(x[, , "wat_nonag_gw_ww"], add = "source", nm = "nonren_nonAg"))
 
     description <- paste0("Non-renewable groundwater withdrawal pool for agriculture (nonren_ag) ",
                           "and non-agricultural uses (nonren_nonAg)")

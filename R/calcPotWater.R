@@ -1,7 +1,10 @@
 #' @title       calcPotWater
 #' @description This function returns the potential water quantity
 #'              (separated into withdrawal and consumption)
-#'              available for different uses
+#'              available for different uses.
+#'              It also returns the non-agricultural water demand
+#'              and the parts served from renewable sources and from
+#'              non-renewable groundwater (wat_nonag_dem, wat_nonag_ren, wat_nonag_gw).
 #'
 #' @param lpjml             LPJmL version used
 #' @param selectyears       Years for which irrigatable area is calculated
@@ -126,7 +129,10 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
   watNonAg <- calcOutput("RiverHumanUseAccounting",
                          iteration = "non_agriculture",
                          lpjml = lpjml, climatetype = climatetype,
-                         transDist = transDist, comAg = NULL,
+                         transDist = transDist,
+                         # comAg: must be set, no effect here (only used in "potential_irrigation"); 
+                         # FALSE avoids duplicate cache entries
+                         comAg = FALSE,
                          efrMethod = efrMethod, multicropping = multicropping,
                          selectyears = selectyears, iniyear = iniyear,
                          accessibilityrule = NULL,
@@ -136,6 +142,12 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
                          aggregate = FALSE)
   watNonAgWW <- collapseNames(watNonAg[, , "currHumanWWtotal"])
   watNonAgWC <- collapseNames(watNonAg[, , "currHumanWCtotal"])
+  # Non-agricultural water demand (as requested in the river routing)
+  # and the part served from renewable sources
+  watNonAgDemWW <- collapseNames(watNonAg[, , "demandWW"])
+  watNonAgDemWC <- collapseNames(watNonAg[, , "demandWC"])
+  watNonAgRenWW <- watNonAgWW
+  watNonAgRenWC <- watNonAgWC
 
   # Fossil groundwater use
   # Note: fossil groundwater is one pool for all scenarios (fixed transport distance of 100 km)
@@ -158,6 +170,8 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
     # add fossil groundwater to renewable groundwater used in non-agricultural sector
     watNonAgWW <- watNonAgWW + gwWW
     watNonAgWC <- watNonAgWC + gwWC
+    gwNonAgWW  <- gwWW
+    gwNonAgWC  <- gwWC
 
     # Fossil groundwater available in agricultural sector
     # Note: if no areas are committed (previously reserved),
@@ -178,10 +192,10 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
                              names = getItems(watAvlAgWW, dim = 3))
 
   } else {
-    gwWW <- gwWC <- .transformObject(x = 0,
-                                     gridcells = getItems(watAvlAgWW, dim = 1),
-                                     years = getItems(watAvlAgWW, dim = 2),
-                                     names = getItems(watAvlAgWW, dim = 3))
+    gwWW <- gwWC <- gwNonAgWW <- gwNonAgWC <- .transformObject(x = 0,
+                                                               gridcells = getItems(watAvlAgWW, dim = 1),
+                                                               years = getItems(watAvlAgWW, dim = 2),
+                                                               names = getItems(watAvlAgWW, dim = 3))
   }
 
   if (comAg) {
@@ -190,7 +204,9 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
     currHuman <- calcOutput("RiverHumanUseAccounting",
                             iteration = "committed_agriculture",
                             lpjml = lpjml, climatetype = climatetype,
-                            transDist = transDist, comAg = NULL,
+                            transDist = transDist,
+                            # comAg: must be set, no effect here (only used in "potential_irrigation")
+                            comAg = FALSE,
                             efrMethod = efrMethod, multicropping = multicropping,
                             selectyears = selectyears, iniyear = iniyear,
                             accessibilityrule = NULL,
@@ -249,7 +265,16 @@ calcPotWater <- function(lpjml, selectyears, climatetype, efrMethod,
   watTotWW <- add_dimension(watTotWW, dim = 3.4, add = "wtype", nm = "wat_tot_ww")
   watTotWC <- add_dimension(watTotWC, dim = 3.4, add = "wtype", nm = "wat_tot_wc")
 
-  out          <- mbind(watAgWW, watAgWC, watTotWW, watTotWC, watGWW, watGWC)
+  # Non-agricultural water: demand, served from renewable sources, served from fossil groundwater
+  watNonAgDemWW <- add_dimension(watNonAgDemWW, dim = 3.4, add = "wtype", nm = "wat_nonag_dem_ww")
+  watNonAgDemWC <- add_dimension(watNonAgDemWC, dim = 3.4, add = "wtype", nm = "wat_nonag_dem_wc")
+  watNonAgRenWW <- add_dimension(watNonAgRenWW, dim = 3.4, add = "wtype", nm = "wat_nonag_ren_ww")
+  watNonAgRenWC <- add_dimension(watNonAgRenWC, dim = 3.4, add = "wtype", nm = "wat_nonag_ren_wc")
+  gwNonAgWW     <- add_dimension(gwNonAgWW, dim = 3.4, add = "wtype", nm = "wat_nonag_gw_ww")
+  gwNonAgWC     <- add_dimension(gwNonAgWC, dim = 3.4, add = "wtype", nm = "wat_nonag_gw_wc")
+
+  out          <- mbind(watAgWW, watAgWC, watTotWW, watTotWC, watGWW, watGWC,
+                        watNonAgDemWW, watNonAgDemWC, watNonAgRenWW, watNonAgRenWC, gwNonAgWW, gwNonAgWC)
   getSets(out) <- c("x", "y", "iso", "year", "EFP", "scen", "wtype")
 
   return(list(x            = out,

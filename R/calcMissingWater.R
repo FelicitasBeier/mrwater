@@ -40,7 +40,7 @@
 #' calcOutput("MissingWater", aggregate = FALSE)
 #' }
 #'
-#' @importFrom magclass collapseNames dimSums
+#' @importFrom magclass collapseNames getItems<-
 #' @importFrom magpiesets findset
 #' @importFrom stringr str_split
 #'
@@ -63,81 +63,51 @@ calcMissingWater <- function(output, lpjml, climatetype,
   #       used to vary surface water transport distance
   transDist <- transDistGW
 
+  # Helper function: select withdrawal and consumption items of the routing output
+  .select <- function(x, items) {
+    x <- collapseNames(x[, , items])
+    getItems(x, dim = 3.3) <- c("withdrawal", "consumption")
+    return(x)
+  }
+
   ##############################
   ### Results from Algorithm ###
   ##############################
-  # (can be fulfilled with renewable water sources)
-  # Water for Non-Agricultural Use after Routing (in mio. m^3)
-  fulfilledNAU <- calcOutput("RiverHumanUseAccounting",
-                             iteration = "non_agriculture",
-                             lpjml = lpjml, climatetype = climatetype,
-                             efrMethod = "VMF:fair", transDist = transDist,
-                             selectyears = selectyears, iniyear = iniyear,
-                             multicropping = m,
-                             accessibilityrule = NULL,
-                             rankmethod = NULL, gainthreshold = NULL,
-                             cropmix = NULL, yieldcalib = NULL,
-                             irrigationsystem = NULL, landScen = NULL,
-                             comAg = FALSE,
-                             aggregate = FALSE)
-  fulfilledNAU <- collapseNames(fulfilledNAU[, , c("currHumanWWtotal", "currHumanWCtotal")])
-  getItems(fulfilledNAU, dim = 3.3) <- c("withdrawal", "consumption")
+  # Water demand as requested in the river routing (from reported current water uses)
+  # and the part that can be fulfilled with renewable water sources (in mio. m^3)
+  # Non-agricultural uses
+  routingNAU <- calcOutput("RiverHumanUseAccounting",
+                           iteration = "non_agriculture",
+                           lpjml = lpjml, climatetype = climatetype,
+                           efrMethod = "VMF:fair", transDist = transDist,
+                           selectyears = selectyears, iniyear = iniyear,
+                           multicropping = m,
+                           accessibilityrule = NULL,
+                           rankmethod = NULL, gainthreshold = NULL,
+                           cropmix = NULL, yieldcalib = NULL,
+                           irrigationsystem = NULL, landScen = NULL,
+                           # comAg: must be set, no effect here (only used in "potential_irrigation")
+                           comAg = FALSE,
+                           aggregate = FALSE)
+  actNAU       <- .select(routingNAU, c("demandWW", "demandWC"))
+  fulfilledNAU <- .select(routingNAU, c("currHumanWWtotal", "currHumanWCtotal"))
 
-  # Water Committed to Agriculture after Routing (in mio. m^3)
-  fulfilledCAU   <- calcOutput("RiverHumanUseAccounting",
-                               iteration = "committed_agriculture",
-                               lpjml = lpjml, climatetype = climatetype,
-                               efrMethod = "VMF:fair", transDist = transDist,
-                               selectyears = selectyears, iniyear = iniyear,
-                               multicropping = m,
-                               accessibilityrule = NULL,
-                               rankmethod = NULL, gainthreshold = NULL,
-                               cropmix = NULL, yieldcalib = NULL,
-                               irrigationsystem = NULL, landScen = NULL,
-                               comAg = FALSE,
-                               aggregate = FALSE)
-  fulfilledCAU <- collapseNames(fulfilledCAU[, , c("currHumanWWtotal", "currHumanWCtotal")])
-  getItems(fulfilledCAU, dim = 3.3) <- c("withdrawal", "consumption")
-
-  ##############################
-  ### Exogenous Water Demand ###
-  ##############################
-  # (would be required according to reported current water uses)
-  # Non-Agricultural Water in the past (in mio. m^3 / yr)
-  actNAU <- calcOutput("WaterUseNonAg",
-                       selectyears = selectyears, cells = "lpjcell",
-                       datasource = "WATERGAP_ISIMIP", usetype = "total",
-                       seasonality = "total", harmonType = "average",
-                       lpjml = NULL, climatetype = NULL,
-                       aggregate = FALSE)
-  # Committed Agricultural Water (in mio. m^3)
-  # (including depreciation of irrigation equipment)
-  actCAU <- dimSums(calcOutput("WaterUseCommittedAg",
-                               lpjml = lpjml, climatetype = climatetype,
-                               selectyears = selectyears, iniyear = iniyear,
-                               multicropping = m, aggregate = FALSE),
-                    dim = "crop")
-
-  # Transform object dimensionality
-  .transformObject <- function(x, gridcells, years, names) {
-    # empty magpie object structure
-    object0 <- new.magpie(cells_and_regions = gridcells,
-                          years = years,
-                          names = names,
-                          fill = 0,
-                          sets = c("x.y.iso", "year", "EFP.scen.wtype"))
-    # bring object x to dimension of object0
-    out <- object0 + x
-    return(out)
-  }
-  actNAU <- .transformObject(x = actNAU,
-                             gridcells = getItems(actNAU, dim = 1),
-                             years = selectyears,
-                             names = getItems(fulfilledNAU, dim = 3))
-  actCAU <- .transformObject(x = actCAU,
-                             gridcells = getItems(actCAU, dim = 1),
-                             years = selectyears,
-                             names = getItems(fulfilledCAU, dim = 3))
+  # Committed agricultural uses (including depreciation of irrigation equipment)
+  routingCAU <- calcOutput("RiverHumanUseAccounting",
+                           iteration = "committed_agriculture",
+                           lpjml = lpjml, climatetype = climatetype,
+                           efrMethod = "VMF:fair", transDist = transDist,
+                           selectyears = selectyears, iniyear = iniyear,
+                           multicropping = m,
+                           accessibilityrule = NULL,
+                           rankmethod = NULL, gainthreshold = NULL,
+                           cropmix = NULL, yieldcalib = NULL,
+                           irrigationsystem = NULL, landScen = NULL,
+                           # comAg: must be set, no effect here (only used in "potential_irrigation")
+                           comAg = FALSE,
+                           aggregate = FALSE)
+  actCAU       <- .select(routingCAU, c("demandWW", "demandWC"))
+  fulfilledCAU <- .select(routingCAU, c("currHumanWWtotal", "currHumanWCtotal"))
 
   ################################
   ### Unfulfilled Water Demand ###

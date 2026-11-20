@@ -139,7 +139,9 @@ fullTRANSPORT <- function(multicropping, rankmethod = "USD_ha:GLO:TRUE") {
     calcOutput("RiverHumanUseAccounting",
                iteration = "non_agriculture",
                lpjml = lpjml, climatetype = climatetype,
-               transDist = transDist, comAg = NULL,
+               transDist = transDist,
+               # comAg: must be set, no effect here (only used in "potential_irrigation")
+               comAg = FALSE,
                efrMethod = efrMethod, multicropping = multicropping,
                selectyears = selectyears, iniyear = iniyear,
                accessibilityrule = NULL,
@@ -153,7 +155,9 @@ fullTRANSPORT <- function(multicropping, rankmethod = "USD_ha:GLO:TRUE") {
     calcOutput("RiverHumanUseAccounting",
                 iteration = "committed_agriculture",
                 lpjml = lpjml, climatetype = climatetype,
-                transDist = transDist, comAg = NULL,
+                transDist = transDist,
+                # comAg: must be set, no effect here (only used in "potential_irrigation")
+                comAg = FALSE,
                 efrMethod = efrMethod, multicropping = multicropping,
                 selectyears = selectyears, iniyear = iniyear,
                 accessibilityrule = NULL,

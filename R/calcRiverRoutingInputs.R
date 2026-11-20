@@ -157,8 +157,13 @@ calcRiverRoutingInputs <- function(lpjml, climatetype,
                                    lpjml = lpjml, climatetype = climatetype,
                                    efrMethod = efrMethod, multicropping = multicropping,
                                    selectyears = selectyears, iniyear = iniyear,
-                                   transDist = transDist, comAg = NULL,
-                                   accessibilityrule = accessibilityrule,
+                                   transDist = transDist,
+                                   # comAg: must be set, no effect here (only used in "potential_irrigation"); 
+                                   # FALSE avoids duplicate cache entries
+                                   comAg = FALSE,
+                                   # accessibilityrule: no effect here (only used in "potential_irrigation" and
+                                   # "committed_agriculture_fullMulticropping"); NULL avoids duplicate cache entries
+                                   accessibilityrule = NULL,
                                    rankmethod = NULL, gainthreshold = NULL,
                                    cropmix = NULL, yieldcalib = NULL,
                                    irrigationsystem = NULL, landScen = NULL,
@@ -205,8 +210,13 @@ calcRiverRoutingInputs <- function(lpjml, climatetype,
                                      lpjml = lpjml, climatetype = climatetype,
                                      efrMethod = efrMethod, multicropping = multicropping,
                                      selectyears = selectyears, iniyear = iniyear,
-                                     transDist = transDist, comAg = NULL,
-                                     accessibilityrule = accessibilityrule,
+                                     transDist = transDist,
+                                     # comAg: must be set, no effect here (only used in "potential_irrigation"); 
+                                     # FALSE avoids duplicate cache entries
+                                     comAg = FALSE,
+                                     # accessibilityrule: no effect here (only used in "potential_irrigation" and
+                                     # "committed_agriculture_fullMulticropping"); NULL avoids duplicate cache entries
+                                     accessibilityrule = NULL,
                                      rankmethod = NULL, gainthreshold = NULL,
                                      cropmix = NULL, yieldcalib = NULL,
                                      irrigationsystem = NULL, landScen = NULL,
