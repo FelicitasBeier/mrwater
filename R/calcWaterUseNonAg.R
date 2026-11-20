@@ -143,7 +143,7 @@ calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lp
       stop(paste0("The years (`selectyears`) in calcWaterUseNonAg does not ",
                   "contain the baseyear ", baseyear, "."))
     }
-    yearsHarmonized <- paste0("y", seq(2010, 2020))
+    yearsHarmonized <- paste0("y", seq(2010, 2025))
     yearsWATERGAP   <- getYears(watdemWATERGAP)
     yISIMIP         <- as.numeric(gsub("y", "", getYears(watdemISIMIP)))
     yBase           <- as.numeric(gsub("y", "", baseyear))
@@ -225,7 +225,7 @@ calcWaterUseNonAg <- function(selectyears = seq(1995, 2100, by = 5), cells = "lp
     watdemWATERGAP[, yearsFUTURE, ] <- watFUTURE
     rm(tmp, watFUTURE)
 
-    # Data follows common scenario (WATERGAP SSP2) until 2020, then scenarios diverge;
+    # Data follows common scenario (WATERGAP SSP2) until 2025, then scenarios diverge;
     # Note: ISIMIP stays constant for future
     watdemWATERGAP[, yearsHarmonized, ] <- collapseNames(watdemWATERGAP[, yearsHarmonized, "ssp2"])
 

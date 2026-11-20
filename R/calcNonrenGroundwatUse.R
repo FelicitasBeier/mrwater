@@ -57,8 +57,9 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
                            aggregate = FALSE)
 
   # Groundwater is calculated based on full water use of the past given all available water (EFP off).
-  # In the past, the non-agriculture scenarios are identical. Therefore, ISIMIP can be used as representative case.
-  scenNonAg  <- "ISIMIP"
+  # Non-agricultural scenarios are identical in the past (ISIMIP history) and follow the common
+  # SSP2 path until the end of the harmonization period. SSP2 is therefore used as representative case.
+  scenNonAg  <- "ssp2"
   scenEFP    <- "off"
   missingWat <- collapseNames(missingWat[, , paste(scenEFP, scenNonAg, sep = ".")])
 
