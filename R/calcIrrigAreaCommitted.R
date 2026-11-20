@@ -2,7 +2,7 @@
 #' @description calculates area reserved for irrigation: irrigated area of the
 #'              respective year until the last year with data (past_til2020),
 #'              area of the last year with data until the end of the
-#'              harmonization period (2025), afterwards reduced by
+#'              harmonization period (toolHarmonizationYear), afterwards reduced by
 #'              depreciation parameter (set to 0.1) every year
 #'
 #' @param iniyear        initialization year
@@ -29,7 +29,7 @@ calcIrrigAreaCommitted <- function(selectyears, iniyear, aggregateCrops = FALSE)
   depreciation <- 0.1
   # End of harmonization period (sm_fix_SSP2 in MAgPIE):
   # committed area is fully reserved until this year and depreciates afterwards
-  harmYr <- 2025
+  harmYr <- toolHarmonizationYear()
   # Last year with irrigated area data
   lastYr <- as.numeric(gsub("y", "", tail(findset("past_til2020"), n = 1)))
 

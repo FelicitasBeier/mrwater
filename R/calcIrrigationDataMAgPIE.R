@@ -23,7 +23,7 @@
 #'
 #' @importFrom stringr str_split
 #' @importFrom madrat calcOutput
-#' @importFrom magclass collapseNames add_dimension add_columns mbind
+#' @importFrom magclass collapseNames add_dimension add_columns mbind collapseDim getYears
 #'
 #' @export
 
@@ -192,6 +192,13 @@ calcIrrigationDataMAgPIE <- function(output,
   out <- mbind(ssp1 = ssp1, ssp2 = ssp2, ssp2efp = ssp2efp,
                ssp3 = ssp3, ssp4 = ssp4, ssp5 = ssp5,
                sdpEI = sdpEI, sdpRC = sdpRC, sdpMC = sdpMC)
+
+  # Harmonization: all scenarios follow the common ssp2 path (EFP off) until the end of the
+  # harmonization period (sm_fix_SSP2 in MAgPIE); scenarios diverge afterwards
+  harmYrs <- getYears(out)[getYears(out, as.integer = TRUE) <= toolHarmonizationYear()]
+  if (length(harmYrs) > 0) {
+    out[, harmYrs, ] <- collapseDim(out[, harmYrs, list(scen25 = "ssp2")], dim = "scen25")
+  }
 
   # Checks
   if (any(is.na(out))) {

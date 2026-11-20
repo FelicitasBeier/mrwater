@@ -3,8 +3,9 @@
 #'              as negative difference between
 #'              water availability from renewable sources and
 #'              human water use (consumption and withdrawal).
-#'              The water use in the initialization year is fixed in the future as
-#'              non-renewable groundwater.
+#'              Until the end of the harmonization period (toolHarmonizationYear),
+#'              the missing water of the respective year is non-renewable groundwater.
+#'              Afterwards, it is fixed to the missing water of the harmonization year.
 #'
 #' @param output        "total": total groundwater use (non-agricultural and agricultural),
 #'                      "nonAg": groundwater use in non-agricultural sector (industry, domestic, electricity),
@@ -40,7 +41,6 @@
 #' }
 #'
 #' @importFrom magclass collapseNames dimSums
-#' @importFrom magpiesets findset
 #' @importFrom stringr str_split
 #'
 #' @export
@@ -63,9 +63,10 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
   scenEFP    <- "off"
   missingWat <- collapseNames(missingWat[, , paste(scenEFP, scenNonAg, sep = ".")])
 
-  # Missing water of past time steps is attributed to non-renewable groundwater.
-  # For the future, it is fixed to the missing water of the last time step.
-  lastYr <- as.numeric(gsub("y", "", tail(magpiesets::findset("past_til2020"), n = 1)))
+  # Missing water until the end of the harmonization period is attributed to non-renewable groundwater
+  # (committed area is fully irrigated during the harmonization period).
+  # Afterwards, it is fixed to the missing water of the harmonization year.
+  harmYr <- toolHarmonizationYear()
 
   if (is.character(selectyears)) {
     selectyears <- as.numeric(gsub("y", "", selectyears))
@@ -79,10 +80,10 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
                 "The 'iniyear' has to be the first year of 'selectyears' ",
                 "or lie in the past of it."))
   }
-  if (iniyear > lastYr) {
+  if (iniyear > harmYr) {
     stop(paste0("Please align the initialization year ('iniyear') ",
-                "with the last year in the past (see magpiesets::findset('past_til2020')). ",
-                "The 'iniyear' has to be smaller or equal to the last year."))
+                "with the end of the harmonization period (see toolHarmonizationYear()). ",
+                "The 'iniyear' has to be smaller or equal to this year."))
   }
   # include iniyear in selectyears
   if (length(intersect(iniyear, selectyears)) < 1) {
@@ -90,10 +91,14 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
   } else {
     cmbYrs <- selectyears
   }
-  # selectyears of the past (including iniyear)
-  pstYrs <- cmbYrs[cmbYrs <= lastYr]
+  # selectyears of the harmonization period (including iniyear)
+  pstYrs <- cmbYrs[cmbYrs <= harmYr]
   # selectyears of the future
-  ftrYrs <- cmbYrs[cmbYrs > lastYr]
+  ftrYrs <- cmbYrs[cmbYrs > harmYr]
+  if (length(ftrYrs) > 0 && !(harmYr %in% cmbYrs)) {
+    stop(paste0("calcNonrenGroundwatUse: 'selectyears' must contain the end of the ",
+                "harmonization period (", harmYr, ") to fix the future groundwater pool."))
+  }
 
   ######################
   ### Prepare output ###
@@ -104,10 +109,10 @@ calcNonrenGroundwatUse <- function(output, lpjml, climatetype,
                     names = c("withdrawal", "consumption"))
   getSets(out) <- c("x", "y", "iso", "year", "wtype")
 
-  # In past time steps, missing water is accounted as fossil groundwater
+  # In the harmonization period, missing water is accounted as fossil groundwater
   out[, pstYrs, ] <- missingWat[, pstYrs, ]
   # In future time steps, fossil groundwater is held constant
-  out[, ftrYrs, ] <- missingWat[, lastYr, ]
+  out[, ftrYrs, ] <- missingWat[, harmYr, ]
 
   ##############
   ### Checks ###
