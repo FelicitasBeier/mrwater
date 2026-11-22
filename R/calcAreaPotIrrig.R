@@ -111,6 +111,15 @@ calcAreaPotIrrig <- function(selectyears, comAg,
                                            selectyears = selectyears, iniyear = iniyear,
                                            aggregate = FALSE))
 
+  # Land accounting at cell level: all land areas in this function are split into crops with the
+  # crop shares of iniyear (cropareaShr). The committed area follows the historical crop pattern
+  # of each year, so its crop-specific values can exceed the crop-specific land.
+  # Therefore, the committed area is distributed to crops with the same crop shares (cell total kept).
+  comIrrigTotal <- dimSums(comIrrigArea, dim = "crop")
+  stopifnot("mrwater::calcAreaPotIrrig: committed irrigated area exceeds the land area of a cell" =
+              all(comIrrigTotal - dimSums(landarea, dim = "crop") <= 1e-6))
+  comIrrigArea <- cropareaShr * comIrrigTotal
+
   # areas that are currently irrigated must also be suitable under irrigated conditions
   landEXCLmarginal <- pmax(landEXCLmarginal, comIrrigArea)
 
@@ -265,24 +274,25 @@ calcAreaPotIrrig <- function(selectyears, comAg,
 
     # subtract physical area already reserved for irrigation
     out <- out - comIrrigArea
-    if (!is.na(protectSCEN)) {
-      # correct negative areas that can occur due to protection
+    # correct negative areas that can occur due to protection or, in the current-land scenarios
+    # (land of iniyear only), due to committed areas that grew after iniyear
+    clampNegative <- !is.na(protectSCEN) | grepl("curr", landSCEN)
+    if (clampNegative) {
       out <- pmax(out, 0)
     }
+  }
+
+  # Checks (at crop level, before aggregation)
+  if (any(is.na(out))) {
+    stop("mrwater::calcAreaPotIrrig produced NA values")
+  }
+  if (any(round(out, digits = 6) < 0)) {
+    stop("mrwater::calcAreaPotIrrig produced negative values")
   }
 
   # Aggregation over crops
   if (cropAggregation) {
     out <- dimSums(out, dim = "crop")
-  }
-
-  # Checks
-  if (any(is.na(out))) {
-    stop("mrwater::calcAreaPotIrrig produced NA values")
-  }
-
-  if (any(round(out, digits = 6) < 0)) {
-    stop("mrwater::calcAreaPotIrrig produced negative values")
   }
 
   # correct negative land availability caused by numerical reasons
