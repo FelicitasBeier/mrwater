@@ -36,9 +36,15 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
   coeff  <- as.numeric(as.list(strsplit(accessibilityrule, split = ":"))[[1]][2])
   method <- as.list(strsplit(accessibilityrule, split = ":"))[[1]][1]
 
+  # Add-on +nocchist (no climate change after the harmonization year): raw data cannot be held constant
+  # (see mrlandcore::calcLPJmLTransform); instead, the variability of the reference period
+  # ending in the harmonization year is used for all later years
+  nocchist <- grepl("+nocchist", lpjml, fixed = TRUE)
+
   # Monthly Discharge from LPJmL (raw: including variation)
   monthlyDischargeLPJmL <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
-                                      lpjmlversion = lpjml, climatetype = climatetype,
+                                      lpjmlversion = sub("+nocchist", "", lpjml, fixed = TRUE),
+                                      climatetype = climatetype,
                                       monthly = TRUE,
                                       stage = "raw:cut", aggregate = FALSE)
 
@@ -55,8 +61,9 @@ calcDischargeAccessibilityShare <- function(lpjml, selectyears, climatetype,
   for (y in selectyears) {
 
     # Long-term reference time frame for discharge variability calculation
-    if ((y - 30) > years[1]) {
-      longtermPeriod <- seq(y - 30, y, by = 1)
+    yRef <- if (nocchist) min(y, toolHarmonizationYear()) else y
+    if ((yRef - 30) > years[1]) {
+      longtermPeriod <- seq(yRef - 30, yRef, by = 1)
     } else {
       longtermPeriod <- seq(1980, 2010, by = 1)
     }

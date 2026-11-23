@@ -15,6 +15,9 @@
 #'                                  (scenario-independent)
 #'                      "EFR": environmental flow requirements (VMF:fair) per cell
 #'                             (discharge-based, not additive across cells)
+#'                      Outputs with scen25 and "EFR" are returned for both climate scenarios (clim25):
+#'                      cc (climate change) and nocc_hist (no climate change after the
+#'                      harmonization year; LPJmL add-on +nocchist)
 #'                      "HarmonizationYear": end of the harmonization period of all outputs
 #'                                           (toolHarmonizationYear), for a consistency check in MAgPIE
 #' @param lpjml         LPJmL version used
@@ -211,6 +214,18 @@ calcIrrigationDataMAgPIE <- function(output,
     return(do.call(calcCall, args))
   }
 
+  # Climate scenarios (clim25): LPJmL version per climate scenario
+  # nocc_hist: smoothed LPJmL data held constant from the harmonization year on
+  #            (add-on +nocchist, see mrlandcore::calcLPJmLTransform)
+  clim25 <- c(cc = lpjml, nocc_hist = paste0(lpjml, "+nocchist"))
+
+  # Helper function: compute output for each climate scenario and add clim25 dimension
+  .byClim <- function(fun, dim) {
+    return(mbind(lapply(names(clim25), function(cl) {
+      add_dimension(fun(clim25[[cl]]), dim = dim, add = "clim25", nm = cl)
+    })))
+  }
+
   # Helper function: aggregation function for outputs that must not be aggregated
   .noAggregation <- function(...) {
     stop("calcIrrigationDataMAgPIE: output ", output, " cannot be aggregated. Use aggregate = FALSE.")
@@ -222,7 +237,9 @@ calcIrrigationDataMAgPIE <- function(output,
 
   if (output == "PotIrrigAreas") {
 
-    out <- mbind(lapply(names(scen25), function(nm) .selectScen(.runCalc("PotIrrigAreas", nm), nm)))
+    out <- .byClim(function(l) {
+      mbind(lapply(names(scen25), function(nm) .selectScen(.runCalc("PotIrrigAreas", nm, lpjml = l), nm)))
+    }, dim = 3.2)
 
     description <- paste0("Potentially irrigated area (PIA) including non-renewable groundwater ",
                           "for different scenarios given available water and land")
@@ -232,13 +249,15 @@ calcIrrigationDataMAgPIE <- function(output,
 
   } else if (output == "WaterAvlMAgPIE") {
 
-    .renAg <- function(nm, usagetype) {
-      x <- .selectScen(.runCalc("WaterAvlMAgPIE", nm, usagetype = usagetype)[, , "ren_ag"], nm)
+    .renAg <- function(nm, usagetype, l) {
+      x <- .selectScen(.runCalc("WaterAvlMAgPIE", nm, usagetype = usagetype, lpjml = l)[, , "ren_ag"], nm)
       return(add_dimension(x, dim = 3.2, add = "wtype", nm = usagetype))
     }
-    out <- mbind(lapply(names(scen25), function(nm) {
-      mbind(.renAg(nm, "withdrawal"), .renAg(nm, "consumption"))
-    }))
+    out <- .byClim(function(l) {
+      mbind(lapply(names(scen25), function(nm) {
+        mbind(.renAg(nm, "withdrawal", l), .renAg(nm, "consumption", l))
+      }))
+    }, dim = 3.2)
 
     description <- paste0("Potential irrigation water withdrawals (PIWW) and consumption (PIWC) ",
                           "from renewable sources for different scenarios given available water and land")
@@ -250,9 +269,9 @@ calcIrrigationDataMAgPIE <- function(output,
 
     # Non-agricultural water demand and the parts served from renewable sources and
     # from non-renewable groundwater, as accounted for in calcPotWater (river routing)
-    .nonAg <- function(nm) {
+    .nonAg <- function(nm, l) {
       s <- scen25[[nm]]
-      x <- .runCalc("PotWater", nm)[, , s[["efp"]]][, , s[["nonAg"]]]
+      x <- .runCalc("PotWater", nm, lpjml = l)[, , s[["efp"]]][, , s[["nonAg"]]]
       .wtype <- function(item) {
         return(mbind(.setItem(x[, , paste0(item, "_ww")], add = "wtype", nm = "withdrawal"),
                      .setItem(x[, , paste0(item, "_wc")], add = "wtype", nm = "consumption")))
@@ -268,7 +287,7 @@ calcIrrigationDataMAgPIE <- function(output,
                  add_dimension(unmet, dim = 3.1, add = "type", nm = "unmet"))
       return(add_dimension(x, dim = 3.1, add = "scen25", nm = nm))
     }
-    out <- mbind(lapply(names(scen25), .nonAg))
+    out <- .byClim(function(l) mbind(lapply(names(scen25), .nonAg, l = l)), dim = 3.2)
 
     description <- paste0("Non-agricultural water demand, demand served from renewable sources ",
                           "and unmet demand (after non-renewable groundwater) for different scenarios")
@@ -279,7 +298,9 @@ calcIrrigationDataMAgPIE <- function(output,
   } else if (output == "NonrenGW") {
 
     # Non-renewable groundwater pool, as used in calcPotWater
-    # (scenario-independent: taken from the ssp2 scenario)
+    # (scenario-independent: taken from the ssp2 scenario;
+    #  climate-independent: missing water until the harmonization year (identical for cc and nocc_hist),
+    #  constant afterwards)
     s   <- scen25[["ssp2"]]
     x   <- .runCalc("PotWater", "ssp2")[, , s[["efp"]]][, , s[["nonAg"]]]
     out <- mbind(.setItem(x[, , "wat_gw_ww"], add = "source", nm = "nonren_ag"),
@@ -295,10 +316,12 @@ calcIrrigationDataMAgPIE <- function(output,
 
     # Environmental flow requirements (as in calcRiverRoutingInputs; MVP: VMF:fair only)
     # Note: EFR = EFR share * natural discharge, i.e. not additive across cells
-    out <- calcOutput("EnvmtlFlowRequirements",
-                      lpjml = lpjml, climatetype = climatetype,
-                      selectyears = selectyears, efrMethod = "VMF:fair",
-                      aggregate = FALSE)[, , "EFR"]
+    out <- .byClim(function(l) {
+      calcOutput("EnvmtlFlowRequirements",
+                 lpjml = l, climatetype = climatetype,
+                 selectyears = selectyears, efrMethod = "VMF:fair",
+                 aggregate = FALSE)[, , "EFR"]
+    }, dim = 3.1)
 
     description <- "Environmental flow requirements (VMF:fair) per cell"
     unit <- "mio. m^3"
@@ -323,17 +346,22 @@ calcIrrigationDataMAgPIE <- function(output,
     stop("calcIrrigationDataMAgPIE: unknown output ", output)
   }
 
-  if ("scen25" %in% getSets(out)) {
+  harmYrs <- getYears(out)[getYears(out, as.integer = TRUE) <= toolHarmonizationYear()]
+
+  if ("clim25" %in% getSets(out) && length(harmYrs) > 0) {
+    # Check: climate scenarios differ only after the harmonization year
+    ccDiff <- collapseDim(out[, harmYrs, list(clim25 = "cc")], dim = "clim25") -
+      collapseDim(out[, harmYrs, list(clim25 = "nocc_hist")], dim = "clim25")
+    if (max(abs(ccDiff)) > 1e-6) {
+      stop("mrwater::calcIrrigationDataMAgPIE: cc and nocc_hist differ until the harmonization year ",
+           "(max. abs. difference: ", max(abs(ccDiff)), ")")
+    }
+  }
+
+  if ("scen25" %in% getSets(out) && length(harmYrs) > 0) {
     # Harmonization: all scenarios follow the common ssp2 path (EFP off) until the end of the
     # harmonization period (sm_fix_SSP2 in MAgPIE); scenarios diverge afterwards
-    harmYrs <- getYears(out)[getYears(out, as.integer = TRUE) <= toolHarmonizationYear()]
-    if (length(harmYrs) > 0) {
-      out[, harmYrs, ] <- collapseDim(out[, harmYrs, list(scen25 = "ssp2")], dim = "scen25")
-    }
-    # Climate scenario (MVP: climate change only)
-    out <- add_dimension(out, dim = 3.2, add = "clim25", nm = "cc")
-  } else if (output == "EFR") {
-    out <- add_dimension(out, dim = 3.1, add = "clim25", nm = "cc")
+    out[, harmYrs, ] <- collapseDim(out[, harmYrs, list(scen25 = "ssp2")], dim = "scen25")
   }
 
   # Aggregation to country level

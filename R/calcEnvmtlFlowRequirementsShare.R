@@ -36,8 +36,10 @@ calcEnvmtlFlowRequirementsShare <- function(lpjml,
   preservationstatus <- strsplit(efrMethod, ":")[[1]][2]
 
   # Monthly Discharge from LPJmL based on historical baseline (raw: including variation)
+  # (fixed historical reference period: independent of the add-on +nocchist)
   monthlyDischarge <- calcOutput("LPJmLTransform", subtype = "pnv:discharge",
-                                 lpjmlversion = cfg$readinVersion, climatetype = cfg$baselineHist,
+                                 lpjmlversion = sub("+nocchist", "", cfg$readinVersion, fixed = TRUE),
+                                 climatetype = cfg$baselineHist,
                                  monthly = TRUE,
                                  stage = "raw:cut", years = refYears, aggregate = FALSE)
 

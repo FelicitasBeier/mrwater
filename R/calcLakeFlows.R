@@ -23,9 +23,11 @@
 calcLakeFlows <- function(lpjml, climatetype, subtype) {
 
   # Lake area from LPJmL (in ha) for one year (static over time)
+  # (raw data, static over time: read without the add-on +nocchist,
+  #  which mrlandcore::calcLPJmLTransform does not accept for raw data)
   lakeArea <- calcOutput("LPJmLTransform", subtype = "pnv:lake_area",
                          stage = "raw:Fullhist",
-                         lpjmlversion = lpjml, climatetype = climatetype,
+                         lpjmlversion = sub("+nocchist", "", lpjml, fixed = TRUE), climatetype = climatetype,
                          monthly = FALSE,
                          aggregate = FALSE)
   # To Do (Feli): use LUH lake area (if possible)
