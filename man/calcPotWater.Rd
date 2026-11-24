@@ -107,7 +107,10 @@ magpie object in cellular resolution
 \description{
 This function returns the potential water quantity
              (separated into withdrawal and consumption)
-             available for different uses
+             available for different uses.
+             It also returns the non-agricultural water demand
+             and the parts served from renewable sources and from
+             non-renewable groundwater (wat_nonag_dem, wat_nonag_ren, wat_nonag_gw).
 }
 \examples{
 \dontrun{

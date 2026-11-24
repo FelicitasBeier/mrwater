@@ -54,8 +54,9 @@ Calculates current non-renewable (fossil) groundwater use
              as negative difference between
              water availability from renewable sources and
              human water use (consumption and withdrawal).
-             The water use in the initialization year is fixed in the future as
-             non-renewable groundwater.
+             Until the end of the harmonization period (toolHarmonizationYear),
+             the missing water of the respective year is non-renewable groundwater.
+             Afterwards, it is fixed to the missing water of the harmonization year.
 }
 \examples{
 \dontrun{

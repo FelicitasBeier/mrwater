@@ -18,8 +18,11 @@ If TRUE, values are aggregated over the crop dimension.}
 magpie object in cellular resolution
 }
 \description{
-calculates area reserved for irrigation based on area irrigated
-             in initialization year and depreciation parameter (set to 0.1)
+calculates area reserved for irrigation: irrigated area of the
+             respective year until the last year with data (past_til2020),
+             area of the last year with data until the end of the
+             harmonization period (toolHarmonizationYear), afterwards reduced by
+             depreciation parameter (set to 0.025) every year
 }
 \examples{
 \dontrun{

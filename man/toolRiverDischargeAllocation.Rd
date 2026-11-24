@@ -8,7 +8,6 @@ toolRiverDischargeAllocation(
   rs,
   c,
   downCells,
-  neighborSelectCells = NULL,
   iteration,
   transDist,
   inLIST,
@@ -21,11 +20,8 @@ downstreamcells and neighboring cells and distances}
 
 \item{c}{Current cell for which water shall be allocated}
 
-\item{downCells}{Downstream cells of c}
-
-\item{neighborSelectCells}{Optionally: precomputed named list of neighbor-cell
-downstream cells (only required for main allocation
-with transDist != 0)}
+\item{downCells}{Downstream cells of c, as global cell IDs unless
+localDownCells is provided}
 
 \item{iteration}{Currently active iteration of river discharge allocation.
 Arguments:
@@ -35,19 +31,22 @@ Arguments:
 \item{transDist}{Water transport distance allowed to fulfill locally
 unfulfilled water demand by surrounding cell water availability}
 
-\item{inLIST}{List of objects that are inputs to the function
-irrigGain, gainthreshold,}
+\item{inLIST}{List of read-only inputs: current water requests
+(currReqWW, currReqWC), inaccessible discharge (inaccD)
+and precomputed selected-cell positions (allocationCells)}
 
-\item{inoutLIST}{List of objects that are inputs to the function and
-are updated by the function}
+\item{inoutLIST}{List of vectors that are read by this tool and returned
+after updates (discharge, prevReservedWW, prevReservedWC,
+protInaccD)}
 }
 \value{
-magpie object in cellular resolution
+list of updated discharge, updated previous withdrawal and consumption
+        reservation, and fulfilled local and neighbor water withdrawals and consumption
 }
 \description{
-This tool function allocates discharge
-             for grid cells respecting upstream-downstream relationships
-             and various water constraints
+This tool function allocates discharge for a prepared
+             selected-cell subset respecting upstream-downstream
+             relationships and various water constraints.
 }
 \author{
 Felicitas Beier, Jens Heinke, Jan Philipp Dietrich
