@@ -29,7 +29,6 @@ calcEFRMAgPIE <- function(lpjml, climatetype, selectyears) {
   # Climate scenarios (clim25): LPJmL version per climate scenario
   lpjmlClim <- c(cc = lpjml, nocc_hist = paste0(lpjml, "+nocchist"))
 
-  # MVP: VMF:fair only
   out <- NULL
   for (clim in names(lpjmlClim)) {
     x   <- calcOutput("EnvmtlFlowRequirements",
