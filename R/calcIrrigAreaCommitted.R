@@ -3,7 +3,7 @@
 #'              respective year until the last year with data (past_til2020),
 #'              area of the last year with data until the end of the
 #'              harmonization period (toolHarmonizationYear), afterwards reduced by
-#'              depreciation parameter (set to 0.1) every year
+#'              depreciation parameter (set to 0.025) every year
 #'
 #' @param iniyear        initialization year
 #' @param selectyears    select years
@@ -25,8 +25,8 @@
 
 calcIrrigAreaCommitted <- function(selectyears, iniyear, aggregateCrops = FALSE) {
 
-  # Set depreciation parameter
-  depreciation <- 0.1
+  # Set depreciation parameter (annual rate; same as the default of s25_AEI_depreciation in MAgPIE)
+  depreciation <- 0.025
   # End of harmonization period (sm_fix_SSP2 in MAgPIE):
   # committed area is fully reserved until this year and depreciates afterwards
   harmYr <- toolHarmonizationYear()
